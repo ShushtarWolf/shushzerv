@@ -23,7 +23,7 @@
   }
 
   body {
-    @apply bg-sz-gray-50 text-sz-gray-900 font-sans antialiased;
+    @apply bg-brand-gray-50 text-brand-gray-900 font-sans antialiased;
     background: linear-gradient(180deg, #f8f8fc 0%, var(--sz-bg) 40%, #ebebf0 100%);
     min-height: 100dvh;
   }
@@ -65,35 +65,39 @@
   }
 
   .ios-footnote {
-    @apply text-[0.8125rem] text-sz-gray-500 leading-snug;
+    @apply text-[0.8125rem] text-brand-gray-500 leading-snug;
   }
 
   .ios-segment {
-    @apply inline-flex p-1 rounded-xl bg-sz-gray-100/80;
+    @apply inline-flex p-1 rounded-xl bg-brand-gray-100/80;
   }
 
   .ios-segment-item {
-    @apply px-4 py-2 rounded-[10px] text-sm font-medium text-sz-gray-600 transition-all duration-200 cursor-pointer;
+    @apply px-4 py-2 rounded-[10px] text-sm font-medium text-brand-gray-600 transition-all duration-200 cursor-pointer;
   }
 
   .ios-segment-item-active {
-    @apply bg-white text-sz-gray-900 shadow-sm;
+    @apply bg-white text-brand-gray-900 shadow-sm;
   }
 
   .ios-input {
-    @apply w-full rounded-ios bg-white/80 border border-sz-gray-200 px-4 py-3 text-sz-gray-900 placeholder:text-sz-gray-400 outline-none transition focus:border-sz-blue focus:ring-2 focus:ring-sz-blue/20;
+    @apply w-full rounded-xl bg-brand-gray-100/70 border border-transparent px-4 py-3 text-brand-gray-900 placeholder:text-brand-gray-400 focus:bg-white focus:border-brand-blue/40 focus:outline-none transition-colors;
   }
 
   .ios-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-ios px-5 py-3 font-semibold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold transition-transform duration-150 active:scale-[0.97];
   }
 
   .ios-btn-primary {
-    @apply ios-btn bg-sz-blue text-white shadow-card hover:bg-sz-blue/90;
+    @apply ios-btn bg-brand-blue text-white shadow-card hover:bg-brand-blue/90;
+  }
+
+  .ios-btn-ghost {
+    @apply ios-btn bg-brand-gray-100 text-brand-gray-900 hover:bg-brand-gray-200;
   }
 
   .ios-btn-secondary {
-    @apply ios-btn bg-sz-gray-100 text-sz-gray-900 hover:bg-sz-gray-200;
+    @apply ios-btn bg-white text-brand-blue border border-brand-blue/20 shadow-card hover:bg-brand-gray-50;
   }
 
   .tap-highlight {
@@ -105,6 +109,7 @@
   }
 }
 
+/* Scrollbar — subtle iOS style */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

@@ -1,22 +1,16 @@
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  const courtId = typeof query.courtId === 'string' ? query.courtId : undefined
-  const clubId = typeof query.clubId === 'string' ? query.clubId : undefined
-  const date = typeof query.date === 'string' ? query.date : undefined
-  const onlyAvailable = query.available === 'true'
+  const { clubId, courtId, date, status } = getQuery(event)
 
-  if (!courtId && !clubId) {
-    throw createError({ statusCode: 400, statusMessage: 'courtId or clubId required' })
-  }
-
-  return prisma.slot.findMany({
+  const slots = await prisma.slot.findMany({
     where: {
-      ...(courtId ? { courtId } : {}),
-      ...(clubId ? { court: { clubId } } : {}),
-      ...(date ? { date } : {}),
-      ...(onlyAvailable ? { status: 'AVAILABLE' } : {}),
+      ...(courtId ? { courtId: String(courtId) } : {}),
+      ...(clubId ? { court: { clubId: String(clubId) } } : {}),
+      ...(date ? { date: String(date) } : {}),
+      ...(status ? { status: String(status) as any } : {}),
     },
     include: { court: { include: { sport: true } } },
     orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
   })
+
+  return slots
 })

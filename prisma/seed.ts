@@ -1,9 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { Scrypt } from '@adonisjs/hash/drivers/scrypt'
+import { hashSecret } from '../server/utils/password.ts'
 
 const prisma = new PrismaClient()
-const scrypt = new Scrypt({})
-const hashPassword = (pw: string) => scrypt.make(pw)
 
 const TIME_SLOTS: Array<[string, string]> = [
   ['08:00', '09:30'],
@@ -95,13 +93,13 @@ async function main() {
 
   console.log('Seeding demo users…')
   const athlete = await prisma.user.create({
-    data: { email: 'athlete@shushzerv.local', name: 'آرش ورزشکار', role: 'ATHLETE', passwordHash: await hashPassword('demo1234') },
+    data: { email: 'athlete@shushzerv.local', name: 'آرش ورزشکار', role: 'ATHLETE', passwordHash: hashSecret('demo1234') },
   })
   const coachUser = await prisma.user.create({
-    data: { email: 'coach@shushzerv.local', name: 'سارا محمدی', role: 'COACH', passwordHash: await hashPassword('demo1234') },
+    data: { email: 'coach@shushzerv.local', name: 'سارا محمدی', role: 'COACH', passwordHash: hashSecret('demo1234') },
   })
   const clubAdmin = await prisma.user.create({
-    data: { email: 'club@shushzerv.local', name: 'مدیر باشگاه آزادی', role: 'CLUB_ADMIN', passwordHash: await hashPassword('demo1234') },
+    data: { email: 'club@shushzerv.local', name: 'مدیر باشگاه آزادی', role: 'CLUB_ADMIN', passwordHash: hashSecret('demo1234') },
   })
 
   console.log('Seeding clubs + courts…')

@@ -1,9 +1,7 @@
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  const sport = typeof query.sport === 'string' && query.sport ? query.sport : undefined
-
+  const { sport } = getQuery(event)
   return prisma.coach.findMany({
-    where: sport ? { sport: { slug: sport } } : undefined,
+    where: sport ? { sport: { slug: String(sport) } } : {},
     include: { sport: true },
     orderBy: { rating: 'desc' },
   })

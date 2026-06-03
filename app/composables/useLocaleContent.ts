@@ -5,15 +5,15 @@ export function useLocaleContent() {
     return locale.value === 'fa' ? fa : en
   }
 
-  function pickName(entity: { nameFa: string; nameEn: string }) {
-    return locale.value === 'fa' ? entity.nameFa : entity.nameEn
+  function formatPrice(amount: number) {
+    if (locale.value === 'fa') {
+      return new Intl.NumberFormat('fa-IR').format(amount)
+    }
+    return new Intl.NumberFormat('en-US').format(amount)
   }
 
-  function formatPrice(amount: number) {
-    const nf = locale.value === 'fa'
-      ? new Intl.NumberFormat('fa-IR')
-      : new Intl.NumberFormat('en-US')
-    return nf.format(amount)
+  function pickName(obj: { nameFa: string; nameEn: string }) {
+    return localized(obj.nameFa, obj.nameEn)
   }
 
   function formatDate(iso: string) {

@@ -1,12 +1,25 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { PrismaClient } from '@prisma/client'
 
-declare global {
-  // eslint-disable-next-line no-var
-  var __prisma: PrismaClient | undefined
+function resolveDatabaseUrl(): string {
+  const roots = [process.cwd(), join(process.cwd(), '..'), join(process.cwd(), '../..')]
+  for (const root of roots) {
+    const dbPath = join(root, 'prisma', 'dev.db')
+    if (existsSync(dbPath)) return `file:${dbPath}`
+  }
+  return process.env.DATABASE_URL || 'file:./prisma/dev.db'
 }
 
-export const prisma = globalThis.__prisma ?? new PrismaClient()
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
+
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    datasourceUrl: resolveDatabaseUrl(),
+    log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+  })
 
 if (process.env.NODE_ENV !== 'production') {
-  globalThis.__prisma = prisma
+  globalForPrisma.prisma = prisma
 }

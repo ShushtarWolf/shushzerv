@@ -4,11 +4,11 @@ const localePath = useLocalePath()
 const { loggedIn, user, clear } = useUserSession()
 
 const navLinks = computed(() => [
-  { to: '/', label: t('nav.home') },
-  { to: '/explore', label: t('nav.explore') },
-  { to: '/clubs', label: t('nav.clubs') },
-  { to: '/coaches', label: t('nav.coaches') },
-  { to: '/news', label: t('nav.news') },
+  { to: localePath('/'), label: t('nav.home') },
+  { to: localePath('/explore'), label: t('nav.explore') },
+  { to: localePath('/clubs'), label: t('nav.clubs') },
+  { to: localePath('/coaches'), label: t('nav.coaches') },
+  { to: localePath('/news'), label: t('nav.news') },
 ])
 
 async function logout() {
@@ -18,16 +18,17 @@ async function logout() {
 </script>
 
 <template>
-  <header class="glass-bar sticky top-0 z-40" :style="{ paddingTop: 'var(--sz-safe-top)' }">
-    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-      <ShushzervLogo />
+  <header class="sticky top-0 z-40 glass-bar">
+    <div class="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between gap-4">
+      <ShushLogo />
 
       <nav class="hidden md:flex items-center gap-1">
         <NuxtLink
           v-for="link in navLinks"
           :key="link.to"
-          :to="localePath(link.to)"
-          class="rounded-full px-3 py-2 text-sm font-medium text-sz-gray-600 transition hover:bg-white/60 hover:text-sz-gray-900"
+          :to="link.to"
+          class="px-3 py-2 rounded-lg text-sm font-medium text-brand-gray-600 hover:text-brand-gray-900 hover:bg-brand-gray-100 transition-colors"
+          active-class="text-brand-blue"
         >
           {{ link.label }}
         </NuxtLink>
@@ -36,13 +37,13 @@ async function logout() {
       <div class="flex items-center gap-2">
         <LocaleSwitcher />
         <template v-if="loggedIn">
-          <NuxtLink :to="localePath('/dashboard')" class="hidden sm:inline-flex rounded-full px-3 py-2 text-sm font-medium text-sz-blue hover:bg-sz-accent-soft">
-            {{ user?.name || t('nav.dashboard') }}
+          <NuxtLink :to="localePath('/dashboard')" class="hidden sm:inline-flex ios-btn-ghost py-2 px-3 text-sm">
+            {{ user?.name?.split(' ')[0] || t('nav.dashboard') }}
           </NuxtLink>
-          <button class="ios-btn-secondary !px-3 !py-2 text-sm" @click="logout">{{ t('nav.logout') }}</button>
+          <button class="ios-btn-ghost py-2 px-3 text-sm" @click="logout">{{ t('nav.logout') }}</button>
         </template>
         <template v-else>
-          <NuxtLink :to="localePath('/login')" class="ios-btn-primary !px-4 !py-2 text-sm">
+          <NuxtLink :to="localePath('/login')" class="ios-btn-primary py-2 px-4 text-sm">
             {{ t('nav.login') }}
           </NuxtLink>
         </template>

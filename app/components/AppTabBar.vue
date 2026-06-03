@@ -4,39 +4,35 @@ const localePath = useLocalePath()
 const { loggedIn } = useUserSession()
 
 const tabs = computed(() => [
-  { to: '/', label: t('nav.home'), icon: 'home' },
-  { to: '/explore', label: t('nav.explore'), icon: 'explore' },
-  { to: '/clubs', label: t('nav.clubs'), icon: 'clubs' },
-  { to: '/news', label: t('nav.news'), icon: 'news' },
-  { to: loggedIn.value ? '/dashboard' : '/login', label: loggedIn.value ? t('nav.dashboard') : t('nav.login'), icon: 'profile' },
+  { to: localePath('/'), label: t('nav.home'), icon: 'home' },
+  { to: localePath('/explore'), label: t('nav.explore'), icon: 'search' },
+  { to: localePath('/clubs'), label: t('nav.clubs'), icon: 'clubs' },
+  { to: localePath('/news'), label: t('nav.news'), icon: 'news' },
+  { to: loggedIn.value ? localePath('/dashboard') : localePath('/login'), label: loggedIn.value ? t('nav.profile') : t('nav.login'), icon: 'profile' },
 ])
-
-const paths: Record<string, string> = {
-  home: 'M3 11.5 12 4l9 7.5M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9',
-  explore: 'M12 12 9 9m6 6-3-3m9 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
-  clubs: 'M4 20V8l8-5 8 5v12M9 20v-6h6v6',
-  news: 'M5 4h14v16H5zM8 8h8M8 12h8M8 16h5',
-  profile: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM5 20a7 7 0 0 1 14 0',
-}
 </script>
 
 <template>
   <nav
-    class="glass-bar fixed inset-x-0 bottom-0 z-40 md:hidden"
-    :style="{ paddingBottom: 'var(--sz-safe-bottom)' }"
+    class="md:hidden fixed bottom-0 inset-x-0 z-40 glass-bar border-t border-black/5"
+    style="padding-bottom: var(--sz-safe-bottom)"
   >
-    <div class="mx-auto flex max-w-lg items-stretch justify-around px-2 py-2">
+    <div class="grid grid-cols-5">
       <NuxtLink
         v-for="tab in tabs"
-        :key="tab.to"
-        :to="localePath(tab.to)"
-        class="flex flex-1 flex-col items-center gap-1 rounded-xl py-1 text-[0.65rem] font-medium text-sz-gray-500 transition"
-        active-class="text-sz-blue"
+        :key="tab.icon"
+        :to="tab.to"
+        class="flex flex-col items-center justify-center gap-1 py-2.5 text-brand-gray-500 tap-highlight"
+        active-class="text-brand-blue"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
-          <path :d="paths[tab.icon]" />
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <template v-if="tab.icon === 'home'"><path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" /></template>
+          <template v-else-if="tab.icon === 'search'"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></template>
+          <template v-else-if="tab.icon === 'clubs'"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 10h18" /></template>
+          <template v-else-if="tab.icon === 'news'"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 9h8M8 13h8M8 17h5" /></template>
+          <template v-else><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></template>
         </svg>
-        {{ tab.label }}
+        <span class="text-[0.65rem] font-medium">{{ tab.label }}</span>
       </NuxtLink>
     </div>
   </nav>

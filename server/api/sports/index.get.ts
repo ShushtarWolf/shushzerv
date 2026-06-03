@@ -1,3 +1,3 @@
 export default defineEventHandler(async () => {
-  return prisma.sport.findMany({ orderBy: { slug: 'asc' } })
+  return prisma.sport.findMany({ orderBy: { nameEn: 'asc' } })
 })

@@ -1,15 +1,14 @@
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ email?: string; password?: string }>(event)
-  const email = body.email?.trim().toLowerCase()
-  const password = body.password ?? ''
+  const { email, password } = await readBody<{ email?: string; password?: string }>(event)
+  const normalized = email?.trim().toLowerCase()
 
-  if (!email || !password) {
-    throw createError({ statusCode: 400, statusMessage: 'Email and password are required' })
+  if (!normalized || !password) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid input' })
   }
 
-  const user = await prisma.user.findUnique({ where: { email } })
+  const user = await prisma.user.findUnique({ where: { email: normalized } })
   if (!user || !verifySecret(password, user.passwordHash)) {
-    throw createError({ statusCode: 401, statusMessage: 'Invalid email or password' })
+    throw createError({ statusCode: 401, statusMessage: 'Invalid credentials' })
   }
 
   await setUserSession(event, {

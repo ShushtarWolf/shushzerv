@@ -45,6 +45,7 @@ export interface Coach {
   bioEn?: string | null
   sportId: string
   sport?: Sport
+  userId?: string | null
 }
 
 export interface NewsArticle {

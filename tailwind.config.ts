@@ -6,6 +6,7 @@ export default {
     './app/layouts/**/*.vue',
     './app/pages/**/*.vue',
     './app/app.vue',
+    './app.vue',
   ],
   theme: {
     extend: {
@@ -23,14 +24,14 @@ export default {
         ],
       },
       colors: {
-        sz: {
+        brand: {
           green: '#34c759',
           teal: '#30b0c7',
           blue: '#007aff',
           indigo: '#5856d6',
-          purple: '#af52de',
           orange: '#ff9500',
           pink: '#ff2d55',
+          purple: '#af52de',
           gray: {
             50: '#f2f2f7',
             100: '#e5e5ea',
@@ -43,6 +44,28 @@ export default {
             800: '#3a3a3c',
             900: '#1c1c1e',
           },
+        },
+        sz: {
+          green: '#34c759',
+          teal: '#30b0c7',
+          blue: '#007aff',
+          indigo: '#5856d6',
+          orange: '#ff9500',
+          pink: '#ff2d55',
+          purple: '#af52de',
+          gray: {
+            50: '#f2f2f7',
+            100: '#e5e5ea',
+            200: '#d1d1d6',
+            300: '#c7c7cc',
+            400: '#aeaeb2',
+            500: '#8e8e93',
+            600: '#636366',
+            700: '#48484a',
+            800: '#3a3a3c',
+            900: '#1c1c1e',
+          },
+          'accent-soft': 'rgba(0, 122, 255, 0.12)',
         },
       },
       borderRadius: {

@@ -2,7 +2,7 @@
 const { locale, locales, setLocale } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
 
-const available = computed(() => locales.value as Array<{ code: string; name: string }>)
+const available = computed(() => locales.value as { code: string; name: string }[])
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const available = computed(() => locales.value as Array<{ code: string; name: st
       :to="switchLocalePath(l.code)"
       class="ios-segment-item"
       :class="{ 'ios-segment-item-active': locale === l.code }"
-      @click="setLocale(l.code as any)"
+      @click="setLocale(l.code)"
     >
       {{ l.code === 'fa' ? 'فا' : 'EN' }}
     </NuxtLink>

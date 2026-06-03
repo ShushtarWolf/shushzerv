@@ -1,17 +1,18 @@
 import type { H3Event } from 'h3'
 import type { Role } from '@prisma/client'
 
-export async function requireAuth(event: H3Event) {
-  const session = await requireUserSession(event)
-  const user = session.user as { id: string; role: Role; email: string; name: string } | undefined
-  if (!user?.id) {
+export async function requireUser(event: H3Event) {
+  const session = await getUserSession(event)
+  if (!session?.user) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
-  return user
+  return session.user as { id: string; email: string; name: string; role: Role }
 }
 
+export const requireAuth = requireUser
+
 export async function requireRole(event: H3Event, ...roles: Role[]) {
-  const user = await requireAuth(event)
+  const user = await requireUser(event)
   if (!roles.includes(user.role)) {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
