@@ -1,182 +1,174 @@
-import { PrismaClient, type Role, SlotStatus } from '@prisma/client'
-import { hashSecret } from '../server/utils/password'
+import { PrismaClient } from '@prisma/client'
+import { Scrypt } from '@adonisjs/hash/drivers/scrypt'
 
 const prisma = new PrismaClient()
+const scrypt = new Scrypt({})
+const hashPassword = (pw: string) => scrypt.make(pw)
 
-const DEMO_PASSWORD = 'demo1234'
-
-const sports = [
-  { slug: 'tennis', nameFa: 'تنیس', nameEn: 'Tennis', icon: '🎾', color: '#34c759', group: 'racket' },
-  { slug: 'padel', nameFa: 'پدل', nameEn: 'Padel', icon: '🥎', color: '#30b0c7', group: 'racket' },
-  { slug: 'football', nameFa: 'فوتبال', nameEn: 'Football', icon: '⚽️', color: '#007aff', group: 'ball' },
-  { slug: 'basketball', nameFa: 'بسکتبال', nameEn: 'Basketball', icon: '🏀', color: '#ff9500', group: 'ball' },
-  { slug: 'fitness', nameFa: 'بدنسازی', nameEn: 'Fitness', icon: '🏋️', color: '#5856d6', group: 'fitness' },
-  { slug: 'yoga', nameFa: 'یوگا', nameEn: 'Yoga', icon: '🧘', color: '#ff2d55', group: 'fitness' },
-  { slug: 'swim', nameFa: 'شنا', nameEn: 'Swimming', icon: '🏊', color: '#30b0c7', group: 'water' },
-  { slug: 'boxing', nameFa: 'بوکس', nameEn: 'Boxing', icon: '🥊', color: '#48484a', group: 'combat' },
+const TIME_SLOTS: Array<[string, string]> = [
+  ['08:00', '09:30'],
+  ['10:00', '11:30'],
+  ['16:00', '17:30'],
+  ['18:00', '19:30'],
+  ['20:00', '21:30'],
 ]
 
-const cities = [
-  { en: 'Tehran', fa: 'تهران', districts: ['ولنجک', 'سعادت‌آباد', 'الهیه', 'ونک'] },
-  { en: 'Isfahan', fa: 'اصفهان', districts: ['چهارباغ', 'سپاهان‌شهر'] },
-  { en: 'Shiraz', fa: 'شیراز', districts: ['معالی‌آباد', 'قصردشت'] },
-  { en: 'Mashhad', fa: 'مشهد', districts: ['وکیل‌آباد', 'احمدآباد'] },
-]
-
-const clubAdjFa = ['المپیک', 'پارس', 'آریا', 'نقش‌جهان', 'پاسارگاد', 'کوروش', 'البرز', 'ستارگان', 'پرسپولیس', 'آزادی', 'انقلاب', 'میلاد', 'زاگرس', 'دماوند', 'کاسپین', 'خلیج‌فارس']
-const clubAdjEn = ['Olympic', 'Pars', 'Aria', 'NaqsheJahan', 'Pasargad', 'Cyrus', 'Alborz', 'Setaregan', 'Persepolis', 'Azadi', 'Enqelab', 'Milad', 'Zagros', 'Damavand', 'Caspian', 'PersianGulf']
-
-function rand<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)]
-}
-function randInt(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
-function dateStr(offsetDays: number) {
+function isoDate(offsetDays: number) {
   const d = new Date()
   d.setHours(0, 0, 0, 0)
   d.setDate(d.getDate() + offsetDays)
   return d.toISOString().slice(0, 10)
 }
 
-const TIME_SLOTS = [
-  { startTime: '08:00', endTime: '09:30' },
-  { startTime: '10:00', endTime: '11:30' },
-  { startTime: '12:00', endTime: '13:30' },
-  { startTime: '16:00', endTime: '17:30' },
-  { startTime: '18:00', endTime: '19:30' },
-  { startTime: '20:00', endTime: '21:30' },
+const sportsData = [
+  { slug: 'tennis', nameFa: 'تنیس', nameEn: 'Tennis', icon: '🎾', color: '#34c759', group: 'racket' },
+  { slug: 'padel', nameFa: 'پدل', nameEn: 'Padel', icon: '🏓', color: '#30b0c7', group: 'racket' },
+  { slug: 'football', nameFa: 'فوتبال', nameEn: 'Football', icon: '⚽', color: '#007aff', group: 'ball' },
+  { slug: 'fitness', nameFa: 'بدنسازی', nameEn: 'Fitness', icon: '🏋️', color: '#ff9500', group: 'fitness' },
+  { slug: 'yoga', nameFa: 'یوگا', nameEn: 'Yoga', icon: '🧘', color: '#af52de', group: 'fitness' },
+  { slug: 'swim', nameFa: 'شنا', nameEn: 'Swimming', icon: '🏊', color: '#5856d6', group: 'water' },
+  { slug: 'basketball', nameFa: 'بسکتبال', nameEn: 'Basketball', icon: '🏀', color: '#ff2d55', group: 'ball' },
+  { slug: 'boxing', nameFa: 'بوکس', nameEn: 'Boxing', icon: '🥊', color: '#636366', group: 'combat' },
+]
+
+const cities = ['تهران', 'اصفهان', 'شیراز', 'مشهد', 'تبریز']
+const citiesEn: Record<string, string> = { 'تهران': 'Tehran', 'اصفهان': 'Isfahan', 'شیراز': 'Shiraz', 'مشهد': 'Mashhad', 'تبریز': 'Tabriz' }
+
+const clubSeeds = [
+  { slug: 'azadi-tennis', nameFa: 'مجموعه تنیس آزادی', nameEn: 'Azadi Tennis Complex', sport: 'tennis', city: 'تهران', district: 'سعادت‌آباد', rating: 4.8, priceFrom: 250000, discount: 15, featured: true },
+  { slug: 'enghelab-tennis', nameFa: 'باشگاه تنیس انقلاب', nameEn: 'Enghelab Tennis Club', sport: 'tennis', city: 'تهران', district: 'الهیه', rating: 4.6, priceFrom: 300000, featured: true },
+  { slug: 'shiraz-tennis-academy', nameFa: 'آکادمی تنیس شیراز', nameEn: 'Shiraz Tennis Academy', sport: 'tennis', city: 'شیراز', district: 'معالی‌آباد', rating: 4.5, priceFrom: 180000 },
+  { slug: 'padel-zone-tehran', nameFa: 'پدل زون تهران', nameEn: 'Padel Zone Tehran', sport: 'padel', city: 'تهران', district: 'ونک', rating: 4.7, priceFrom: 320000, discount: 10, featured: true },
+  { slug: 'isfahan-padel-club', nameFa: 'باشگاه پدل اصفهان', nameEn: 'Isfahan Padel Club', sport: 'padel', city: 'اصفهان', district: 'سپاهان‌شهر', rating: 4.4, priceFrom: 220000 },
+  { slug: 'green-turf-arena', nameFa: 'مجموعه چمن سبز', nameEn: 'Green Turf Arena', sport: 'football', city: 'تهران', district: 'پاسداران', rating: 4.5, priceFrom: 600000, featured: true },
+  { slug: 'mashhad-football-center', nameFa: 'مرکز فوتبال مشهد', nameEn: 'Mashhad Football Center', sport: 'football', city: 'مشهد', district: 'احمدآباد', rating: 4.3, priceFrom: 500000 },
+  { slug: 'tabriz-mini-football', nameFa: 'مینی فوتبال تبریز', nameEn: 'Tabriz Mini Football', sport: 'football', city: 'تبریز', district: 'ولیعصر', rating: 4.2, priceFrom: 450000 },
+  { slug: 'iron-house-gym', nameFa: 'باشگاه آیرون هاوس', nameEn: 'Iron House Gym', sport: 'fitness', city: 'تهران', district: 'جردن', rating: 4.7, priceFrom: 150000, discount: 20, featured: true },
+  { slug: 'isfahan-fit-club', nameFa: 'باشگاه فیت اصفهان', nameEn: 'Isfahan Fit Club', sport: 'fitness', city: 'اصفهان', district: 'چهارباغ', rating: 4.4, priceFrom: 120000 },
+  { slug: 'zen-yoga-studio', nameFa: 'استودیو یوگا ذن', nameEn: 'Zen Yoga Studio', sport: 'yoga', city: 'تهران', district: 'فرشته', rating: 4.9, priceFrom: 200000, featured: true },
+  { slug: 'shiraz-yoga-house', nameFa: 'خانه یوگا شیراز', nameEn: 'Shiraz Yoga House', sport: 'yoga', city: 'شیراز', district: 'قصردشت', rating: 4.6, priceFrom: 160000 },
+  { slug: 'aqua-swim-center', nameFa: 'مرکز شنا آکوا', nameEn: 'Aqua Swim Center', sport: 'swim', city: 'تهران', district: 'نیاوران', rating: 4.5, priceFrom: 180000, discount: 12 },
+  { slug: 'mashhad-aquatics', nameFa: 'مجموعه آبی مشهد', nameEn: 'Mashhad Aquatics', sport: 'swim', city: 'مشهد', district: 'وکیل‌آباد', rating: 4.3, priceFrom: 150000 },
+  { slug: 'hoops-basketball-arena', nameFa: 'سالن بسکتبال هوپس', nameEn: 'Hoops Basketball Arena', sport: 'basketball', city: 'تهران', district: 'تهرانپارس', rating: 4.4, priceFrom: 280000 },
+  { slug: 'knockout-boxing-club', nameFa: 'باشگاه بوکس ناک‌اوت', nameEn: 'Knockout Boxing Club', sport: 'boxing', city: 'تهران', district: 'یوسف‌آباد', rating: 4.6, priceFrom: 170000, discount: 10 },
+]
+
+const coachSeeds = [
+  { nameFa: 'سارا محمدی', nameEn: 'Sara Mohammadi', sport: 'tennis', city: 'تهران', rating: 4.9, sessions: 320, bioFa: 'مربی تنیس با ۱۰ سال سابقه و قهرمان ملی.', bioEn: 'Tennis coach with 10 years of experience and national champion.' },
+  { nameFa: 'رضا کریمی', nameEn: 'Reza Karimi', sport: 'tennis', city: 'شیراز', rating: 4.7, sessions: 210, bioFa: 'تمرکز بر آموزش کودکان و نوجوانان.', bioEn: 'Focused on coaching kids and teenagers.' },
+  { nameFa: 'مریم احمدی', nameEn: 'Maryam Ahmadi', sport: 'padel', city: 'تهران', rating: 4.8, sessions: 180, bioFa: 'مربی رسمی فدراسیون پدل.', bioEn: 'Official padel federation coach.' },
+  { nameFa: 'علی رضایی', nameEn: 'Ali Rezaei', sport: 'football', city: 'تهران', rating: 4.6, sessions: 260, bioFa: 'مربی فوتبال پایه و تکنیک فردی.', bioEn: 'Youth football and individual technique coach.' },
+  { nameFa: 'نگار حسینی', nameEn: 'Negar Hosseini', sport: 'fitness', city: 'اصفهان', rating: 4.9, sessions: 410, bioFa: 'مربی بدنسازی و تغذیه ورزشی.', bioEn: 'Strength and sports nutrition coach.' },
+  { nameFa: 'بهنام صادقی', nameEn: 'Behnam Sadeghi', sport: 'fitness', city: 'تهران', rating: 4.5, sessions: 150, bioFa: 'متخصص تمرینات فانکشنال.', bioEn: 'Functional training specialist.' },
+  { nameFa: 'لیلا کاظمی', nameEn: 'Leila Kazemi', sport: 'yoga', city: 'تهران', rating: 5.0, sessions: 290, bioFa: 'مربی یوگا و مدیتیشن.', bioEn: 'Yoga and meditation instructor.' },
+  { nameFa: 'امیر تهرانی', nameEn: 'Amir Tehrani', sport: 'swim', city: 'مشهد', rating: 4.4, sessions: 130, bioFa: 'مربی شنا و نجات غریق.', bioEn: 'Swimming and lifeguard coach.' },
+  { nameFa: 'سینا مرادی', nameEn: 'Sina Moradi', sport: 'basketball', city: 'تهران', rating: 4.6, sessions: 175, bioFa: 'مربی بسکتبال و آمادگی جسمانی.', bioEn: 'Basketball and conditioning coach.' },
+  { nameFa: 'کیان عباسی', nameEn: 'Kian Abbasi', sport: 'boxing', city: 'تهران', rating: 4.7, sessions: 200, bioFa: 'مربی بوکس حرفه‌ای و آماتور.', bioEn: 'Professional and amateur boxing coach.' },
+]
+
+const newsSeeds = [
+  { slug: 'shushzerv-launch', sport: 'tennis', titleFa: 'شوش‌زرو رسماً راه‌اندازی شد', titleEn: 'Shushzerv officially launches', excerptFa: 'پلتفرم رزرو ورزشی شوش‌زرو با ده‌ها باشگاه آغاز به کار کرد.', excerptEn: 'The Shushzerv sports booking platform launches with dozens of clubs.' },
+  { slug: 'padel-rising', sport: 'padel', titleFa: 'پدل؛ ورزش در حال رشد ایران', titleEn: 'Padel: Iran’s fastest growing sport', excerptFa: 'محبوبیت پدل در شهرهای بزرگ به‌سرعت در حال افزایش است.', excerptEn: 'Padel popularity is rising fast in major cities.' },
+  { slug: 'winter-fitness-tips', sport: 'fitness', titleFa: 'نکات تمرین در فصل سرد', titleEn: 'Fitness tips for the cold season', excerptFa: 'چطور در زمستان انگیزه تمرین را حفظ کنیم.', excerptEn: 'How to stay motivated to train in winter.' },
+  { slug: 'yoga-for-athletes', sport: 'yoga', titleFa: 'یوگا برای ورزشکاران', titleEn: 'Yoga for athletes', excerptFa: 'یوگا چطور به ریکاوری و انعطاف کمک می‌کند.', excerptEn: 'How yoga helps recovery and flexibility.' },
+  { slug: 'swimming-season', sport: 'swim', titleFa: 'فصل جدید سانس‌های شنا', titleEn: 'New swimming season slots', excerptFa: 'سانس‌های جدید استخرها اضافه شد.', excerptEn: 'New pool slots have been added.' },
+  { slug: 'book-pay-at-club', titleFa: 'رزرو کن، در باشگاه پرداخت کن', titleEn: 'Book now, pay at the club', excerptFa: 'در نسخه فعلی پرداخت به صورت حضوری انجام می‌شود.', excerptEn: 'In the current version, payment is made in person.' },
 ]
 
 async function main() {
-  console.log('Resetting data…')
+  console.log('Resetting tables…')
   await prisma.booking.deleteMany()
   await prisma.slot.deleteMany()
   await prisma.court.deleteMany()
   await prisma.coach.deleteMany()
-  await prisma.club.deleteMany()
   await prisma.newsArticle.deleteMany()
+  await prisma.club.deleteMany()
   await prisma.sport.deleteMany()
   await prisma.user.deleteMany()
 
-  // --- Sports ---
   console.log('Seeding sports…')
-  const sportRecords = await Promise.all(
-    sports.map((s) => prisma.sport.create({ data: s })),
-  )
-  const sportBySlug = Object.fromEntries(sportRecords.map((s) => [s.slug, s]))
+  const sports: Record<string, string> = {}
+  for (const s of sportsData) {
+    const created = await prisma.sport.create({ data: s })
+    sports[s.slug] = created.id
+  }
 
-  // --- Demo users ---
   console.log('Seeding demo users…')
-  const passwordHash = hashSecret(DEMO_PASSWORD)
   const athlete = await prisma.user.create({
-    data: { email: 'athlete@shushzerv.app', passwordHash, name: 'علی ورزشکار', role: 'ATHLETE' as Role },
+    data: { email: 'athlete@shushzerv.local', name: 'آرش ورزشکار', role: 'ATHLETE', passwordHash: await hashPassword('demo1234') },
   })
   const coachUser = await prisma.user.create({
-    data: { email: 'coach@shushzerv.app', passwordHash, name: 'مربی نمونه', role: 'COACH' as Role },
+    data: { email: 'coach@shushzerv.local', name: 'سارا محمدی', role: 'COACH', passwordHash: await hashPassword('demo1234') },
   })
   const clubAdmin = await prisma.user.create({
-    data: { email: 'club@shushzerv.app', passwordHash, name: 'مدیر باشگاه', role: 'CLUB_ADMIN' as Role },
+    data: { email: 'club@shushzerv.local', name: 'مدیر باشگاه آزادی', role: 'CLUB_ADMIN', passwordHash: await hashPassword('demo1234') },
   })
 
-  // --- Clubs + courts + slots ---
-  console.log('Seeding clubs, courts and slots…')
-  const clubCount = 16
-  for (let i = 0; i < clubCount; i++) {
-    const city = rand(cities)
-    const district = rand(city.districts)
-    const featured = i < 6
-    // first 6 clubs owned by the club admin demo account
-    const ownerId = i < 6 ? clubAdmin.id : null
-
+  console.log('Seeding clubs + courts…')
+  const courtIds: Array<{ id: string; sportSlug: string; priceFrom: number }> = []
+  for (const [i, c] of clubSeeds.entries()) {
     const club = await prisma.club.create({
       data: {
-        slug: `club-${i + 1}-${clubAdjEn[i].toLowerCase()}`,
-        nameFa: `باشگاه ${clubAdjFa[i]}`,
-        nameEn: `${clubAdjEn[i]} Club`,
-        addressFa: `${city.fa}، ${district}، خیابان اصلی، پلاک ${randInt(1, 120)}`,
-        addressEn: `${district}, Main St ${randInt(1, 120)}, ${city.en}`,
-        city: city.en,
-        district,
-        rating: Number((Math.random() * 1.4 + 3.6).toFixed(1)),
-        priceFrom: randInt(15, 60) * 10000,
-        discount: Math.random() > 0.6 ? randInt(10, 30) : null,
-        featured,
-        ownerId,
+        slug: c.slug,
+        nameFa: c.nameFa,
+        nameEn: c.nameEn,
+        addressFa: `${c.city}، ${c.district}`,
+        addressEn: `${c.district}, ${citiesEn[c.city]}`,
+        city: c.city,
+        district: c.district,
+        rating: c.rating,
+        priceFrom: c.priceFrom,
+        discount: c.discount ?? null,
+        featured: c.featured ?? false,
+        ownerId: i === 0 ? clubAdmin.id : null,
       },
     })
-
-    // 1-3 courts, each tied to a sport
-    const courtCount = randInt(1, 3)
-    const usedSports = new Set<string>()
-    for (let c = 0; c < courtCount; c++) {
-      let sport = rand(sportRecords)
-      let guard = 0
-      while (usedSports.has(sport.slug) && guard++ < 5) sport = rand(sportRecords)
-      usedSports.add(sport.slug)
-
+    const courtCount = c.sport === 'football' || c.sport === 'swim' ? 2 : 3
+    for (let n = 1; n <= courtCount; n++) {
       const court = await prisma.court.create({
         data: {
-          nameFa: `زمین ${c + 1}`,
-          nameEn: `Court ${c + 1}`,
-          surface: rand(['hard', 'clay', 'grass', 'indoor']),
+          nameFa: `زمین ${n}`,
+          nameEn: `Court ${n}`,
+          surface: c.sport === 'tennis' ? 'Hard' : null,
           clubId: club.id,
-          sportId: sport.id,
+          sportId: sports[c.sport],
         },
       })
-
-      // slots for the next 14 days
-      const slotData: { date: string; startTime: string; endTime: string; price: number; status: SlotStatus; courtId: string }[] = []
-      for (let day = 0; day < 14; day++) {
-        for (const t of TIME_SLOTS) {
-          slotData.push({
-            date: dateStr(day),
-            startTime: t.startTime,
-            endTime: t.endTime,
-            price: club.priceFrom + randInt(0, 5) * 10000,
-            status: Math.random() > 0.78 ? SlotStatus.BOOKED : SlotStatus.AVAILABLE,
-            courtId: court.id,
-          })
-        }
-      }
-      await prisma.slot.createMany({ data: slotData })
+      courtIds.push({ id: court.id, sportSlug: c.sport, priceFrom: c.priceFrom })
     }
   }
 
-  // --- Coaches ---
+  console.log('Seeding slots (rolling 14 days)…')
+  const slotData: Array<{ date: string; startTime: string; endTime: string; price: number; courtId: string }> = []
+  for (const court of courtIds) {
+    for (let day = 0; day < 14; day++) {
+      const date = isoDate(day)
+      for (const [start, end] of TIME_SLOTS) {
+        slotData.push({ date, startTime: start, endTime: end, price: court.priceFrom, courtId: court.id })
+      }
+    }
+  }
+  await prisma.slot.createMany({ data: slotData })
+
   console.log('Seeding coaches…')
-  const coachNamesFa = ['رضا محمدی', 'سارا کریمی', 'امیر حسینی', 'نگار رستمی', 'بابک تقوی', 'مینا اکبری', 'حسام رضایی', 'لیلا نوری', 'پویا صادقی', 'الهام فرهادی']
-  const coachNamesEn = ['Reza Mohammadi', 'Sara Karimi', 'Amir Hosseini', 'Negar Rostami', 'Babak Taghavi', 'Mina Akbari', 'Hesam Rezaei', 'Leila Noori', 'Pouya Sadeghi', 'Elham Farhadi']
-  for (let i = 0; i < 10; i++) {
-    const sport = rand(sportRecords)
-    const city = rand(cities)
+  for (const [i, c] of coachSeeds.entries()) {
     await prisma.coach.create({
       data: {
-        nameFa: coachNamesFa[i],
-        nameEn: coachNamesEn[i],
-        city: city.en,
-        rating: Number((Math.random() * 1.2 + 3.8).toFixed(1)),
-        sessions: randInt(40, 600),
-        bioFa: 'مربی باتجربه با سال‌ها سابقه آموزش در سطوح مختلف.',
-        bioEn: 'Experienced coach with years of training athletes at all levels.',
-        sportId: sport.id,
+        nameFa: c.nameFa,
+        nameEn: c.nameEn,
+        city: c.city,
+        rating: c.rating,
+        sessions: c.sessions,
+        bioFa: c.bioFa,
+        bioEn: c.bioEn,
+        sportId: sports[c.sport],
         userId: i === 0 ? coachUser.id : null,
       },
     })
   }
 
-  // --- News ---
   console.log('Seeding news…')
-  const news = [
-    { slug: 'season-opening', sport: 'tennis', titleFa: 'آغاز فصل جدید تنیس', titleEn: 'New tennis season kicks off', excerptFa: 'باشگاه‌ها برای فصل جدید آماده می‌شوند.', excerptEn: 'Clubs gear up for the new season.' },
-    { slug: 'padel-boom', sport: 'padel', titleFa: 'محبوبیت روزافزون پدل', titleEn: 'Padel keeps booming', excerptFa: 'زمین‌های پدل در شهرها افزایش یافت.', excerptEn: 'Padel courts are popping up across cities.' },
-    { slug: 'fitness-tips', sport: 'fitness', titleFa: 'نکات تمرینی برای زمستان', titleEn: 'Winter training tips', excerptFa: 'با این نکات فرم بدنی خود را حفظ کنید.', excerptEn: 'Stay in shape this winter with these tips.' },
-    { slug: 'youth-league', sport: 'football', titleFa: 'لیگ جوانان آغاز شد', titleEn: 'Youth league begins', excerptFa: 'تیم‌های جوان وارد رقابت شدند.', excerptEn: 'Young teams enter the competition.' },
-    { slug: 'swim-health', sport: 'swim', titleFa: 'فواید شنا برای سلامتی', titleEn: 'Health benefits of swimming', excerptFa: 'شنا یکی از کامل‌ترین ورزش‌هاست.', excerptEn: 'Swimming is one of the most complete sports.' },
-    { slug: 'coach-spotlight', sport: 'boxing', titleFa: 'معرفی مربی برتر ماه', titleEn: 'Coach of the month', excerptFa: 'با مربی منتخب این ماه آشنا شوید.', excerptEn: 'Meet our featured coach this month.' },
-  ]
-  for (let i = 0; i < news.length; i++) {
-    const n = news[i]
+  for (const n of newsSeeds) {
     await prisma.newsArticle.create({
       data: {
         slug: n.slug,
@@ -184,30 +176,31 @@ async function main() {
         titleEn: n.titleEn,
         excerptFa: n.excerptFa,
         excerptEn: n.excerptEn,
-        bodyFa: `${n.excerptFa}\n\nاین یک مطلب نمایشی است که برای نمایش ساختار صفحه خبر تهیه شده است. محتوای کامل در نسخه‌های بعدی اضافه خواهد شد.`,
-        bodyEn: `${n.excerptEn}\n\nThis is demo content used to show the article layout. Full content will be added in later versions.`,
-        date: dateStr(-randInt(1, 30)),
-        sportId: sportBySlug[n.sport]?.id ?? null,
+        bodyFa: `${n.excerptFa}\n\nاین یک متن نمونه برای نسخه دموی شوش‌زرو است. محتوای کامل مقاله در نسخه‌های بعدی اضافه خواهد شد.`,
+        bodyEn: `${n.excerptEn}\n\nThis is placeholder body text for the Shushzerv demo. Full article content will be added in later versions.`,
+        date: isoDate(-newsSeeds.indexOf(n) - 1),
+        sportId: n.sport ? sports[n.sport] : null,
       },
     })
   }
 
   const counts = {
-    users: await prisma.user.count(),
     sports: await prisma.sport.count(),
     clubs: await prisma.club.count(),
     courts: await prisma.court.count(),
     slots: await prisma.slot.count(),
     coaches: await prisma.coach.count(),
     news: await prisma.newsArticle.count(),
+    users: await prisma.user.count(),
   }
   console.log('Seed complete:', counts)
 }
 
 main()
-  .then(() => prisma.$disconnect())
-  .catch(async (e) => {
+  .catch((e) => {
     console.error(e)
-    await prisma.$disconnect()
     process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
   })

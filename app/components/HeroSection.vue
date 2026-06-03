@@ -1,21 +1,21 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const localePath = useLocalePath()
 </script>
 
 <template>
-  <section class="relative overflow-hidden">
-    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-brand-blue/15 via-brand-indigo/10 to-brand-teal/10" />
-    <div class="mx-auto max-w-6xl px-4 pt-10 pb-6 sm:pt-16">
-      <div class="glass-panel p-6 sm:p-10">
-        <p class="mb-3 inline-block rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
-          {{ $t('brand.tagline') }}
-        </p>
-        <h1 class="ios-large-title max-w-2xl sm:text-5xl">{{ $t('hero.title') }}</h1>
-        <p class="mt-3 max-w-xl text-brand-gray-600">{{ $t('hero.subtitle') }}</p>
-        <div class="mt-6 flex flex-wrap gap-3">
-          <NuxtLink :to="localePath('/clubs')" class="ios-btn-primary">{{ $t('hero.cta') }}</NuxtLink>
-          <NuxtLink :to="localePath('/explore')" class="ios-btn-secondary">{{ $t('hero.secondary') }}</NuxtLink>
-        </div>
+  <section class="glass-panel relative overflow-hidden p-8 md:p-12">
+    <div class="absolute -top-16 -end-16 h-56 w-56 rounded-full bg-sz-blue/20 blur-3xl" />
+    <div class="absolute -bottom-20 -start-10 h-56 w-56 rounded-full bg-sz-indigo/20 blur-3xl" />
+    <div class="relative max-w-xl space-y-4">
+      <span class="inline-block rounded-full bg-sz-accent-soft px-3 py-1 text-xs font-semibold text-sz-blue">
+        {{ t('brand.tagline') }}
+      </span>
+      <h1 class="ios-large-title">{{ t('hero.title') }}</h1>
+      <p class="text-lg text-sz-gray-600">{{ t('hero.subtitle') }}</p>
+      <div class="flex flex-wrap gap-3 pt-2">
+        <NuxtLink :to="localePath('/clubs')" class="ios-btn-primary">{{ t('hero.cta') }}</NuxtLink>
+        <NuxtLink :to="localePath('/explore')" class="ios-btn-secondary">{{ t('hero.secondary') }}</NuxtLink>
       </div>
     </div>
   </section>

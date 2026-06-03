@@ -6,7 +6,6 @@ export default {
     './app/layouts/**/*.vue',
     './app/pages/**/*.vue',
     './app/app.vue',
-    './app/**/*.{vue,js,ts}',
   ],
   theme: {
     extend: {
@@ -24,11 +23,12 @@ export default {
         ],
       },
       colors: {
-        brand: {
+        sz: {
           green: '#34c759',
           teal: '#30b0c7',
           blue: '#007aff',
           indigo: '#5856d6',
+          purple: '#af52de',
           orange: '#ff9500',
           pink: '#ff2d55',
           gray: {

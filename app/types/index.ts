@@ -8,6 +8,15 @@ export interface Sport {
   group: string
 }
 
+export interface Court {
+  id: string
+  nameFa: string
+  nameEn: string
+  surface?: string | null
+  sportId: string
+  sport?: Sport
+}
+
 export interface Club {
   id: string
   slug: string
@@ -23,28 +32,6 @@ export interface Club {
   image?: string | null
   featured: boolean
   courts?: Court[]
-  sports?: Sport[]
-}
-
-export interface Court {
-  id: string
-  nameFa: string
-  nameEn: string
-  surface?: string | null
-  clubId: string
-  sportId: string
-  sport?: Sport
-}
-
-export interface Slot {
-  id: string
-  date: string
-  startTime: string
-  endTime: string
-  price: number
-  status: 'AVAILABLE' | 'BOOKED' | 'BLOCKED'
-  courtId: string
-  court?: Court
 }
 
 export interface Coach {
@@ -56,6 +43,7 @@ export interface Coach {
   sessions: number
   bioFa?: string | null
   bioEn?: string | null
+  sportId: string
   sport?: Sport
 }
 
@@ -72,10 +60,25 @@ export interface NewsArticle {
   sport?: Sport | null
 }
 
+export type SlotStatus = 'AVAILABLE' | 'BOOKED' | 'BLOCKED'
+
+export interface Slot {
+  id: string
+  date: string
+  startTime: string
+  endTime: string
+  price: number
+  status: SlotStatus
+  courtId: string
+  court?: Court & { club?: Club }
+}
+
+export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED'
+
 export interface Booking {
   id: string
-  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED'
+  status: BookingStatus
   paymentStatus: 'PAY_AT_CLUB' | 'PAID'
   createdAt: string
-  slot?: Slot & { court?: Court & { club?: Club } }
+  slot?: Slot
 }
