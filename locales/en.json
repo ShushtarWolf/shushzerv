@@ -1,0 +1,160 @@
+{
+  "brand": {
+    "name": "Shushzerv",
+    "tagline": "Book sports courts, classes & coaches"
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "clubs": "Clubs",
+    "coaches": "Coaches",
+    "news": "News",
+    "dashboard": "Dashboard"
+  },
+  "hero": {
+    "title": "Book courts, classes & coaches with ease",
+    "subtitle": "Dozens of clubs across cities. Search, find open slots, and reserve in seconds.",
+    "cta": "Browse clubs",
+    "secondary": "Explore sports"
+  },
+  "search": {
+    "city": "City",
+    "sport": "Sport",
+    "action": "Search"
+  },
+  "cities": {
+    "tehran": "Tehran",
+    "isfahan": "Isfahan",
+    "shiraz": "Shiraz",
+    "mashhad": "Mashhad"
+  },
+  "categories": {
+    "title": "Sports"
+  },
+  "clubs": {
+    "title": "Featured clubs",
+    "all": "All",
+    "from": "from",
+    "currency": "Toman",
+    "reserve": "Reserve",
+    "details": "Details",
+    "discount": "off",
+    "rating": "Rating",
+    "viewAll": "View all",
+    "courts": "Courts",
+    "noResults": "No clubs found",
+    "selectCourt": "Select a court",
+    "selectSlot": "Select a slot",
+    "availableSlots": "Available slots"
+  },
+  "coaches": {
+    "title": "Top coaches",
+    "viewAll": "View all",
+    "sessions": "sessions"
+  },
+  "news": {
+    "title": "News & articles",
+    "readMore": "Read more",
+    "viewAll": "View all"
+  },
+  "explore": {
+    "title": "Explore sports",
+    "subtitle": "Pick a sport to see its clubs and coaches."
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "items": [
+      { "q": "How do I book a slot?", "a": "Sign in, pick a club and court, choose an open slot, and confirm your booking." },
+      { "q": "Do I need to pay online?", "a": "In this demo, payment is made at the club — no online payment required." },
+      { "q": "How do I cancel a booking?", "a": "Open the booking from your dashboard and tap cancel to free the slot." },
+      { "q": "Can I register as a coach?", "a": "Yes, choose the coach role when signing up to access the coach dashboard." },
+      { "q": "What can a club admin do?", "a": "Club admins manage courts, generate slots, and view bookings." }
+    ]
+  },
+  "sport": {
+    "tennis": { "name": "Tennis", "headline": "Tennis", "desc": "Find standard tennis courts and pro coaches." },
+    "padel": { "name": "Padel", "headline": "Padel", "desc": "Play the most popular racket sport on modern courts." },
+    "football": { "name": "Football", "headline": "Football", "desc": "Grass pitches and indoor courts for games with friends." },
+    "fitness": { "name": "Fitness", "headline": "Fitness", "desc": "Well-equipped gyms and trainers near you." },
+    "yoga": { "name": "Yoga", "headline": "Yoga", "desc": "Yoga classes for calm and flexibility." },
+    "swim": { "name": "Swimming", "headline": "Swimming", "desc": "Standard pools and swim coaches." },
+    "boxing": { "name": "Boxing", "headline": "Boxing", "desc": "Boxing gyms and martial arts classes." },
+    "basketball": { "name": "Basketball", "headline": "Basketball", "desc": "Indoor and outdoor basketball courts." }
+  },
+  "cta": {
+    "banner": "Sign up now and book your first sports session.",
+    "button": "Create account"
+  },
+  "footer": {
+    "about": "About",
+    "contact": "Contact",
+    "clubs": "Clubs",
+    "coaches": "Coaches",
+    "rights": "All rights reserved."
+  },
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out",
+    "register": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full name",
+    "role": "Role",
+    "roleAthlete": "Athlete",
+    "roleCoach": "Coach",
+    "roleClubAdmin": "Club admin",
+    "loginTitle": "Log in to your account",
+    "registerTitle": "Create your account",
+    "haveAccount": "Have an account? Log in",
+    "noAccount": "No account? Sign up",
+    "submitLogin": "Log in",
+    "submitRegister": "Sign up",
+    "demoAccounts": "Demo accounts",
+    "invalid": "Invalid email or password.",
+    "exists": "This email is already registered."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "athlete": "Athlete dashboard",
+    "coach": "Coach dashboard",
+    "club": "Club dashboard",
+    "myBookings": "My bookings",
+    "upcoming": "Upcoming",
+    "past": "Past bookings",
+    "noBookings": "You have no bookings yet",
+    "mySessions": "My sessions",
+    "myStudents": "Students",
+    "manageCourts": "Manage courts",
+    "manageSlots": "Manage slots",
+    "clubBookings": "Club bookings",
+    "generateSlots": "Generate slots",
+    "addCourt": "Add court",
+    "date": "Date",
+    "price": "Price",
+    "createSlots": "Create daily slots",
+    "welcome": "Welcome"
+  },
+  "booking": {
+    "title": "Book a slot",
+    "book": "Book this slot",
+    "confirm": "Confirm booking",
+    "confirmed": "Your booking is confirmed",
+    "payAtClub": "Pay at club",
+    "cancel": "Cancel booking",
+    "cancelled": "Booking cancelled",
+    "loginRequired": "Please log in to book",
+    "status": "Status",
+    "court": "Court",
+    "time": "Time",
+    "noSlots": "No open slots for this day",
+    "selectDate": "Select date"
+  },
+  "common": {
+    "back": "Back",
+    "loading": "Loading…",
+    "noResults": "No results found",
+    "language": "Language",
+    "save": "Save",
+    "all": "All"
+  }
+}

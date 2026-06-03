@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --sz-bg: #f2f2f7;
+    --sz-bg-elevated: rgba(255, 255, 255, 0.72);
+    --sz-bg-glass: rgba(255, 255, 255, 0.65);
+    --sz-border: rgba(0, 0, 0, 0.06);
+    --sz-text: #1c1c1e;
+    --sz-text-secondary: #636366;
+    --sz-accent: #007aff;
+    --sz-accent-soft: rgba(0, 122, 255, 0.12);
+    --sz-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --sz-safe-top: env(safe-area-inset-top, 0px);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-brand-gray-50 text-brand-gray-900 font-sans antialiased;
+    background: linear-gradient(180deg, #f8f8fc 0%, var(--sz-bg) 40%, #ebebf0 100%);
+    min-height: 100dvh;
+  }
+
+  [dir='rtl'] body {
+    font-feature-settings: 'ss01' on;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-ios-lg border border-white/40 shadow-glass;
+    background: var(--sz-bg-glass);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+
+  .glass-bar {
+    @apply border-b border-black/5;
+    background: rgba(242, 242, 247, 0.82);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  .ios-card {
+    @apply rounded-ios-lg bg-white shadow-card transition-transform duration-200 active:scale-[0.98];
+  }
+
+  .ios-large-title {
+    @apply text-[2.125rem] font-bold tracking-tight leading-tight;
+  }
+
+  .ios-title-2 {
+    @apply text-[1.375rem] font-semibold tracking-tight;
+  }
+
+  .ios-title-3 {
+    @apply text-[1.125rem] font-semibold;
+  }
+
+  .ios-footnote {
+    @apply text-[0.8125rem] text-brand-gray-500 leading-snug;
+  }
+
+  .ios-segment {
+    @apply inline-flex p-1 rounded-xl bg-brand-gray-100/80;
+  }
+
+  .ios-segment-item {
+    @apply px-4 py-2 rounded-[10px] text-sm font-medium text-brand-gray-600 transition-all duration-200 cursor-pointer;
+  }
+
+  .ios-segment-item-active {
+    @apply bg-white text-brand-gray-900 shadow-sm;
+  }
+
+  .ios-input {
+    @apply w-full rounded-2xl border border-black/5 bg-white px-4 py-3 text-brand-gray-900 outline-none transition focus:border-brand-blue/40 focus:ring-2 focus:ring-brand-blue/20;
+  }
+
+  .ios-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-semibold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50;
+  }
+
+  .ios-btn-primary {
+    @apply ios-btn bg-brand-blue text-white shadow-float;
+  }
+
+  .ios-btn-secondary {
+    @apply ios-btn bg-white text-brand-gray-900 shadow-card;
+  }
+
+  .tap-highlight {
+    @apply transition-transform duration-150 active:scale-[0.97];
+  }
+
+  .page-enter {
+    @apply animate-slide-up;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+}
