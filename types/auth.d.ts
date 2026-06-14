@@ -5,6 +5,7 @@ declare module '#auth-utils' {
     name: string
     role: 'ATHLETE' | 'COACH' | 'CLUB_ADMIN' | 'PLATFORM_ADMIN'
     locale?: string
+    onboarded?: boolean
   }
 
   interface UserSession {

@@ -23,21 +23,21 @@ function title(c: Conversation) {
 
 <template>
   <div class="page-enter mx-auto max-w-2xl px-4 py-8 sm:px-6">
-    <h1 class="sz-headline mb-6">{{ t('chat.title') }}</h1>
+    <SzPageHeader :title="t('chat.title')" />
     <div v-if="conversations?.length" class="space-y-2">
-      <NuxtLink
+      <SzCard
         v-for="c in conversations"
         :key="c.id"
         :to="localePath(`/chat/${c.id}`)"
-        class="ios-card flex items-center justify-between gap-3 p-4 tap-highlight"
+        class="flex items-center justify-between gap-3 p-4"
       >
         <div class="min-w-0">
           <p class="font-bold">{{ title(c) }}</p>
           <p v-if="c.lastMessage" class="truncate text-sm text-brand-gray-500">{{ c.lastMessage.body }}</p>
         </div>
-        <span v-if="c.isGroup" class="sz-chip bg-brand-orange/12 text-brand-orange text-xs">#</span>
-      </NuxtLink>
+        <SzBadge v-if="c.isGroup" tone="orange">#</SzBadge>
+      </SzCard>
     </div>
-    <p v-else class="ios-footnote">{{ t('chat.empty') }}</p>
+    <SzEmptyState v-else :message="t('chat.empty')" />
   </div>
 </template>

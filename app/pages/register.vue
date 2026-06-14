@@ -52,28 +52,16 @@ async function submit() {
 
 <template>
   <div class="page-enter mx-auto max-w-md px-4 py-10 sm:px-6">
-    <h1 class="ios-large-title mb-6">{{ t('auth.registerTitle') }}</h1>
+    <SzPageHeader :title="t('auth.registerTitle')" />
     <form class="glass-panel space-y-4 p-6" @submit.prevent="submit">
-      <div>
-        <label class="ios-footnote mb-1 block">{{ t('auth.name') }}</label>
-        <input v-model="name" type="text" required class="ios-input" />
-      </div>
-      <div>
-        <label class="ios-footnote mb-1 block">{{ t('auth.email') }}</label>
-        <input v-model="email" type="email" required class="ios-input" autocomplete="email" />
-      </div>
-      <div>
-        <label class="ios-footnote mb-1 block">{{ t('auth.password') }}</label>
-        <input v-model="password" type="password" required minlength="6" class="ios-input" />
-      </div>
-      <div>
-        <label class="ios-footnote mb-1 block">{{ t('auth.role') }}</label>
-        <select v-model="role" class="ios-input">
-          <option value="ATHLETE">{{ t('auth.roleAthlete') }}</option>
-          <option value="COACH">{{ t('auth.roleCoach') }}</option>
-          <option value="CLUB_ADMIN">{{ t('auth.roleClubAdmin') }}</option>
-        </select>
-      </div>
+      <SzInput v-model="name" :label="t('auth.name')" required />
+      <SzInput v-model="email" :label="t('auth.email')" type="email" required autocomplete="email" />
+      <SzInput v-model="password" :label="t('auth.password')" type="password" required :minlength="6" />
+      <SzSelect v-model="role" :label="t('auth.role')">
+        <option value="ATHLETE">{{ t('auth.roleAthlete') }}</option>
+        <option value="COACH">{{ t('auth.roleCoach') }}</option>
+        <option value="CLUB_ADMIN">{{ t('auth.roleClubAdmin') }}</option>
+      </SzSelect>
       <template v-if="role === 'COACH'">
         <div>
           <label class="ios-footnote mb-2 block">{{ t('search.sport') }}</label>
@@ -94,19 +82,16 @@ async function submit() {
             </button>
           </div>
         </div>
-        <div>
-          <label class="ios-footnote mb-1 block">{{ t('search.city') }}</label>
-          <select v-model="city" class="ios-input">
-            <option v-for="c in cities" :key="c.value" :value="c.value">{{ c.label }}</option>
-          </select>
-        </div>
+        <SzSelect v-model="city" :label="t('search.city')">
+          <option v-for="c in cities" :key="c.value" :value="c.value">{{ c.label }}</option>
+        </SzSelect>
       </template>
-      <p v-if="error" class="text-sm text-sz-pink">{{ error }}</p>
-      <button type="submit" class="ios-btn-primary w-full" :disabled="pending">{{ t('auth.registerAction') }}</button>
+      <p v-if="error" class="text-sm text-brand-pink">{{ error }}</p>
+      <SzButton type="submit" block :disabled="pending">{{ t('auth.registerAction') }}</SzButton>
     </form>
-    <p class="mt-6 text-center text-sm text-sz-gray-600">
+    <p class="mt-6 text-center text-sm text-brand-gray-600">
       {{ t('auth.haveAccount') }}
-      <NuxtLink :to="localePath('/login')" class="font-semibold text-sz-blue">{{ t('auth.goLogin') }}</NuxtLink>
+      <NuxtLink :to="localePath('/login')" class="font-semibold text-brand-orange">{{ t('auth.goLogin') }}</NuxtLink>
     </p>
   </div>
 </template>

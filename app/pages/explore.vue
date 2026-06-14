@@ -26,8 +26,7 @@ const filteredSports = computed(() =>
 
 <template>
   <div class="page-enter mx-auto max-w-6xl px-4 py-8 sm:px-6">
-    <h1 class="ios-large-title mb-2">{{ t('nav.explore') }}</h1>
-    <p class="mb-8 text-sz-gray-600">{{ t('hero.subtitle') }}</p>
+    <SzPageHeader :title="t('nav.explore')" :subtitle="t('hero.subtitle')" />
 
     <div class="ios-segment mb-8 flex w-full max-w-lg flex-wrap gap-1">
       <button
@@ -64,6 +63,6 @@ const filteredSports = computed(() =>
         <span class="font-semibold">{{ t(`sport.${sport.slug}.name`, sport.slug) }}</span>
       </SzCard>
     </div>
-    <p v-else class="ios-footnote">{{ t('common.noResults') }}</p>
+    <SzEmptyState v-else :message="t('common.noResults')" />
   </div>
 </template>

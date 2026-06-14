@@ -9,11 +9,11 @@ const { data: coaches, pending } = await useApiFetch<Coach[]>('/api/coaches')
 
 <template>
   <div class="page-enter mx-auto max-w-6xl px-4 py-8 sm:px-6">
-    <h1 class="ios-large-title mb-6">{{ t('coaches.title') }}</h1>
+    <SzPageHeader :title="t('coaches.title')" />
     <p v-if="pending" class="ios-footnote">{{ t('common.loading') }}</p>
     <div v-else-if="coaches?.length" class="sz-stagger grid items-stretch gap-3 sm:grid-cols-2">
       <CoachCard v-for="coach in coaches" :key="coach.id" :coach="coach" />
     </div>
-    <p v-else class="ios-footnote">{{ t('common.noResults') }}</p>
+    <SzEmptyState v-else :message="t('common.noResults')" />
   </div>
 </template>

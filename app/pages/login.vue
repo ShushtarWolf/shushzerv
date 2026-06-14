@@ -1,7 +1,8 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const localePath = useLocalePath()
-const { fetch: refreshSession } = useUserSession()
+const { fetch: refreshSession, user } = useUserSession()
+const { dashboardPath } = useDashboardPath()
 
 useHead({ title: () => t('auth.loginTitle') })
 
@@ -16,8 +17,11 @@ async function submit() {
   try {
     await $fetch('/api/auth/login', { method: 'POST', body: { email: email.value, password: password.value } })
     await refreshSession()
-    const { dashboardPath } = useDashboardPath()
-    await navigateTo(dashboardPath.value)
+    if (user.value?.role === 'ATHLETE' && !user.value.onboarded) {
+      await navigateTo(localePath('/onboarding'))
+    } else {
+      await navigateTo(dashboardPath.value)
+    }
   } catch {
     error.value = t('auth.invalid')
   } finally {
@@ -28,23 +32,16 @@ async function submit() {
 
 <template>
   <div class="page-enter mx-auto max-w-md px-4 py-10 sm:px-6">
-    <h1 class="ios-large-title mb-2">{{ t('auth.loginTitle') }}</h1>
-    <p class="ios-footnote mb-6">{{ t('auth.demoHint') }}</p>
+    <SzPageHeader :title="t('auth.loginTitle')" :subtitle="t('auth.demoHint')" />
     <form class="glass-panel space-y-4 p-6" @submit.prevent="submit">
-      <div>
-        <label class="ios-footnote mb-1 block">{{ t('auth.email') }}</label>
-        <input v-model="email" type="email" required class="ios-input" autocomplete="email" />
-      </div>
-      <div>
-        <label class="ios-footnote mb-1 block">{{ t('auth.password') }}</label>
-        <input v-model="password" type="password" required class="ios-input" autocomplete="current-password" />
-      </div>
-      <p v-if="error" class="text-sm text-sz-pink">{{ error }}</p>
-      <button type="submit" class="ios-btn-primary w-full" :disabled="pending">{{ t('auth.loginAction') }}</button>
+      <SzInput v-model="email" :label="t('auth.email')" type="email" required autocomplete="email" />
+      <SzInput v-model="password" :label="t('auth.password')" type="password" required autocomplete="current-password" />
+      <p v-if="error" class="text-sm text-brand-pink">{{ error }}</p>
+      <SzButton type="submit" block :disabled="pending">{{ t('auth.loginAction') }}</SzButton>
     </form>
-    <p class="mt-6 text-center text-sm text-sz-gray-600">
+    <p class="mt-6 text-center text-sm text-brand-gray-600">
       {{ t('auth.noAccount') }}
-      <NuxtLink :to="localePath('/register')" class="font-semibold text-sz-blue">{{ t('auth.goRegister') }}</NuxtLink>
+      <NuxtLink :to="localePath('/register')" class="font-semibold text-brand-orange">{{ t('auth.goRegister') }}</NuxtLink>
     </p>
   </div>
 </template>

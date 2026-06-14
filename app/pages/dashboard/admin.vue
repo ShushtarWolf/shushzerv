@@ -67,8 +67,7 @@ function txLabel(type: WalletTransaction['type']) {
 
 <template>
   <div class="page-enter mx-auto max-w-4xl px-4 py-8 sm:px-6">
-    <h1 class="ios-large-title mb-1">{{ t('dashboard.platformAdmin') }}</h1>
-    <p class="ios-footnote mb-6">{{ t('dashboard.welcomeUser', { name: user?.name ?? '' }) }}</p>
+    <SzPageHeader :title="t('dashboard.platformAdmin')" :subtitle="t('dashboard.welcomeUser', { name: user?.name ?? '' })" />
 
     <DashboardTabs v-model="tab" :tabs="tabs" />
 

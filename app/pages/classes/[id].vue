@@ -73,7 +73,7 @@ async function cancel() {
           {{ localized(classSession.sport.nameFa, classSession.sport.nameEn) }}
         </span>
       </div>
-      <h1 class="ios-large-title">{{ localized(classSession.titleFa, classSession.titleEn) }}</h1>
+      <h1 class="sz-headline">{{ localized(classSession.titleFa, classSession.titleEn) }}</h1>
       <p v-if="classSession.club" class="mt-2 text-sz-gray-600">{{ pickName(classSession.club) }}</p>
       <p v-if="classSession.coach" class="ios-footnote mt-1">{{ pickName(classSession.coach) }}</p>
       <p class="mt-4">{{ formatDate(classSession.date) }} · {{ classSession.startTime }}–{{ classSession.endTime }}</p>
@@ -85,22 +85,25 @@ async function cancel() {
         <input v-model="payWithWallet" type="checkbox" class="rounded border-brand-gray-300" />
         <span>{{ t('wallet.payWithWallet') }} ({{ formatPrice(walletBalance) }})</span>
       </label>
-      <button
+      <SzButton
         v-if="classSession.enrolled"
-        class="ios-btn-ghost mt-6 w-full"
+        variant="ghost"
+        block
+        class="mt-6"
         :disabled="pending"
         @click="cancel"
       >
         {{ t('classes.cancelEnroll') }}
-      </button>
-      <button
+      </SzButton>
+      <SzButton
         v-else-if="classSession.status !== 'FULL'"
-        class="ios-btn-primary mt-6 w-full"
+        block
+        class="mt-6"
         :disabled="pending"
         @click="enroll"
       >
         {{ loggedIn ? t('classes.enroll') : t('booking.loginRequired') }}
-      </button>
+      </SzButton>
       <p v-else class="mt-6 text-sm text-sz-gray-500">{{ t('classes.full') }}</p>
     </div>
   </div>

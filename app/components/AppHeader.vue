@@ -86,22 +86,22 @@ function closeMobileNav() {
 
       <div class="flex items-center gap-1.5 sm:gap-2">
         <LocaleSwitcher />
-        <NuxtLink :to="localePath('/clubs')" class="hidden sm:inline-flex ios-btn-secondary py-2 px-4 text-sm">
+        <SzButton :to="localePath('/clubs')" variant="secondary" size="sm" class="hidden sm:inline-flex">
           {{ t('nav.book') }}
-        </NuxtLink>
+        </SzButton>
         <template v-if="loggedIn">
-          <NuxtLink :to="dashboardPath" class="hidden sm:inline-flex ios-btn-ghost py-2 px-3 text-sm">
+          <SzButton :to="dashboardPath" variant="ghost" size="sm" class="hidden sm:inline-flex">
             {{ user?.name?.split(' ')[0] || t('nav.dashboard') }}
-          </NuxtLink>
-          <button class="ios-btn-ghost py-2 px-3 text-sm" @click="logout">{{ t('nav.logout') }}</button>
+          </SzButton>
+          <SzButton variant="ghost" size="sm" @click="logout">{{ t('nav.logout') }}</SzButton>
         </template>
         <template v-else>
-          <NuxtLink :to="localePath('/login')" class="ios-btn-ghost py-2 px-3 text-sm">
+          <SzButton :to="localePath('/login')" variant="ghost" size="sm">
             {{ t('nav.login') }}
-          </NuxtLink>
-          <NuxtLink :to="localePath('/register')" class="ios-btn-primary py-2 px-4 text-sm">
+          </SzButton>
+          <SzButton :to="localePath('/register')" size="sm">
             {{ t('nav.register') }}
-          </NuxtLink>
+          </SzButton>
         </template>
       </div>
     </div>

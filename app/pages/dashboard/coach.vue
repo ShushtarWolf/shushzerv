@@ -57,8 +57,7 @@ async function createPlan() {
 
 <template>
   <div class="page-enter mx-auto max-w-3xl px-4 py-8 sm:px-6">
-    <h1 class="ios-large-title mb-1">{{ t('dashboard.coach') }}</h1>
-    <p class="ios-footnote mb-6">{{ t('dashboard.welcomeUser', { name: user?.name ?? '' }) }}</p>
+    <SzPageHeader :title="t('dashboard.coach')" :subtitle="t('dashboard.welcomeUser', { name: user?.name ?? '' })" />
     <p v-if="message" class="mb-4 text-sm text-sz-green">{{ message }}</p>
 
     <DashboardTabs v-model="tab" :tabs="tabs" />

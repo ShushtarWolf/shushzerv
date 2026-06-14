@@ -5,7 +5,7 @@ useHead({ title: () => t('footer.about') })
 
 <template>
   <div class="page-enter mx-auto max-w-3xl px-4 py-8 sm:px-6">
-    <h1 class="ios-large-title mb-4">{{ t('footer.about') }}</h1>
+    <SzPageHeader :title="t('footer.about')" />
     <div class="glass-panel space-y-4 p-6 leading-relaxed text-sz-gray-700">
       <template v-if="locale === 'fa'">
         <p>

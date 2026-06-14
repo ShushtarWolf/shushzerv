@@ -32,6 +32,10 @@ const { slug: selectedSport } = useSelectedSportColor()
     </section>
 
     <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+      <SzTrustStrip />
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <SzSection :title="t('matches.title')" :to="localePath('/matches')" :link-text="t('matches.viewAll')" />
       <div :key="selectedSport" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <MatchCard v-for="m in openMatches" :key="m.id" :match="m" />

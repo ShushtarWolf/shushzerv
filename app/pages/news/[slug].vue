@@ -33,7 +33,7 @@ useHead({
       <SportIcon :slug="article.sport.slug" size="xs" />
       {{ localized(article.sport.nameFa, article.sport.nameEn) }}
     </p>
-    <h1 class="ios-large-title mb-4">{{ localized(article.titleFa, article.titleEn) }}</h1>
+    <h1 class="sz-headline mb-4">{{ localized(article.titleFa, article.titleEn) }}</h1>
     <p class="text-lg text-sz-gray-600 mb-6">{{ localized(article.excerptFa, article.excerptEn) }}</p>
     <div class="prose prose-sz max-w-none whitespace-pre-line text-sz-gray-800 leading-relaxed">
       {{ localized(article.bodyFa, article.bodyEn) }}

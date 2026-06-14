@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AthleteProfile, Booking, Sport, TrainingPlan, UserBadge } from '~/types'
 
-definePageMeta({ middleware: ['auth', 'role-athlete'] })
+definePageMeta({ middleware: ['auth', 'role-athlete', 'onboarding-gate'] })
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -81,8 +81,7 @@ async function saveProfile() {
 
 <template>
   <div class="page-enter mx-auto max-w-3xl px-4 py-8 sm:px-6">
-    <h1 class="sz-headline mb-1">{{ t('dashboard.title') }}</h1>
-    <p class="mb-6 text-brand-gray-600">{{ t('dashboard.welcomeUser', { name: user?.name ?? '' }) }}</p>
+    <SzPageHeader :title="t('dashboard.title')" :subtitle="t('dashboard.welcomeUser', { name: user?.name ?? '' })" />
 
     <DashboardTabs v-model="tab" :tabs="tabs" />
 

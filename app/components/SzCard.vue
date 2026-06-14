@@ -9,11 +9,19 @@ const props = withDefaults(
   { interactive: true, themed: false },
 )
 
-const { cardVars } = useSportTheme()
+const { cardVars, DEFAULT_SPORT_COLOR } = useSportTheme()
+const { color: selectedColor } = useSelectedSportColor()
+
+const resolvedAccent = computed(() => {
+  if (props.accent) return props.accent
+  if (props.themed) return selectedColor.value ?? DEFAULT_SPORT_COLOR
+  return undefined
+})
 
 const cardStyle = computed(() => {
-  if (!props.accent) return undefined
-  return cardVars(props.accent)
+  const color = resolvedAccent.value
+  if (!color) return undefined
+  return cardVars(color)
 })
 </script>
 
@@ -24,14 +32,14 @@ const cardStyle = computed(() => {
     class="group sz-card relative block overflow-hidden rounded-ios-lg bg-white shadow-card transition-all duration-300 ease-out"
     :class="[
       interactive ? 'sz-card-interactive' : '',
-      accent ? 'sz-card-sport' : '',
+      resolvedAccent ? 'sz-card-sport' : '',
     ]"
     :style="cardStyle"
   >
     <span
-      v-if="accent"
+      v-if="resolvedAccent"
       class="sz-card-accent absolute inset-x-0 top-0 h-1.5 transition-all duration-300 group-hover:h-2.5"
-      :style="{ backgroundColor: accent }"
+      :style="{ backgroundColor: resolvedAccent }"
     />
     <slot />
   </component>

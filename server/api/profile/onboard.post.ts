@@ -29,5 +29,8 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  const updated = await prisma.user.findUniqueOrThrow({ where: { id: user.id } })
+  await setUserSession(event, { user: toSessionUser(updated) })
+
   return { ok: true }
 })
