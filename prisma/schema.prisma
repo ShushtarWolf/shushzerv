@@ -11,6 +11,17 @@ enum Role {
   ATHLETE
   COACH
   CLUB_ADMIN
+  PLATFORM_ADMIN
+}
+
+enum WalletTxType {
+  TOP_UP
+  BOOKING
+  CLASS
+  REFUND
+  PAYOUT
+  COACH_EARNING
+  PLATFORM_FEE
 }
 
 enum SlotStatus {
@@ -30,19 +41,89 @@ enum PaymentStatus {
   PAID
 }
 
-model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  passwordHash String
-  name         String
-  role         Role      @default(ATHLETE)
-  locale       String    @default("fa")
-  phone        String?
-  createdAt    DateTime  @default(now())
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  PRO
+}
 
-  ownedClubs   Club[]    @relation("ClubOwner")
-  coachProfile Coach?
-  bookings     Booking[]
+enum ClassStatus {
+  OPEN
+  FULL
+  CANCELLED
+}
+
+enum MatchStatus {
+  OPEN
+  FULL
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  passwordHash   String
+  name           String
+  role           Role      @default(ATHLETE)
+  locale         String    @default("fa")
+  phone          String?
+  favoriteSports String?
+  onboardedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  ownedClubs        Club[]              @relation("ClubOwner")
+  coachProfile      Coach?
+  bookings          Booking[]
+  athleteProfile    AthleteProfile?
+  classEnrollments  ClassEnrollment[]
+  createdMatches    OpenMatch[]         @relation("MatchCreator")
+  matchParticipants MatchParticipant[]
+  planAssignments   PlanAssignment[]
+  badges            UserBadge[]
+  reviews           Review[]
+  conversations     ConversationMember[]
+  messages          Message[]
+  wallet            Wallet?
+  walletTransactions WalletTransaction[] @relation("UserWalletTx")
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  balance   Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ClubWallet {
+  id        String   @id @default(cuid())
+  balance   Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  clubId String @unique
+  club   Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+}
+
+model WalletTransaction {
+  id          String       @id @default(cuid())
+  type        WalletTxType
+  amount      Int
+  balanceAfter Int
+  noteFa      String?
+  noteEn      String?
+  referenceId String?
+  createdAt   DateTime     @default(now())
+
+  userId String?
+  user   User?  @relation("UserWalletTx", fields: [userId], references: [id], onDelete: SetNull)
+  clubId String?
+  club   Club?  @relation(fields: [clubId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([clubId, createdAt])
 }
 
 model Sport {
@@ -54,9 +135,13 @@ model Sport {
   color   String
   group   String
 
-  courts  Court[]
-  coaches Coach[]
-  news    NewsArticle[]
+  courts        Court[]
+  coaches       Coach[]
+  news          NewsArticle[]
+  classSessions ClassSession[]
+  openMatches   OpenMatch[]
+  athleteLevels AthleteProfile[]
+  trainingPlans TrainingPlan[]
 }
 
 model Club {
@@ -68,6 +153,8 @@ model Club {
   addressEn String
   city      String
   district  String?
+  lat       Float?
+  lng       Float?
   rating    Float    @default(0)
   priceFrom Int      @default(0)
   discount  Int?
@@ -78,7 +165,13 @@ model Club {
   ownerId   String?
   owner     User?    @relation("ClubOwner", fields: [ownerId], references: [id])
 
-  courts    Court[]
+  courts        Court[]
+  classSessions ClassSession[]
+  activities    ClubActivity[]
+  openMatches   OpenMatch[]
+  reviews       Review[]
+  wallet        ClubWallet?
+  transactions  WalletTransaction[]
 }
 
 model Court {
@@ -92,7 +185,7 @@ model Court {
   sportId String
   sport   Sport   @relation(fields: [sportId], references: [id])
 
-  slots   Slot[]
+  slots Slot[]
 }
 
 model Slot {
@@ -103,10 +196,10 @@ model Slot {
   price     Int
   status    SlotStatus @default(AVAILABLE)
 
-  courtId   String
-  court     Court      @relation(fields: [courtId], references: [id], onDelete: Cascade)
+  courtId String
+  court   Court   @relation(fields: [courtId], references: [id], onDelete: Cascade)
 
-  booking   Booking?
+  booking Booking?
 
   @@index([courtId, date])
 }
@@ -125,6 +218,9 @@ model Coach {
   sport    Sport   @relation(fields: [sportId], references: [id])
   userId   String? @unique
   user     User?   @relation(fields: [userId], references: [id])
+
+  classSessions ClassSession[]
+  trainingPlans TrainingPlan[]
 }
 
 model Booking {
@@ -133,15 +229,15 @@ model Booking {
   paymentStatus PaymentStatus @default(PAY_AT_CLUB)
   createdAt     DateTime      @default(now())
 
-  userId        String
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  slotId        String        @unique
-  slot          Slot          @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slotId String @unique
+  slot   Slot   @relation(fields: [slotId], references: [id], onDelete: Cascade)
 }
 
 model NewsArticle {
-  id        String   @id @default(cuid())
-  slug      String   @unique
+  id        String  @id @default(cuid())
+  slug      String  @unique
   titleFa   String
   titleEn   String
   excerptFa String
@@ -150,6 +246,193 @@ model NewsArticle {
   bodyEn    String
   date      String
 
-  sportId   String?
-  sport     Sport?   @relation(fields: [sportId], references: [id])
+  sportId String?
+  sport   Sport?  @relation(fields: [sportId], references: [id])
+}
+
+model AthleteProfile {
+  id            String     @id @default(cuid())
+  level         SkillLevel @default(BEGINNER)
+  matchesPlayed Int        @default(0)
+  wins          Int        @default(0)
+  xp            Int        @default(0)
+
+  userId  String @unique
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sportId String
+  sport   Sport  @relation(fields: [sportId], references: [id])
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  code     String
+  earnedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, code])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      @default(5)
+  bodyFa    String
+  bodyEn    String
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clubId String?
+  club   Club?  @relation(fields: [clubId], references: [id], onDelete: Cascade)
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  titleFa   String?
+  titleEn   String?
+  isGroup   Boolean  @default(false)
+  matchId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  members  ConversationMember[]
+  messages Message[]
+}
+
+model ConversationMember {
+  id       String   @id @default(cuid())
+  joinedAt DateTime @default(now())
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  body      String
+  createdAt DateTime @default(now())
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model ClassSession {
+  id          String      @id @default(cuid())
+  titleFa     String
+  titleEn     String
+  date        String
+  startTime   String
+  endTime     String
+  price       Int
+  maxSeats    Int         @default(12)
+  bookedSeats Int         @default(0)
+  status      ClassStatus @default(OPEN)
+
+  clubId  String
+  club    Club    @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  sportId String
+  sport   Sport   @relation(fields: [sportId], references: [id])
+  coachId String?
+  coach   Coach?  @relation(fields: [coachId], references: [id])
+
+  enrollments ClassEnrollment[]
+}
+
+model ClassEnrollment {
+  id            String        @id @default(cuid())
+  paymentStatus PaymentStatus @default(PAY_AT_CLUB)
+  createdAt     DateTime      @default(now())
+
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classSessionId String
+  classSession   ClassSession @relation(fields: [classSessionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, classSessionId])
+}
+
+model OpenMatch {
+  id          String      @id @default(cuid())
+  city        String
+  date        String
+  startTime   String
+  maxPlayers  Int         @default(4)
+  joinedCount Int         @default(1)
+  minLevel    SkillLevel  @default(BEGINNER)
+  maxLevel    SkillLevel  @default(PRO)
+  status      MatchStatus @default(OPEN)
+  notesFa     String?
+  notesEn     String?
+  shareToken  String?     @unique
+  createdAt   DateTime    @default(now())
+
+  sportId   String
+  sport     Sport  @relation(fields: [sportId], references: [id])
+  clubId    String?
+  club      Club?  @relation(fields: [clubId], references: [id])
+  creatorId String
+  creator   User   @relation("MatchCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  participants MatchParticipant[]
+}
+
+model MatchParticipant {
+  id        String   @id @default(cuid())
+  joinedAt  DateTime @default(now())
+
+  matchId String
+  match   OpenMatch @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([matchId, userId])
+}
+
+model TrainingPlan {
+  id      String @id @default(cuid())
+  titleFa String
+  titleEn String
+  bodyFa  String
+  bodyEn  String
+
+  coachId String
+  coach   Coach  @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  sportId String?
+  sport   Sport? @relation(fields: [sportId], references: [id])
+
+  assignments PlanAssignment[]
+}
+
+model PlanAssignment {
+  id         String   @id @default(cuid())
+  assignedAt DateTime @default(now())
+
+  planId    String
+  plan      TrainingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  athleteId String
+  athlete   User         @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, athleteId])
+}
+
+model ClubActivity {
+  id      String @id @default(cuid())
+  titleFa String
+  titleEn String
+  descFa  String
+  descEn  String
+  date    String
+  startTime String
+
+  clubId String
+  club   Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
 }

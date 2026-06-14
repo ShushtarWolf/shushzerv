@@ -15,22 +15,70 @@ function isoDate(offsetDays: number) {
   const d = new Date()
   d.setHours(0, 0, 0, 0)
   d.setDate(d.getDate() + offsetDays)
-  return d.toISOString().slice(0, 10)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 const sportsData = [
-  { slug: 'tennis', nameFa: 'تنیس', nameEn: 'Tennis', icon: '🎾', color: '#34c759', group: 'racket' },
-  { slug: 'padel', nameFa: 'پدل', nameEn: 'Padel', icon: '🏓', color: '#30b0c7', group: 'racket' },
-  { slug: 'football', nameFa: 'فوتبال', nameEn: 'Football', icon: '⚽', color: '#007aff', group: 'ball' },
-  { slug: 'fitness', nameFa: 'بدنسازی', nameEn: 'Fitness', icon: '🏋️', color: '#ff9500', group: 'fitness' },
-  { slug: 'yoga', nameFa: 'یوگا', nameEn: 'Yoga', icon: '🧘', color: '#af52de', group: 'fitness' },
-  { slug: 'swim', nameFa: 'شنا', nameEn: 'Swimming', icon: '🏊', color: '#5856d6', group: 'water' },
-  { slug: 'basketball', nameFa: 'بسکتبال', nameEn: 'Basketball', icon: '🏀', color: '#ff2d55', group: 'ball' },
-  { slug: 'boxing', nameFa: 'بوکس', nameEn: 'Boxing', icon: '🥊', color: '#636366', group: 'combat' },
+  { slug: 'tennis', nameFa: 'تنیس', nameEn: 'Tennis', icon: 'tennis', color: '#B8C93E', group: 'racket' },
+  { slug: 'padel', nameFa: 'پدل', nameEn: 'Padel', icon: 'padel', color: '#1D6FD4', group: 'racket' },
+  { slug: 'football', nameFa: 'فوتبال', nameEn: 'Football', icon: 'football', color: '#000000', group: 'ball' },
+  { slug: 'fitness', nameFa: 'بدنسازی', nameEn: 'Fitness', icon: 'fitness', color: '#DC3C3C', group: 'fitness' },
+  { slug: 'yoga', nameFa: 'یوگا', nameEn: 'Yoga', icon: 'yoga', color: '#8A7AAF', group: 'fitness' },
+  { slug: 'swim', nameFa: 'شنا', nameEn: 'Swimming', icon: 'swim', color: '#0077BE', group: 'water' },
+  { slug: 'basketball', nameFa: 'بسکتبال', nameEn: 'Basketball', icon: 'basketball', color: '#FF6B00', group: 'ball' },
+  { slug: 'boxing', nameFa: 'بوکس', nameEn: 'Boxing', icon: 'boxing', color: '#9E1B28', group: 'combat' },
 ]
 
 const cities = ['تهران', 'اصفهان', 'شیراز', 'مشهد', 'تبریز']
 const citiesEn: Record<string, string> = { 'تهران': 'Tehran', 'اصفهان': 'Isfahan', 'شیراز': 'Shiraz', 'مشهد': 'Mashhad', 'تبریز': 'Tabriz' }
+const districtsEn: Record<string, string> = {
+  'سعادت‌آباد': 'Saadat Abad',
+  'الهیه': 'Elahieh',
+  'معالی‌آباد': 'Maali Abad',
+  'ونک': 'Vanak',
+  'سپاهان‌شهر': 'Sepahan Shahr',
+  'پاسداران': 'Pasdaran',
+  'احمدآباد': 'Ahmad Abad',
+  'ولیعصر': 'Valiasr',
+  'جردن': 'Jordan',
+  'چهارباغ': 'Chahar Bagh',
+  'فرشته': 'Fereshteh',
+  'قصردشت': 'Qasr Dasht',
+  'نیاوران': 'Niavaran',
+  'وکیل‌آباد': 'Vakil Abad',
+  'تهرانپارس': 'Tehran Pars',
+  'یوسف‌آباد': 'Yousef Abad',
+}
+
+/** Approximate coordinates for map pins (demo data). */
+const cityCoords: Record<string, [number, number]> = {
+  'تهران': [35.6892, 51.389],
+  'اصفهان': [32.6546, 51.668],
+  'شیراز': [29.5918, 52.5837],
+  'مشهد': [36.2605, 59.6168],
+  'تبریز': [38.08, 46.2919],
+}
+
+const tehranDistrictCoords: Record<string, [number, number]> = {
+  'سعادت‌آباد': [35.773, 51.363],
+  'الهیه': [35.789, 51.424],
+  'ونک': [35.757, 51.41],
+  'پاسداران': [35.768, 51.477],
+  'جردن': [35.754, 51.418],
+  'فرشته': [35.798, 51.42],
+  'نیاوران': [35.817, 51.47],
+  'تهرانپارس': [35.734, 51.533],
+  'یوسف‌آباد': [35.732, 51.376],
+}
+
+function clubCoords(city: string, district: string, index: number): [number, number] {
+  if (city === 'تهران' && tehranDistrictCoords[district]) {
+    const [lat, lng] = tehranDistrictCoords[district]
+    return [lat + (index % 3) * 0.004, lng + (index % 2) * 0.005]
+  }
+  const [lat, lng] = cityCoords[city] ?? [35.6892, 51.389]
+  return [lat + index * 0.012, lng + index * 0.01]
+}
 
 const clubSeeds = [
   { slug: 'azadi-tennis', nameFa: 'مجموعه تنیس آزادی', nameEn: 'Azadi Tennis Complex', sport: 'tennis', city: 'تهران', district: 'سعادت‌آباد', rating: 4.8, priceFrom: 250000, discount: 15, featured: true },
@@ -75,6 +123,22 @@ const newsSeeds = [
 
 async function main() {
   console.log('Resetting tables…')
+  await prisma.walletTransaction.deleteMany()
+  await prisma.clubWallet.deleteMany()
+  await prisma.wallet.deleteMany()
+  await prisma.message.deleteMany()
+  await prisma.conversationMember.deleteMany()
+  await prisma.conversation.deleteMany()
+  await prisma.userBadge.deleteMany()
+  await prisma.review.deleteMany()
+  await prisma.planAssignment.deleteMany()
+  await prisma.trainingPlan.deleteMany()
+  await prisma.matchParticipant.deleteMany()
+  await prisma.openMatch.deleteMany()
+  await prisma.classEnrollment.deleteMany()
+  await prisma.classSession.deleteMany()
+  await prisma.clubActivity.deleteMany()
+  await prisma.athleteProfile.deleteMany()
   await prisma.booking.deleteMany()
   await prisma.slot.deleteMany()
   await prisma.court.deleteMany()
@@ -101,19 +165,25 @@ async function main() {
   const clubAdmin = await prisma.user.create({
     data: { email: 'club@shushzerv.local', name: 'مدیر باشگاه آزادی', role: 'CLUB_ADMIN', passwordHash: hashSecret('demo1234') },
   })
+  const platformAdmin = await prisma.user.create({
+    data: { email: 'admin@shushzerv.local', name: 'مدیر پلتفرم', role: 'PLATFORM_ADMIN', passwordHash: hashSecret('demo1234') },
+  })
 
   console.log('Seeding clubs + courts…')
   const courtIds: Array<{ id: string; sportSlug: string; priceFrom: number }> = []
   for (const [i, c] of clubSeeds.entries()) {
+    const [lat, lng] = clubCoords(c.city, c.district, i)
     const club = await prisma.club.create({
       data: {
         slug: c.slug,
         nameFa: c.nameFa,
         nameEn: c.nameEn,
         addressFa: `${c.city}، ${c.district}`,
-        addressEn: `${c.district}, ${citiesEn[c.city]}`,
+        addressEn: `${districtsEn[c.district] ?? c.district}, ${citiesEn[c.city]}`,
         city: c.city,
         district: c.district,
+        lat,
+        lng,
         rating: c.rating,
         priceFrom: c.priceFrom,
         discount: c.discount ?? null,
@@ -149,8 +219,9 @@ async function main() {
   await prisma.slot.createMany({ data: slotData })
 
   console.log('Seeding coaches…')
+  const coachIds: Record<string, string> = {}
   for (const [i, c] of coachSeeds.entries()) {
-    await prisma.coach.create({
+    const coach = await prisma.coach.create({
       data: {
         nameFa: c.nameFa,
         nameEn: c.nameEn,
@@ -161,6 +232,113 @@ async function main() {
         bioEn: c.bioEn,
         sportId: sports[c.sport],
         userId: i === 0 ? coachUser.id : null,
+      },
+    })
+    if (i === 0) coachIds.sara = coach.id
+    if (c.sport === 'yoga') coachIds.leila = coach.id
+    if (c.sport === 'fitness') coachIds.negar = coach.id
+  }
+
+  const clubs = await prisma.club.findMany({ select: { id: true, slug: true, city: true } })
+  const clubBySlug = Object.fromEntries(clubs.map((c) => [c.slug, c]))
+
+  console.log('Seeding athlete profile…')
+  await prisma.athleteProfile.create({
+    data: { userId: athlete.id, sportId: sports.tennis, level: 'INTERMEDIATE', matchesPlayed: 24, wins: 14, xp: 260 },
+  })
+  for (const code of ['first_booking', 'regular', 'social_player', 'rising_star']) {
+    await prisma.userBadge.create({ data: { userId: athlete.id, code } })
+  }
+
+  console.log('Seeding group classes…')
+  const classSeeds = [
+    { club: 'zen-yoga-studio', coach: coachIds.leila, sport: 'yoga', titleFa: 'یوگای صبحگاهی', titleEn: 'Morning Yoga', day: 1, time: '08:00', end: '09:30', price: 180000, seats: 15, booked: 8 },
+    { club: 'azadi-tennis', coach: coachIds.sara, sport: 'tennis', titleFa: 'کلاس تنیس مبتدی', titleEn: 'Beginner Tennis Class', day: 2, time: '10:00', end: '11:30', price: 220000, seats: 8, booked: 5 },
+    { club: 'iron-house-gym', coach: coachIds.negar, sport: 'fitness', titleFa: 'فیتنس گروهی', titleEn: 'Group Fitness', day: 3, time: '18:00', end: '19:30', price: 150000, seats: 20, booked: 12 },
+    { club: 'padel-zone-tehran', sport: 'padel', titleFa: 'آموزش پدل', titleEn: 'Padel Intro Class', day: 4, time: '16:00', end: '17:30', price: 280000, seats: 4, booked: 2 },
+  ]
+  for (const cs of classSeeds) {
+    await prisma.classSession.create({
+      data: {
+        titleFa: cs.titleFa,
+        titleEn: cs.titleEn,
+        date: isoDate(cs.day),
+        startTime: cs.time,
+        endTime: cs.end,
+        price: cs.price,
+        maxSeats: cs.seats,
+        bookedSeats: cs.booked,
+        clubId: clubBySlug[cs.club]!.id,
+        sportId: sports[cs.sport],
+        coachId: cs.coach ?? null,
+      },
+    })
+  }
+
+  console.log('Seeding open matches…')
+  const matchSeeds = [
+    { sport: 'tennis', city: 'تهران', club: 'azadi-tennis', day: 2, time: '18:00', max: 4, joined: 2, min: 'INTERMEDIATE', maxL: 'ADVANCED', notesFa: 'دو نفر جا داریم', notesEn: 'Looking for 2 more players' },
+    { sport: 'padel', city: 'تهران', club: 'padel-zone-tehran', day: 3, time: '20:00', max: 4, joined: 3, min: 'BEGINNER', maxL: 'INTERMEDIATE', notesFa: 'بازی دوستانه', notesEn: 'Friendly doubles game' },
+    { sport: 'football', city: 'تهران', club: 'green-turf-arena', day: 5, time: '19:00', max: 10, joined: 7, min: 'BEGINNER', maxL: 'PRO', notesFa: 'فوتبال ۵ نفره', notesEn: '5-a-side football' },
+  ]
+  for (const [mi, ms] of matchSeeds.entries()) {
+    const match = await prisma.openMatch.create({
+      data: {
+        sportId: sports[ms.sport],
+        city: ms.city,
+        clubId: clubBySlug[ms.club]?.id,
+        creatorId: athlete.id,
+        date: isoDate(ms.day),
+        startTime: ms.time,
+        maxPlayers: ms.max,
+        joinedCount: ms.joined,
+        minLevel: ms.min as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+        maxLevel: ms.maxL as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+        notesFa: ms.notesFa,
+        notesEn: ms.notesEn,
+        shareToken: `demo${mi + 1}match`,
+      },
+    })
+    await prisma.matchParticipant.create({ data: { matchId: match.id, userId: athlete.id } })
+    await prisma.conversation.create({
+      data: {
+        isGroup: true,
+        matchId: match.id,
+        titleFa: `بازی ${ms.city}`,
+        titleEn: `Match in ${ms.city}`,
+        members: { create: { userId: athlete.id } },
+      },
+    })
+  }
+
+  console.log('Seeding training plans…')
+  const plan = await prisma.trainingPlan.create({
+    data: {
+      coachId: coachIds.sara,
+      sportId: sports.tennis,
+      titleFa: 'برنامه تنیس ۴ هفته‌ای',
+      titleEn: '4-week tennis program',
+      bodyFa: 'هفته ۱: سرویس و فورهند\nهفته ۲: بکند و والی\nهفته ۳: تاکتیک بازی\nهفته ۴: مسابقه تمرینی',
+      bodyEn: 'Week 1: Serve & forehand\nWeek 2: Backhand & volley\nWeek 3: Match tactics\nWeek 4: Practice match',
+    },
+  })
+  await prisma.planAssignment.create({ data: { planId: plan.id, athleteId: athlete.id } })
+
+  console.log('Seeding club activities…')
+  const activitySeeds = [
+    { club: 'azadi-tennis', titleFa: 'تورنمنت تنیس آخر هفته', titleEn: 'Weekend Tennis Tournament', descFa: 'مسابقه دو نفره آزاد', descEn: 'Open doubles tournament', day: 6, time: '09:00' },
+    { club: 'padel-zone-tehran', titleFa: 'شب پدل', titleEn: 'Padel Night', descFa: 'بازی گروهی و شبکه‌سازی', descEn: 'Social padel evening', day: 7, time: '20:00' },
+  ]
+  for (const a of activitySeeds) {
+    await prisma.clubActivity.create({
+      data: {
+        clubId: clubBySlug[a.club]!.id,
+        titleFa: a.titleFa,
+        titleEn: a.titleEn,
+        descFa: a.descFa,
+        descEn: a.descEn,
+        date: isoDate(a.day),
+        startTime: a.time,
       },
     })
   }
@@ -182,12 +360,95 @@ async function main() {
     })
   }
 
+  console.log('Seeding reviews…')
+  const reviewSeeds = [
+    { club: 'azadi-tennis', rating: 5, fa: 'رزرو فوق‌العاده ساده بود و زمین عالی. حتماً دوباره استفاده می‌کنم.', en: 'Booking was super simple and the court was great. Will definitely use again.' },
+    { club: 'padel-zone-tehran', rating: 5, fa: 'بهترین راه برای پیدا کردن همبازی و رزرو زمین پدل. عاشقش شدم!', en: 'The best way to find partners and book a padel court. Loved it!' },
+    { club: 'green-turf-arena', rating: 5, fa: 'بدون دردسر، بدون تماس تلفنی، فقط چند کلیک تا بازی.', en: 'No hassle, no phone calls, just a few clicks to play.' },
+    { club: 'zen-yoga-studio', rating: 5, fa: 'برنامه لحظه‌ای و پرداخت در محل کار را خیلی راحت کرده.', en: 'Real-time schedule and pay-at-club made everything so easy.' },
+    { club: 'iron-house-gym', rating: 4, fa: 'تجربه روان و سریع. قیمت‌ها هم شفاف هستند.', en: 'Smooth and fast experience. Pricing is transparent too.' },
+    { club: 'hoops-basketball-arena', rating: 5, fa: 'پیدا کردن زمین نزدیک خونه عالیه. پیشنهاد می‌کنم.', en: 'Finding a court near home is great. Highly recommend.' },
+  ]
+  for (const r of reviewSeeds) {
+    await prisma.review.create({
+      data: {
+        rating: r.rating,
+        bodyFa: r.fa,
+        bodyEn: r.en,
+        userId: athlete.id,
+        clubId: clubBySlug[r.club]?.id ?? null,
+      },
+    })
+  }
+
+  console.log('Seeding wallets…')
+  await prisma.wallet.create({ data: { userId: athlete.id, balance: 2_500_000 } })
+  await prisma.wallet.create({ data: { userId: coachUser.id, balance: 850_000 } })
+  await prisma.wallet.create({ data: { userId: clubAdmin.id, balance: 0 } })
+  await prisma.wallet.create({ data: { userId: platformAdmin.id, balance: 420_000 } })
+
+  const azadiClub = clubBySlug['azadi-tennis']
+  if (azadiClub) {
+    await prisma.clubWallet.create({ data: { clubId: azadiClub.id, balance: 1_850_000 } })
+    await prisma.walletTransaction.createMany({
+      data: [
+        {
+          type: 'TOP_UP',
+          amount: 3_000_000,
+          balanceAfter: 3_000_000,
+          userId: athlete.id,
+          noteFa: 'شارژ اولیه کیف پول',
+          noteEn: 'Initial wallet top-up',
+        },
+        {
+          type: 'BOOKING',
+          amount: -250_000,
+          balanceAfter: 2_750_000,
+          userId: athlete.id,
+          referenceId: 'demo-booking-1',
+          noteFa: 'پرداخت رزرو زمین',
+          noteEn: 'Court booking payment',
+        },
+        {
+          type: 'BOOKING',
+          amount: 225_000,
+          balanceAfter: 225_000,
+          clubId: azadiClub.id,
+          referenceId: 'demo-booking-1',
+          noteFa: 'دریافت رزرو زمین',
+          noteEn: 'Court booking received',
+        },
+        {
+          type: 'PLATFORM_FEE',
+          amount: 25_000,
+          balanceAfter: 25_000,
+          userId: platformAdmin.id,
+          referenceId: 'demo-booking-1',
+          noteFa: 'کارمزد پلتفرم — رزرو',
+          noteEn: 'Platform fee — booking',
+        },
+        {
+          type: 'COACH_EARNING',
+          amount: 33_000,
+          balanceAfter: 883_000,
+          userId: coachUser.id,
+          referenceId: 'demo-class-1',
+          noteFa: 'درآمد مربی — کلاس',
+          noteEn: 'Coach earning — class',
+        },
+      ],
+    })
+  }
+
   const counts = {
     sports: await prisma.sport.count(),
     clubs: await prisma.club.count(),
     courts: await prisma.court.count(),
     slots: await prisma.slot.count(),
     coaches: await prisma.coach.count(),
+    classes: await prisma.classSession.count(),
+    matches: await prisma.openMatch.count(),
+    plans: await prisma.trainingPlan.count(),
     news: await prisma.newsArticle.count(),
     users: await prisma.user.count(),
   }

@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+
+# nuxt build artifacts
+.nuxt/
+.output/
+.data/
+dist/
+
+# database
+*.db
+*.db-journal
+prisma/dev.db
+prisma/dev.db-journal
+
+# env / secrets
+.env
+.env.*
+
+# logs
+*.log
+npm-debug.log*
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
+!.vscode/extensions.json
+
+# misc
+.cache/
+
+# nuxt/vite temp cache
+.tmp/

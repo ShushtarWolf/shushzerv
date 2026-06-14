@@ -1,17 +1,20 @@
+@import '@fontsource-variable/vazirmatn/index.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --sz-bg: #f2f2f7;
-    --sz-bg-elevated: rgba(255, 255, 255, 0.72);
-    --sz-bg-glass: rgba(255, 255, 255, 0.65);
+    --sz-bg: #f7f7f4;
+    --sz-bg-elevated: rgba(255, 255, 255, 0.78);
+    --sz-bg-glass: rgba(255, 255, 255, 0.7);
     --sz-border: rgba(0, 0, 0, 0.06);
-    --sz-text: #1c1c1e;
-    --sz-text-secondary: #636366;
-    --sz-accent: #007aff;
-    --sz-accent-soft: rgba(0, 122, 255, 0.12);
+    --sz-text: #1a1a17;
+    --sz-text-secondary: #5c5c56;
+    --sz-accent: #ff5a1f;
+    --sz-accent-dark: #e64a13;
+    --sz-accent-soft: rgba(255, 90, 31, 0.12);
     --sz-safe-bottom: env(safe-area-inset-bottom, 0px);
     --sz-safe-top: env(safe-area-inset-top, 0px);
   }
@@ -24,12 +27,18 @@
 
   body {
     @apply bg-brand-gray-50 text-brand-gray-900 font-sans antialiased;
-    background: linear-gradient(180deg, #f8f8fc 0%, var(--sz-bg) 40%, #ebebf0 100%);
+    background: var(--sz-bg);
     min-height: 100dvh;
   }
 
   [dir='rtl'] body {
-    font-feature-settings: 'ss01' on;
+    font-family: 'Vazirmatn Variable', Vazirmatn, ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: 'ss01' on, 'kern' on;
+    letter-spacing: 0;
+  }
+
+  [dir='ltr'] body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', sans-serif;
   }
 }
 
@@ -49,7 +58,11 @@
   }
 
   .ios-card {
-    @apply rounded-ios-lg bg-white shadow-card transition-transform duration-200 active:scale-[0.98];
+    @apply rounded-ios-lg bg-white shadow-card transition-all duration-300 ease-out active:scale-[0.98];
+  }
+
+  .ios-card-hover {
+    @apply hover:-translate-y-1 hover:shadow-lifted-soft;
   }
 
   .ios-large-title {
@@ -62,6 +75,22 @@
 
   .ios-title-3 {
     @apply text-[1.125rem] font-semibold;
+  }
+
+  .sz-display {
+    @apply text-[2.5rem] font-extrabold tracking-tight leading-[1.05] sm:text-[3.25rem];
+  }
+
+  .sz-headline {
+    @apply text-2xl font-bold tracking-tight sm:text-3xl;
+  }
+
+  .sz-stat {
+    @apply text-3xl font-black tabular-nums tracking-tight sm:text-4xl;
+  }
+
+  .sz-eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.18em] text-brand-orange;
   }
 
   .ios-footnote {
@@ -81,7 +110,69 @@
   }
 
   .ios-input {
-    @apply w-full rounded-xl bg-brand-gray-100/70 border border-transparent px-4 py-3 text-brand-gray-900 placeholder:text-brand-gray-400 focus:bg-white focus:border-brand-blue/40 focus:outline-none transition-colors;
+    @apply w-full rounded-xl bg-brand-gray-100/70 border border-transparent px-4 py-3 text-start text-brand-gray-900 placeholder:text-brand-gray-400 focus:bg-white focus:border-brand-blue/40 focus:outline-none transition-colors;
+  }
+
+  [dir='rtl'] .ios-input::placeholder {
+    text-align: right;
+  }
+
+  .ios-select-wrap {
+    @apply relative;
+  }
+
+  .ios-select-wrap select.ios-input {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235c5c56' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 1rem;
+  }
+
+  [dir='rtl'] .ios-select-wrap select.ios-input {
+    background-position: left 0.85rem center;
+    padding-inline-start: 1rem;
+    padding-inline-end: 2.25rem;
+    text-align: right;
+  }
+
+  [dir='ltr'] .ios-select-wrap select.ios-input {
+    background-position: right 0.85rem center;
+    padding-inline-end: 2.25rem;
+    text-align: left;
+  }
+
+  .sz-scroll-fade {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 1.5rem,
+      #000 calc(100% - 1.5rem),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 1.5rem,
+      #000 calc(100% - 1.5rem),
+      transparent
+    );
+  }
+
+  .sz-hero-shadow {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  }
+
+  .sz-nearby-toggle {
+    @apply flex w-full items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition-colors;
+  }
+
+  .sz-nearby-toggle-off {
+    @apply border-brand-gray-200 bg-white text-brand-gray-700 hover:border-brand-gray-300;
+  }
+
+  .sz-nearby-toggle-on {
+    @apply border-brand-orange bg-brand-orange/10 text-brand-orange;
   }
 
   .ios-btn {
@@ -89,7 +180,7 @@
   }
 
   .ios-btn-primary {
-    @apply ios-btn bg-brand-blue text-white shadow-card hover:bg-brand-blue/90;
+    @apply ios-btn bg-brand-orange text-white shadow-card hover:bg-brand-orange-dark;
   }
 
   .ios-btn-ghost {
@@ -97,7 +188,7 @@
   }
 
   .ios-btn-secondary {
-    @apply ios-btn bg-white text-brand-blue border border-brand-blue/20 shadow-card hover:bg-brand-gray-50;
+    @apply ios-btn bg-white text-brand-orange border border-brand-orange/25 shadow-card hover:bg-brand-gray-50;
   }
 
   .tap-highlight {
@@ -106,6 +197,67 @@
 
   .page-enter {
     @apply animate-slide-up;
+  }
+
+  /* Staggered entrance for grids/lists — apply .sz-stagger on parent */
+  .sz-stagger > * {
+    @apply animate-fade-up;
+  }
+
+  .sz-stagger > *:nth-child(1) { animation-delay: 0.02s; }
+  .sz-stagger > *:nth-child(2) { animation-delay: 0.07s; }
+  .sz-stagger > *:nth-child(3) { animation-delay: 0.12s; }
+  .sz-stagger > *:nth-child(4) { animation-delay: 0.17s; }
+  .sz-stagger > *:nth-child(5) { animation-delay: 0.22s; }
+  .sz-stagger > *:nth-child(6) { animation-delay: 0.27s; }
+  .sz-stagger > *:nth-child(7) { animation-delay: 0.32s; }
+  .sz-stagger > *:nth-child(8) { animation-delay: 0.37s; }
+  .sz-stagger > *:nth-child(9) { animation-delay: 0.42s; }
+  .sz-stagger > *:nth-child(10) { animation-delay: 0.47s; }
+  .sz-stagger > *:nth-child(11) { animation-delay: 0.52s; }
+  .sz-stagger > *:nth-child(12) { animation-delay: 0.57s; }
+
+  .sz-grid-enter {
+    @apply animate-grid-in;
+  }
+
+  .sz-card-interactive {
+    @apply hover:-translate-y-1.5 active:scale-[0.98];
+  }
+
+  .sz-card-interactive:hover {
+    box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.22);
+  }
+
+  .sz-card-sport.sz-card-interactive:hover {
+    box-shadow: 0 20px 44px -14px color-mix(in srgb, var(--sport-color) 42%, transparent);
+  }
+
+  .sz-card-sport .sz-sport-icon {
+    @apply transition-transform duration-300 ease-out;
+  }
+
+  .sz-card-sport:hover .sz-sport-icon {
+    @apply animate-icon-bounce;
+  }
+
+  .sz-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold transition-colors;
+  }
+
+  .motion-reduce\:animate-none {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -117,4 +269,19 @@
 ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 999px;
+}
+
+/* Leaflet controls in RTL */
+[dir='rtl'] .leaflet-control-container .leaflet-left {
+  left: auto;
+  right: 0;
+}
+
+[dir='rtl'] .leaflet-control-container .leaflet-right {
+  right: auto;
+  left: 0;
+}
+
+[dir='rtl'] .leaflet-control-zoom a {
+  font-family: inherit;
 }

@@ -27,7 +27,7 @@ npm run dev
 
 Open http://localhost:3000 (Farsi) and http://localhost:3000/en (English).
 
-If `npm run dev` hits vite-node `EINVAL` socket errors on macOS, use the production build:
+The `dev` script sets `TMPDIR=/tmp` to avoid a Nuxt 4.4.7 macOS vite-node socket bug (long paths → 500s / ~20s timeouts). If dev still fails, use the production build:
 
 ```bash
 npm run build
@@ -41,8 +41,9 @@ PORT=3000 npm run start   # loads .env (DATABASE_URL, session secret)
 | Athlete | `athlete@shushzerv.local` | `demo1234` |
 | Coach | `coach@shushzerv.local` | `demo1234` |
 | Club admin | `club@shushzerv.local` | `demo1234` |
+| Platform admin | `admin@shushzerv.local` | `demo1234` |
 
-Bookings confirm without online payment (**pay at club**).
+Book with **wallet (کیف پول)** or pay at the club. Demo wallets are pre-loaded after seed.
 
 ## Sharing with friends
 
@@ -61,7 +62,7 @@ Bookings confirm without online payment (**pay at club**).
 | Coaches | `/coaches` | `/en/coaches` |
 | News | `/news` | `/en/news` |
 | Login / Register | `/login`, `/register` | `/en/login`, … |
-| Dashboards | `/dashboard`, `/dashboard/coach`, `/dashboard/club` | prefixed with `/en` |
+| Dashboards | `/dashboard`, `/dashboard/coach`, `/dashboard/club`, `/dashboard/admin` | prefixed with `/en` |
 
 ## Database
 
@@ -71,9 +72,9 @@ Bookings confirm without online payment (**pay at club**).
 
 ## v1 scope
 
-Included: public browse, booking with persistence, 3 roles + dashboards, PWA shell, bilingual UI.
+Included: public browse, court booking, group classes, open matches (player matching), training plans, skill levels, club events, ShushBot assistant, 4 roles + full dashboards (wallet/کیف پول, finance stats), PWA shell, bilingual UI.
 
-Not included: real payments, SMS/OTP, production deploy, AloBot assistant.
+Not included: real payment gateway, SMS/OTP, production deploy, global/multi-country network.
 
 ## Stack
 

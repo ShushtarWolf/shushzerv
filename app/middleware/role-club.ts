@@ -3,6 +3,7 @@ export default defineNuxtRouteMiddleware(() => {
   const { loggedIn, user } = useUserSession()
   if (!loggedIn.value) return navigateTo(localePath('/login'))
   if (user.value?.role !== 'CLUB_ADMIN') {
+    if (user.value?.role === 'PLATFORM_ADMIN') return navigateTo(localePath('/dashboard/admin'))
     if (user.value?.role === 'COACH') return navigateTo(localePath('/dashboard/coach'))
     return navigateTo(localePath('/dashboard'))
   }

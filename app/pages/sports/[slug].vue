@@ -22,32 +22,64 @@ const { data: coaches } = await useApiFetch<Coach[]>('/api/coaches', {
   query: computed(() => ({ sport: slug.value })),
 })
 
-useHead({
-  title: () => (sport.value ? t(`sport.${slug.value}.name`) : slug.value),
-})
+useHead({ title: () => (sport.value ? t(`sport.${slug.value}.name`) : slug.value) })
+
+const steps = ['pick', 'book', 'play'] as const
+const { sync } = useSelectedSportColor()
+watch(
+  [sport, sports],
+  () => sync(sports.value, sport.value?.slug ?? ''),
+  { immediate: true },
+)
 </script>
 
 <template>
   <div v-if="sport" class="page-enter mx-auto max-w-6xl px-4 py-8 sm:px-6">
-    <NuxtLink :to="localePath('/explore')" class="ios-footnote mb-4 inline-flex text-sz-blue">← {{ t('common.back') }}</NuxtLink>
-    <div class="glass-panel mb-8 p-8">
-      <span class="text-4xl">{{ sport.icon }}</span>
-      <h1 class="ios-large-title mt-4">{{ t(`sport.${slug}.headline`) }}</h1>
-      <p class="mt-2 text-lg text-sz-gray-600">{{ t(`sport.${slug}.desc`) }}</p>
-    </div>
+    <BackLink to="/explore" />
 
-    <SectionHeader :title="t('clubs.title')" :to="localePath(`/clubs?sport=${slug}`)" :link-text="t('clubs.viewAll')" />
-    <div class="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <section
+      class="mb-10 overflow-hidden rounded-ios-xl p-8 text-white shadow-lifted"
+      :style="{ backgroundColor: sport.color }"
+    >
+      <span class="inline-flex text-white">
+        <SportIcon :slug="sport.slug" size="xl" />
+      </span>
+      <h1 class="sz-display mt-4 text-white">{{ t(`sport.${slug}.headline`) }}</h1>
+      <p class="mt-3 max-w-xl text-lg text-white/90">{{ t(`sport.${slug}.desc`) }}</p>
+      <SzButton :to="localePath(`/clubs?sport=${slug}`)" class="mt-6" variant="secondary">
+        {{ t('sportLanding.cta') }}
+      </SzButton>
+    </section>
+
+    <section class="mb-10">
+      <SzSection :title="t('sportLanding.howTitle')" />
+      <div class="sz-stagger grid gap-4 md:grid-cols-3">
+        <div v-for="(step, i) in steps" :key="step" class="ios-card ios-card-hover p-5">
+          <span
+            class="flex h-10 w-10 items-center justify-center rounded-full text-lg font-black text-white"
+            :style="{ backgroundColor: sport.color }"
+          >{{ i + 1 }}</span>
+          <h3 class="mt-3 font-extrabold">{{ t(`sportLanding.steps.${step}.title`) }}</h3>
+          <p class="mt-2 text-sm text-brand-gray-600">{{ t(`sportLanding.steps.${step}.desc`) }}</p>
+        </div>
+      </div>
+    </section>
+
+    <SzSection :title="t('clubs.title')" :to="localePath(`/clubs?sport=${slug}`)" :link-text="t('clubs.viewAll')" />
+    <div class="mb-10 sz-stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <ClubCard v-for="club in clubs" :key="club.id" :club="club" />
     </div>
     <p v-if="!clubs?.length" class="ios-footnote mb-10">{{ t('common.noResults') }}</p>
 
-    <SectionHeader :title="t('coaches.title')" :to="localePath('/coaches')" :link-text="t('coaches.viewAll')" />
-    <div class="grid gap-3 sm:grid-cols-2">
+    <SzSection :title="t('coaches.title')" :to="localePath('/coaches')" :link-text="t('coaches.viewAll')" />
+    <div class="sz-stagger grid gap-3 sm:grid-cols-2">
       <CoachCard v-for="coach in coaches" :key="coach.id" :coach="coach" />
     </div>
     <p v-if="!coaches?.length" class="ios-footnote">{{ t('common.noResults') }}</p>
 
+    <div class="mt-10">
+      <FaqAccordion />
+    </div>
     <div class="mt-10">
       <CtaBanner />
     </div>

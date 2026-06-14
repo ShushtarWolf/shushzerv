@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شوشزرور — راهنمای پروژه</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #ff5a1f;
+      --ink: #1a1a1a;
+      --muted: #555;
+      --border: #e5e5e0;
+      --bg: #fff;
+      --bg-soft: #f7f7f4;
+    }
+
+    * { box-sizing: border-box; }
+
+    @page {
+      size: A4;
+      margin: 14mm 12mm 16mm;
+    }
+
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.65;
+      color: var(--ink);
+      background: var(--bg);
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      max-width: 100%;
+    }
+
+    header {
+      border-bottom: 3px solid var(--orange);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 20pt;
+      font-weight: 700;
+      margin: 0 0 6px;
+      color: var(--ink);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      font-size: 9pt;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-block;
+      background: #fff3ed;
+      color: var(--orange);
+      border: 1px solid #ffd4c2;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 12.5pt;
+      font-weight: 700;
+      color: var(--orange);
+      margin: 16px 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+      break-after: avoid;
+    }
+
+    h3 {
+      font-size: 10.5pt;
+      font-weight: 600;
+      margin: 12px 0 6px;
+      break-after: avoid;
+    }
+
+    p { margin: 6px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px;
+      font-size: 9pt;
+      break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 5px 7px;
+      text-align: right;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--bg-soft);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td { background: #fafaf8; }
+
+    .status-ok { color: #15803d; font-weight: 600; }
+    .status-no { color: #b91c1c; font-weight: 600; }
+
+    .progress {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: 'Vazirmatn', monospace;
+      font-size: 8.5pt;
+      line-height: 1.9;
+      direction: rtl;
+      white-space: pre-wrap;
+      break-inside: avoid;
+    }
+
+    ul {
+      margin: 6px 0;
+      padding-right: 18px;
+    }
+
+    li { margin: 3px 0; }
+
+    code, .mono {
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 8.5pt;
+      background: #f0f0ec;
+      padding: 1px 4px;
+      border-radius: 3px;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    pre {
+      background: #1e1e1e;
+      color: #f5f5f5;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 8.5pt;
+      line-height: 1.5;
+      direction: ltr;
+      text-align: left;
+      overflow-wrap: anywhere;
+      break-inside: avoid;
+    }
+
+    .summary-box {
+      background: #fff8f5;
+      border: 1px solid #ffd4c2;
+      border-right: 4px solid var(--orange);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      break-inside: avoid;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    footer {
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 8.5pt;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .avoid-break { break-inside: avoid; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>شوشزرور — راهنمای یک‌صفحه‌ای پروژه</h1>
+      <div class="meta">
+        <span>آخرین به‌روزرسانی: ۹ ژوئن ۲۰۲۶</span>
+        <span class="badge">وضعیت: ~۸۵٪ تکمیل v1</span>
+        <span>shushzerv — Sports Booking Demo</span>
+      </div>
+    </header>
+
+    <h2>پروژه چیست؟</h2>
+    <p><strong>شوشزرور (Shushzerv)</strong> یک پلتفرم وب دوزبانه (فارسی پیش‌فرض + انگلیسی) برای <strong>رزرو زمین ورزشی، کلاس گروهی، پیدا کردن همبازی و مدیریت باشگاه</strong> است.</p>
+    <table>
+      <tr><th>مورد</th><th>توضیح</th></tr>
+      <tr><td><strong>الهام</strong></td><td>alotennis.ir (Alo Play) — ولی کپی نیست؛ برند و UI مستقل</td></tr>
+      <tr><td><strong>هدف v1</strong></td><td>نسخهٔ قابل‌دمو برای دوستان و تست ایده — نه محصول تجاری نهایی</td></tr>
+      <tr><td><strong>پلتفرم</strong></td><td>وب + PWA (قابل نصب روی موبایل) — در آینده احتمالاً Capacitor</td></tr>
+      <tr><td><strong>پرداخت</strong></td><td>فقط «پرداخت در باشگاه» — بدون درگاه واقعی</td></tr>
+    </table>
+
+    <div class="two-col">
+      <div>
+        <h2>فناوری‌ها</h2>
+        <table>
+          <tr><th>لایه</th><th>ابزار</th></tr>
+          <tr><td>فرانت‌اند</td><td>Nuxt 4، Vue 3، TypeScript، Tailwind</td></tr>
+          <tr><td>بک‌اند</td><td>Nuxt Server API</td></tr>
+          <tr><td>دیتابیس</td><td>Prisma + SQLite</td></tr>
+          <tr><td>احراز هویت</td><td>nuxt-auth-utils (ایمیل/رمز)</td></tr>
+          <tr><td>چندزبانه</td><td>@nuxtjs/i18n — FA RTL، EN در /en</td></tr>
+          <tr><td>PWA</td><td>@vite-pwa/nuxt</td></tr>
+          <tr><td>نقشه</td><td>Leaflet</td></tr>
+        </table>
+      </div>
+      <div>
+        <h2>نقش‌های کاربری</h2>
+        <table>
+          <tr><th>نقش</th><th>ایمیل دمو</th><th>رمز</th></tr>
+          <tr><td>ورزشکار</td><td><code>athlete@shushzerv.local</code></td><td><code>demo1234</code></td></tr>
+          <tr><td>مربی</td><td><code>coach@shushzerv.local</code></td><td><code>demo1234</code></td></tr>
+          <tr><td>مدیر باشگاه</td><td><code>club@shushzerv.local</code></td><td><code>demo1234</code></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <h2>ویژگی‌های اصلی</h2>
+    <table>
+      <tr><th>ویژگی</th><th>توضیح</th><th>وضعیت</th></tr>
+      <tr><td>صفحهٔ اصلی</td><td>جستجو، ورزش‌ها، باشگاه‌ها، کلاس‌ها، همبازی، نقشه، اخبار</td><td class="status-ok">آماده</td></tr>
+      <tr><td>کاوش</td><td>مرور محتوا بر اساس ورزش و شهر</td><td class="status-ok">آماده</td></tr>
+      <tr><td>باشگاه‌ها + نقشه</td><td>لیست، نقشه Leaflet، جزئیات باشگاه</td><td class="status-ok">آماده</td></tr>
+      <tr><td>رزرو زمین</td><td>انتخاب سانس، تأیید رزرو، لغو از داشبورد</td><td class="status-ok">آماده</td></tr>
+      <tr><td>کلاس گروهی</td><td>لیست کلاس‌ها، ثبت‌نام، لغو ثبت‌نام</td><td class="status-ok">آماده</td></tr>
+      <tr><td>همبازی</td><td>ساخت/پیوستن به بازی، اشتراک لینک /m/:token</td><td class="status-ok">آماده</td></tr>
+      <tr><td>چت</td><td>مکالمه بین کاربران</td><td class="status-ok">پایه آماده</td></tr>
+      <tr><td>مربیان</td><td>پروفایل مربی، برنامه تمرین</td><td class="status-ok">آماده</td></tr>
+      <tr><td>گیمیفیکیشن</td><td>XP، سطح، نشان</td><td class="status-ok">پایه آماده</td></tr>
+      <tr><td>شوش‌بات</td><td>دستیار قوانین‌محور (نه AI واقعی)</td><td class="status-ok">پایه آماده</td></tr>
+      <tr><td>داشبورد ۳ نقش</td><td>ورزشکار، مربی، باشگاه</td><td class="status-ok">آماده</td></tr>
+      <tr><td>PWA</td><td>نصب روی صفحهٔ اصلی</td><td class="status-ok">پایه آماده</td></tr>
+      <tr><td>پرداخت آنلاین</td><td>درگاه، کارت، کیف پول</td><td class="status-no">خارج از v1</td></tr>
+      <tr><td>SMS / OTP</td><td>ورود با موبایل</td><td class="status-no">خارج از v1</td></tr>
+      <tr><td>دیپلوی پروداکشن</td><td>سرور ابری، دامنه، SSL</td><td class="status-no">خارج از v1</td></tr>
+    </table>
+
+    <h2>صفحات مهم</h2>
+    <table>
+      <tr><th>صفحه</th><th>مسیر فارسی</th><th>مسیر انگلیسی</th></tr>
+      <tr><td>خانه</td><td><code>/</code></td><td><code>/en</code></td></tr>
+      <tr><td>کاوش</td><td><code>/explore</code></td><td><code>/en/explore</code></td></tr>
+      <tr><td>باشگاه‌ها</td><td><code>/clubs</code></td><td><code>/en/clubs</code></td></tr>
+      <tr><td>رزرو باشگاه</td><td><code>/clubs/:slug</code></td><td><code>/en/clubs/:slug</code></td></tr>
+      <tr><td>کلاس‌ها</td><td><code>/classes</code></td><td><code>/en/classes</code></td></tr>
+      <tr><td>همبازی</td><td><code>/matches</code></td><td><code>/en/matches</code></td></tr>
+      <tr><td>چت</td><td><code>/chat</code></td><td><code>/en/chat</code></td></tr>
+      <tr><td>داشبورد</td><td><code>/dashboard</code></td><td><code>/en/dashboard</code></td></tr>
+    </table>
+
+    <h2>کجاییم؟ — نقشهٔ پیشرفت</h2>
+    <div class="progress">فاز ۱  زیرساخت (Nuxt, Prisma, Auth, i18n)     ████████████████████  ۱۰۰٪
+فاز ۲  UI و برند (کامپوننت‌ها، RTL، تم ورزشی)  █████████████████░░░   ۸۵٪
+فاز ۳  رزرو زمین + باشگاه‌ها + نقشه            ███████████████████░   ۹۵٪
+فاز ۴  کلاس، همبازی، چت، اشتراک لینک          █████████████████░░░   ۹۰٪
+فاز ۵  داشبورد سه نقش + گیمیفیکیشن            ████████████████░░░░   ۸۵٪
+فاز ۶  شوش‌بات + آنبوردینگ + پروفایل          ████████████████░░░░   ۸۰٪
+فاز ۷  PWA و آماده‌سازی اپ                    ███████████████░░░░░   ۷۵٪</div>
+
+    <div class="two-col">
+      <div>
+        <h3>کارهای انجام‌شده</h3>
+        <ul>
+          <li>دیتابیس کامل با ۲۰+ مدل</li>
+          <li>۴۳ endpoint در server/api</li>
+          <li>۲۴ صفحه در app/pages</li>
+          <li>دادهٔ نمونه با db:seed</li>
+          <li>طراحی موبایل‌اول + Tab Bar</li>
+          <li>آیکون‌های اختصاصی ورزش‌ها</li>
+        </ul>
+      </div>
+      <div>
+        <h3>کارهای باقی‌مانده (P0–P2)</h3>
+        <ul>
+          <li><strong>P0:</strong> پالایش UI رزرو (slot pills)</li>
+          <li><strong>P0:</strong> بنر نصب PWA</li>
+          <li><strong>P0:</strong> آیکون PNG ۵۱۲×۵۱۲</li>
+          <li><strong>P1:</strong> مرور RTL/EN نهایی</li>
+          <li><strong>P1:</strong> تست end-to-end</li>
+          <li><strong>P2:</strong> Capacitor (بعد از فریز وب)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>چطور اجرا کنیم؟</h2>
+    <pre>cd ~/Projects/shushzerv
+nvm use          # Node 22
+npm install
+npm run db:push
+npm run db:seed
+npm run dev</pre>
+    <table>
+      <tr><th>آدرس</th><th>محتوا</th></tr>
+      <tr><td><code>http://localhost:3000</code></td><td>فارسی (RTL)</td></tr>
+      <tr><td><code>http://localhost:3000/en</code></td><td>انگلیسی (LTR)</td></tr>
+    </table>
+
+    <div class="summary-box avoid-break">
+      <h3 style="margin-top:0">جمع‌بندی</h3>
+      <p>شوشزرور الان یک <strong>دموی کامل و قابل‌لمس</strong> از ایدهٔ «رزرو ورزشی + اجتماعی» است. هستهٔ محصول (رزرو، کلاس، همبازی، نقش‌ها، داشبورد، PWA) <strong>ساخته شده</strong>؛ مرحلهٔ فعلی <strong>پالایش UX، تست و آماده‌سازی برای نمایش</strong> است.</p>
+      <p><strong>قدم بعدی:</strong> تکمیل موارد P0، تست با حساب‌های دمو، سپس فریز v1.</p>
+    </div>
+
+    <footer>شوشزرور · README.md و APP.md · جزئیات فنی انگلیسی</footer>
+  </div>
+</body>
+</html>

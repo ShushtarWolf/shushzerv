@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-06-02',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
 
   modules: [
     '@nuxtjs/tailwindcss',
@@ -9,7 +9,13 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
   ],
 
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css', 'leaflet/dist/leaflet.css'],
+
+  vite: {
+    optimizeDeps: {
+      include: ['leaflet'],
+    },
+  },
 
   app: {
     head: {
@@ -20,7 +26,7 @@ export default defineNuxtConfig({
       ],
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
-        { name: 'theme-color', content: '#f2f2f7' },
+        { name: 'theme-color', content: '#f7f7f4' },
         { name: 'description', content: 'Shushzerv — book sports courts, classes, and coaches' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
@@ -48,6 +54,7 @@ export default defineNuxtConfig({
   },
 
   pwa: {
+    minify: false,
     registerType: 'autoUpdate',
     manifest: {
       name: 'Shushzerv — Sports Booking',
@@ -55,8 +62,8 @@ export default defineNuxtConfig({
       description: 'Book sports courts, classes, and coaches',
       lang: 'fa',
       dir: 'rtl',
-      theme_color: '#f2f2f7',
-      background_color: '#f2f2f7',
+      theme_color: '#ff5a1f',
+      background_color: '#f7f7f4',
       display: 'standalone',
       start_url: '/',
       icons: [

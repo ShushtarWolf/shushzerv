@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شوش‌بات — راهنمای دستیار شوش‌زرو</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #ff5a1f;
+      --ink: #1a1a1a;
+      --muted: #555;
+      --border: #e5e5e0;
+      --bg-soft: #f7f7f4;
+    }
+    * { box-sizing: border-box; }
+    @page { size: A4; margin: 14mm 12mm 16mm; }
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.65;
+      color: var(--ink);
+      margin: 0;
+    }
+    header {
+      border-bottom: 3px solid var(--orange);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+    h1 { font-size: 20pt; margin: 0 0 6px; }
+    .meta { font-size: 9pt; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
+    .badge {
+      background: #fff3ed;
+      color: var(--orange);
+      border: 1px solid #ffd4c2;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-weight: 600;
+    }
+    h2 {
+      font-size: 12.5pt;
+      color: var(--orange);
+      margin: 16px 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+      break-after: avoid;
+    }
+    h3 { font-size: 10.5pt; margin: 12px 0 6px; break-after: avoid; }
+    p { margin: 6px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px;
+      font-size: 9pt;
+      break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 5px 7px;
+      text-align: right;
+      vertical-align: top;
+    }
+    th { background: var(--bg-soft); font-weight: 600; }
+    tr:nth-child(even) td { background: #fafaf8; }
+    .chat {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 10px 0;
+      break-inside: avoid;
+    }
+    .chat-head {
+      background: #fff3ed;
+      padding: 8px 12px;
+      font-weight: 700;
+      color: var(--orange);
+    }
+    .bubble-user {
+      background: #fff3ed;
+      color: var(--orange);
+      margin: 8px 12px 8px 40px;
+      padding: 8px 10px;
+      border-radius: 12px 12px 4px 12px;
+      font-size: 9pt;
+      text-align: left;
+    }
+    .bubble-bot {
+      background: var(--bg-soft);
+      margin: 8px 40px 8px 12px;
+      padding: 8px 10px;
+      border-radius: 12px 12px 12px 4px;
+      font-size: 9pt;
+    }
+    .link-hint {
+      color: var(--orange);
+      font-size: 8.5pt;
+      margin-top: 4px;
+      text-decoration: underline;
+    }
+    .chips { padding: 6px 12px 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 8.5pt;
+    }
+    code, .mono {
+      font-family: ui-monospace, Menlo, monospace;
+      font-size: 8.5pt;
+      background: #f0f0ec;
+      padding: 1px 4px;
+      border-radius: 3px;
+      direction: ltr;
+      display: inline-block;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #f5f5f5;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 8.5pt;
+      direction: ltr;
+      text-align: left;
+      break-inside: avoid;
+    }
+    ul { margin: 6px 0; padding-right: 18px; }
+    li { margin: 3px 0; }
+    .note {
+      background: #fff8f5;
+      border-right: 4px solid var(--orange);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      break-inside: avoid;
+    }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .no { color: #b91c1c; font-weight: 600; }
+    .yes { color: #15803d; font-weight: 600; }
+    footer {
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 8.5pt;
+      color: var(--muted);
+      text-align: center;
+    }
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>شوش‌بات — راهنمای دستیار شوش‌زرو</h1>
+    <div class="meta">
+      <span>آخرین به‌روزرسانی: ۹ ژوئن ۲۰۲۶</span>
+      <span class="badge">Rule-based · دوزبانه FA/EN</span>
+      <span>Shushzerv Assistant</span>
+    </div>
+  </header>
+
+  <h2>شوش‌بات چیست؟</h2>
+  <p><strong>شوش‌بات (ShushBot)</strong> دستیار راهنمای داخل اپلیکیشن شوش‌زرو است. یک ویجت چت شناور در گوشهٔ صفحه است که به کاربران کمک می‌کند بدانند چطور رزرو زمین، کلاس، همبازی، مربی و برنامه تمرین را پیدا کنند.</p>
+
+  <table>
+    <tr><th>ویژگی</th><th>توضیح</th></tr>
+    <tr><td>نوع</td><td>چت‌بات <strong>قوانین‌محور</strong> — نه هوش مصنوعی واقعی (ChatGPT نیست)</td></tr>
+    <tr><td>زبان</td><td>فارسی و انگلیسی — بر اساس زبان فعلی سایت</td></tr>
+    <tr><td>داده</td><td>اطلاعات زنده از دیتابیس (باشگاه‌ها، مربیان، تعداد کلاس و بازی)</td></tr>
+    <tr><td>دسترسی</td><td>در همهٔ صفحات — دکمهٔ نارنجی چت پایین صفحه</td></tr>
+    <tr><td>ورود</td><td>بدون نیاز به لاگین — همه می‌توانند بپرسند</td></tr>
+  </table>
+
+  <h2>چطور استفاده کنیم؟</h2>
+  <ol style="padding-right: 18px; margin: 6px 0;">
+    <li>روی <strong>دکمهٔ نارنجی چت</strong> (پایین چپ در فارسی) بزنید.</li>
+    <li>سؤال را تایپ کنید یا روی <strong>پیشنهادها</strong> (chip) کلیک کنید.</li>
+    <li>پاسخ شوش‌بات را بخوانید؛ اگر لینک داشت، «برو به صفحه» را بزنید.</li>
+  </ol>
+
+  <div class="chat">
+    <div class="chat-head">شوش‌بات</div>
+    <div class="bubble-bot">سلام! من شوش‌بات هستم — درباره رزرو زمین، کلاس، همبازی، مربی یا برنامه تمرین بپرس.</div>
+    <div class="chips">
+      <span class="chip">رزرو زمین</span>
+      <span class="chip">کلاس گروهی</span>
+      <span class="chip">پیدا کردن همبازی</span>
+      <span class="chip">برنامه تمرین</span>
+    </div>
+    <div class="bubble-user">چطور زمین رزرو کنم؟</div>
+    <div class="bubble-bot">
+      برای رزرو زمین، باشگاه را انتخاب کن و سانس دلخواه را بزن. باشگاه‌های منتخب: … پرداخت در محل باشگاه انجام می‌شود.
+      <div class="link-hint">برو به صفحه → /clubs</div>
+    </div>
+  </div>
+
+  <h2>موضوعات پشتیبانی‌شده</h2>
+  <table>
+    <tr><th>موضوع</th><th>کلیدواژه‌ها (FA / EN)</th><th>لینک</th><th>اطلاعات زنده</th></tr>
+    <tr><td>رزرو زمین</td><td>رزرو، زمین / book, court, reserve</td><td><code>/clubs</code></td><td>نام ۳ باشگاه منتخب</td></tr>
+    <tr><td>کلاس گروهی</td><td>کلاس / class, group</td><td><code>/classes</code></td><td>تعداد کلاس‌های باز</td></tr>
+    <tr><td>همبازی</td><td>همبازی، بازی / match, player</td><td><code>/matches</code></td><td>تعداد بازی‌های باز</td></tr>
+    <tr><td>مربیان</td><td>مربی / coach</td><td><code>/coaches</code></td><td>۳ مربی برتر</td></tr>
+    <tr><td>برنامه تمرین</td><td>برنامه، تمرین / plan, training</td><td><code>/dashboard</code></td><td>—</td></tr>
+    <tr><td>سطح مهارت</td><td>سطح، رتبه / level</td><td><code>/dashboard</code></td><td>—</td></tr>
+    <tr><td>پرداخت</td><td>پرداخت، قیمت / pay, price</td><td>—</td><td>توضیح «پرداخت در باشگاه»</td></tr>
+    <tr><td>سؤال نامشخص</td><td>هر چیز دیگر</td><td>—</td><td>پیشنهادهای کلی</td></tr>
+  </table>
+
+  <div class="two-col">
+    <div>
+      <h2>چه کارهایی می‌کند</h2>
+      <ul>
+        <li class="yes">راهنمایی گام‌به‌گام کاربران تازه‌وارد</li>
+        <li class="yes">پاسخ سریع بدون پشتیبانی انسانی</li>
+        <li class="yes">لینک مستقیم به صفحهٔ مرتبط</li>
+        <li class="yes">پیشنهادهای آماده (chips)</li>
+        <li class="yes">دوزبانه FA / EN</li>
+      </ul>
+    </div>
+    <div>
+      <h2>چه کارهایی نمی‌کند</h2>
+      <ul>
+        <li class="no">رزرو واقعی — فقط راهنمایی می‌کند</li>
+        <li class="no">گفتگوی آزاد و خلاقانه (مثل ChatGPT)</li>
+        <li class="no">پاسخ به سؤال‌های خارج از حوزهٔ ورزشی</li>
+        <li class="no">یادآوری یا اعلان push</li>
+        <li class="no">چت با پشتیبانی انسانی</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>معماری فنی (خلاصه)</h2>
+  <table>
+    <tr><th>بخش</th><th>فایل / مسیر</th></tr>
+    <tr><td>ویجت UI</td><td><code>app/components/AssistantWidget.vue</code></td></tr>
+    <tr><td>نمایش در همه صفحات</td><td><code>app/layouts/default.vue</code></td></tr>
+    <tr><td>API پاسخ‌دهی</td><td><code>POST /api/assistant/chat</code></td></tr>
+    <tr><td>منطق کلیدواژه</td><td><code>server/api/assistant/chat.post.ts</code></td></tr>
+    <tr><td>متن‌های فارسی</td><td><code>locales/fa.json → assistant.*</code></td></tr>
+  </table>
+
+  <pre>POST /api/assistant/chat
+Body: { "message": "رزرو زمین", "locale": "fa" }
+Response: { "reply": "...", "link": "/clubs", "suggestions": [...] }</pre>
+
+  <h2>نمونه سؤال‌ها</h2>
+  <table>
+    <tr><th>سؤال نمونه</th><th>نتیجه</th></tr>
+    <tr><td>«چطور زمین رزرو کنم؟»</td><td>راهنمای رزرو + لیست باشگاه‌ها + لینک /clubs</td></tr>
+    <tr><td>«کلاس گروهی دارید؟»</td><td>تعداد کلاس‌های باز + لینک /classes</td></tr>
+    <tr><td>«همبازی پیدا کنم»</td><td>تعداد بازی‌های باز + لینک /matches</td></tr>
+    <tr><td>«مربی خوب کیه؟»</td><td>نام مربیان برتر + لینک /coaches</td></tr>
+    <tr><td>«پرداخت آنلاین دارید؟»</td><td>توضیح پرداخت در باشگاه (بدون لینک)</td></tr>
+    <tr><td>«آب و هوا چطوره؟»</td><td>پاسخ کلی + پیشنهاد موضوعات مرتبط</td></tr>
+  </table>
+
+  <div class="note">
+    <h3 style="margin-top:0">وضعیت فعلی و آینده</h3>
+    <p>شوش‌بات الان در نسخهٔ <strong>پایه (v1 demo)</strong> است — برای راهنمایی سریع کافی است. در فاز بعدی می‌توان پاسخ‌ها را غنی‌تر کرد یا به API هوش مصنوعی واقعی وصل کرد (P2 در نقشهٔ پروژه).</p>
+    <p><strong>تست:</strong> <code>npm run dev</code> → باز کردن سایت → کلیک روی دکمهٔ چت نارنجی.</p>
+  </div>
+
+  <footer>شوش‌زرو · شوش‌بات · راهنمای داخلی دستیار</footer>
+</body>
+</html>

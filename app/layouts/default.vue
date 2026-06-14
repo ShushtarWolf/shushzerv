@@ -6,5 +6,6 @@
     </main>
     <AppFooter />
     <AppTabBar />
+    <AssistantWidget />
   </div>
 </template>

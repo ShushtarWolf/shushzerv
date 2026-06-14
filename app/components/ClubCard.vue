@@ -2,44 +2,64 @@
 import type { Club } from '~/types'
 
 const props = defineProps<{ club: Club }>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { localized, pickName, formatPrice } = useLocaleContent()
 const localePath = useLocalePath()
 
-const gradient = computed(() => {
-  const palette = ['from-sz-blue to-sz-indigo', 'from-sz-green to-sz-teal', 'from-sz-orange to-sz-pink', 'from-sz-purple to-sz-indigo']
-  let h = 0
-  for (const c of props.club.slug) h = (h + c.charCodeAt(0)) % palette.length
-  return palette[h]
+const { resolveAccent } = useSportTheme()
+
+const accent = computed(() => resolveAccent(props.club.courts?.[0]?.sport))
+
+const sportChips = computed(() => {
+  const seen = new Set<string>()
+  const chips: Array<{ slug: string; name: string; color: string }> = []
+  for (const court of props.club.courts ?? []) {
+    if (court.sport && !seen.has(court.sport.slug)) {
+      seen.add(court.sport.slug)
+      chips.push({ slug: court.sport.slug, name: pickName(court.sport), color: court.sport.color })
+    }
+  }
+  return chips.slice(0, 3)
 })
 </script>
 
 <template>
-  <NuxtLink :to="localePath(`/clubs/${club.slug}`)" class="ios-card group block overflow-hidden">
-    <div class="relative h-32 bg-gradient-to-br" :class="gradient">
-      <span v-if="club.discount" class="absolute top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-xs font-bold text-sz-pink ltr:right-3 rtl:left-3">
-        {{ formatPrice(club.discount) }}٪ {{ t('clubs.discount') }}
+  <SzCard :to="localePath(`/clubs/${club.slug}`)" :accent="accent" themed class="flex h-full flex-col overflow-hidden">
+    <div class="relative h-36 overflow-hidden">
+      <div class="h-full transition-transform duration-500 group-hover:scale-105">
+        <ClubCover :club="club" />
+      </div>
+      <span
+        v-if="club.discount"
+        class="absolute top-3 z-10 rounded-full bg-brand-orange px-2.5 py-1 text-xs font-bold text-white ltr:right-3 rtl:left-3"
+      >
+        {{ club.discount }}{{ locale === 'fa' ? '٪' : '%' }} {{ t('clubs.discount') }}
       </span>
-      <div class="absolute inset-0 flex items-center justify-center text-white/90 text-4xl font-black opacity-30">
-        {{ pickName(club).charAt(0) }}
-      </div>
     </div>
-    <div class="space-y-2 p-4">
+    <div class="flex flex-1 flex-col gap-2 p-4">
       <div class="flex items-start justify-between gap-2">
-        <h3 class="ios-title-3 leading-tight">{{ pickName(club) }}</h3>
-        <span class="flex shrink-0 items-center gap-1 text-sm font-semibold text-sz-orange">
-          ★ {{ club.rating.toFixed(1) }}
-        </span>
+        <h3 class="text-lg font-extrabold leading-tight">{{ pickName(club) }}</h3>
+        <SzBadge tone="yellow">★ {{ club.rating.toFixed(1) }}</SzBadge>
       </div>
-      <p class="ios-footnote line-clamp-1">{{ localized(club.addressFa, club.addressEn) }}</p>
-      <div class="flex items-center justify-between pt-1">
-        <span class="text-sm text-sz-gray-500">
-          {{ t('clubs.from') }} <span class="font-bold text-sz-gray-900">{{ formatPrice(club.priceFrom) }}</span> {{ t('clubs.currency') }}
+      <p class="text-xs text-brand-gray-500 line-clamp-1">{{ localized(club.addressFa, club.addressEn) }}</p>
+      <div v-if="sportChips.length" class="flex flex-wrap gap-1">
+        <SzBadge v-for="s in sportChips" :key="s.slug" tone="sport" :sport-color="s.color" class="!text-xs">
+          <span class="inline-flex items-center gap-1" :style="{ color: s.color }">
+            <SportIcon :slug="s.slug" size="xs" />
+            {{ s.name }}
+          </span>
+        </SzBadge>
+      </div>
+      <div class="mt-auto flex items-center justify-between gap-2 pt-2">
+        <span class="text-sm">
+          {{ t('clubs.from') }}
+          <span class="text-lg font-black text-brand-orange">{{ formatPrice(club.priceFrom) }}</span>
+          {{ t('clubs.currency') }}
         </span>
-        <span class="rounded-full bg-sz-accent-soft px-3 py-1 text-xs font-semibold text-sz-blue group-hover:bg-sz-blue group-hover:text-white transition">
-          {{ t('clubs.details') }}
+        <span class="text-xs font-bold transition-transform duration-200 group-hover:translate-x-0.5" :style="{ color: accent }">
+          {{ t('clubs.reserve') }} →
         </span>
       </div>
     </div>
-  </NuxtLink>
+  </SzCard>
 </template>

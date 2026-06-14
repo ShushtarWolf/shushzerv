@@ -8,19 +8,54 @@
     "explore": "Explore",
     "clubs": "Clubs",
     "coaches": "Coaches",
+    "classes": "Classes",
+    "matches": "Matches",
     "book": "Book",
     "news": "News",
     "about": "About",
     "dashboard": "Dashboard",
     "login": "Sign in",
     "register": "Sign up",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "profile": "Profile",
+    "more": "More",
+    "menu": "Menu",
+    "chat": "Chat"
+  },
+  "cities": {
+    "tehran": "Tehran",
+    "isfahan": "Isfahan",
+    "shiraz": "Shiraz",
+    "mashhad": "Mashhad",
+    "tabriz": "Tabriz"
   },
   "hero": {
     "title": "Play, book, level up",
     "subtitle": "Find courts, classes and coaches in your city and book in seconds.",
     "cta": "Start booking",
-    "secondary": "Browse clubs"
+    "secondary": "Browse clubs",
+    "bookNow": "Book a court — now!",
+    "bookNowPrefix": "Book a court",
+    "bookNowHighlight": "now!",
+    "where": "Where",
+    "when": "When",
+    "nearby": "Near me",
+    "wherePlaceholder": "City or club…",
+    "pickSport": "Pick a sport",
+    "greeting": "Hey {name}! Ready to play?"
+  },
+  "trust": {
+    "rating": "App rating",
+    "players": "players",
+    "clubs": "clubs",
+    "realtime": "Real-time slots",
+    "realtimeValue": "Live"
+  },
+  "map": {
+    "title": "Clubs on the map",
+    "fromPrice": "from {price}",
+    "clubsCount": "{n} clubs",
+    "viewClub": "View club"
   },
   "search": {
     "city": "City",
@@ -38,9 +73,65 @@
   },
   "features": {
     "classes": { "title": "Group classes", "desc": "Join sports classes with flexible schedules" },
-    "coaches": { "title": "Pro coaches", "desc": "Book private sessions with top coaches" },
-    "clubs": { "title": "Featured clubs", "desc": "Access the best courts and facilities" },
+    "matches": { "title": "Find players", "desc": "Create or join open matches near you" },
+    "coaches": { "title": "Pro coaches", "desc": "Book sessions and get training plans" },
+    "clubs": { "title": "Featured clubs", "desc": "Book courts and pay at the club" },
     "plans": { "title": "Pay at club", "desc": "Book now, pay when you arrive" }
+  },
+  "levels": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "pro": "Pro"
+  },
+  "classes": {
+    "title": "Group classes",
+    "subtitle": "Sign up for group sports classes with pro coaches",
+    "viewAll": "View all",
+    "enroll": "Enroll",
+    "cancelEnroll": "Cancel enrollment",
+    "enrollError": "Could not enroll",
+    "full": "Class is full",
+    "seats": "Seats",
+    "manage": "Manage classes",
+    "create": "Create class",
+    "created": "Class created",
+    "titleField": "Class title"
+  },
+  "matches": {
+    "title": "Open matches",
+    "subtitle": "Create a match or join games that need players",
+    "viewAll": "View all",
+    "create": "Create match",
+    "join": "Join",
+    "leave": "Leave",
+    "full": "Match is full",
+    "players": "players",
+    "maxPlayers": "Max players",
+    "notes": "Notes",
+    "spotsLeft": "spots left"
+  },
+  "trainingPlans": {
+    "title": "Training plans",
+    "manage": "Manage plans",
+    "create": "Create plan",
+    "titleField": "Plan title",
+    "bodyField": "Plan content (one line per day/exercise)",
+    "assignEmail": "Athlete email (optional)"
+  },
+  "activities": {
+    "title": "Club events",
+    "create": "Create event",
+    "titleField": "Event title",
+    "descField": "Description"
+  },
+  "assistant": {
+    "title": "ShushBot",
+    "greeting": "Hi! I'm ShushBot — ask about court booking, classes, matches, coaches, or training plans.",
+    "placeholder": "Type your question…",
+    "send": "Send",
+    "go": "Go to page",
+    "error": "Something went wrong. Try again."
   },
   "why": {
     "title": "Why Shushzerv?",
@@ -79,12 +170,19 @@
     "courts": "Courts",
     "selectCourt": "Select a court",
     "selectSlot": "Select a slot",
-    "noSlots": "No slots available for this day"
+    "noSlots": "No slots available for this day",
+    "mapView": "Map",
+    "listView": "List",
+    "sortDefault": "Default",
+    "sortDistance": "Nearest",
+    "sortPrice": "Cheapest",
+    "reserve": "Book"
   },
   "coaches": {
     "title": "Top coaches",
     "viewAll": "View all",
     "sessions": "sessions",
+    "rating": "Rating",
     "bookSession": "Book a session"
   },
   "news": {
@@ -146,6 +244,7 @@
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome",
+    "welcomeUser": "Welcome, {name}",
     "myBookings": "My bookings",
     "upcoming": "Upcoming",
     "past": "Past",
@@ -168,16 +267,65 @@
     "price": "Price",
     "status": "Status",
     "court": "Court",
-    "customer": "Customer"
+    "customer": "Customer",
+    "myLevel": "Skill level",
+    "matchesPlayed": "Matches",
+    "wins": "Wins",
+    "overview": "Overview",
+    "walletTab": "Wallet",
+    "bookingsTab": "Bookings",
+    "plansTab": "Plans",
+    "manageTab": "Manage",
+    "financeTab": "Finance",
+    "platformAdmin": "Platform admin",
+    "todayRevenue": "Today's revenue",
+    "monthRevenue": "This month",
+    "totalRevenue": "Total revenue",
+    "walletBalance": "Wallet balance",
+    "pendingPayAtClub": "Pay at club",
+    "totalSpent": "Total spent",
+    "totalEarnings": "Total earnings",
+    "platformFees": "Platform fees",
+    "allUsers": "Users",
+    "allClubs": "Clubs",
+    "recentActivity": "Recent activity"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "topUp": "Top up wallet",
+    "topUpAmount": "Top-up amount",
+    "topUpHint": "Demo top-up — no real payment gateway.",
+    "topUpSuccess": "Wallet topped up successfully.",
+    "topUpError": "Top-up failed.",
+    "payout": "Withdraw",
+    "payoutAmount": "Withdrawal amount",
+    "payoutHint": "Withdraw to your registered bank account (demo).",
+    "payoutSuccess": "Withdrawal request submitted.",
+    "payoutError": "Withdrawal failed — insufficient balance.",
+    "transactions": "Transactions",
+    "noTransactions": "No transactions yet.",
+    "payWithWallet": "Pay with wallet",
+    "insufficientBalance": "Insufficient wallet balance.",
+    "types": {
+      "TOP_UP": "Top-up",
+      "BOOKING": "Court booking",
+      "CLASS": "Class",
+      "REFUND": "Refund",
+      "PAYOUT": "Withdrawal",
+      "COACH_EARNING": "Coach earning",
+      "PLATFORM_FEE": "Platform fee"
+    }
   },
   "booking": {
     "title": "Booking",
     "confirm": "Confirm booking",
     "payAtClub": "Pay at the club",
+    "payWithWallet": "Pay with wallet",
     "success": "Booking confirmed!",
     "loginRequired": "Please sign in to book.",
     "viewBookings": "View bookings",
-    "summary": "Booking summary"
+    "summary": "Booking summary",
+    "shareMatchHint": "Want company? Create an open match and share the link!"
   },
   "common": {
     "back": "Back",
@@ -185,6 +333,68 @@
     "noResults": "No results found",
     "language": "Language",
     "save": "Save",
-    "today": "Today"
+    "today": "Today",
+    "close": "Close"
+  },
+  "sportShowcase": {
+    "courts": "{n} courts available",
+    "cta": "View courts"
+  },
+  "cityGrid": {
+    "title": "Play in your city",
+    "subtitle": "Find courts near you across Iran"
+  },
+  "whyBook": {
+    "title": "Why book on Shushzerv?",
+    "eyebrow": "Simple & fair",
+    "freedom": { "title": "Total freedom", "desc": "No annual memberships. Pay only when you play." },
+    "pricing": { "title": "Transparent pricing", "desc": "Same prices as the club — no hidden fees." },
+    "realtime": { "title": "Real-time slots", "desc": "Live availability so you book with confidence." }
+  },
+  "testimonials": {
+    "title": "What players say",
+    "subtitle": "Thousands book every week",
+    "anonymous": "Player"
+  },
+  "matchShare": {
+    "title": "Join this match",
+    "joined": "You're in!",
+    "viewMatch": "View match",
+    "copyLink": "Copy share link",
+    "created": "Match created — share this link:"
+  },
+  "chat": {
+    "title": "Messages",
+    "thread": "Chat",
+    "direct": "Direct message",
+    "empty": "No conversations yet. Join a match to start chatting.",
+    "placeholder": "Type a message…",
+    "send": "Send"
+  },
+  "onboarding": {
+    "eyebrow": "Welcome",
+    "title": "Set up your profile",
+    "subtitle": "Pick your sports and level so we can find the right matches.",
+    "pickSports": "Favorite sports",
+    "pickLevel": "Your level",
+    "finish": "Let's go!"
+  },
+  "gamification": {
+    "level": "Level"
+  },
+  "badges": {
+    "first_booking": "First booking",
+    "regular": "Regular player",
+    "social_player": "Social player",
+    "rising_star": "Rising star"
+  },
+  "sportLanding": {
+    "cta": "Book a court now",
+    "howTitle": "How it works",
+    "steps": {
+      "pick": { "title": "Pick your city & slot", "desc": "Browse clubs sorted by distance and price." },
+      "book": { "title": "Book in seconds", "desc": "Confirm your slot — pay at the club." },
+      "play": { "title": "Show up and play", "desc": "Get your confirmation and hit the court." }
+    }
   }
 }

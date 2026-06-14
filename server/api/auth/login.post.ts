@@ -11,6 +11,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Invalid credentials' })
   }
 
+  await ensureWalletsForUser(user.id)
+
   await setUserSession(event, {
     user: { id: user.id, email: user.email, name: user.name, role: user.role, locale: user.locale },
   })

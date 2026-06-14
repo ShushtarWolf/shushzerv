@@ -5,8 +5,8 @@ const { fetch: refreshSession } = useUserSession()
 
 useHead({ title: () => t('auth.loginTitle') })
 
-const email = ref('athlete@shushzerv.local')
-const password = ref('demo1234')
+const email = ref('')
+const password = ref('')
 const error = ref('')
 const pending = ref(false)
 
@@ -16,10 +16,8 @@ async function submit() {
   try {
     await $fetch('/api/auth/login', { method: 'POST', body: { email: email.value, password: password.value } })
     await refreshSession()
-    const { user } = useUserSession()
-    if (user.value?.role === 'CLUB_ADMIN') await navigateTo(localePath('/dashboard/club'))
-    else if (user.value?.role === 'COACH') await navigateTo(localePath('/dashboard/coach'))
-    else await navigateTo(localePath('/dashboard'))
+    const { dashboardPath } = useDashboardPath()
+    await navigateTo(dashboardPath.value)
   } catch {
     error.value = t('auth.invalid')
   } finally {

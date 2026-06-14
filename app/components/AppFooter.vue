@@ -6,7 +6,7 @@ const year = new Date().getFullYear()
 
 <template>
   <footer class="hidden md:block border-t border-black/5 mt-12">
-    <div class="mx-auto max-w-6xl px-4 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+    <div class="mx-auto max-w-7xl px-4 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
       <div class="space-y-2">
         <ShushLogo />
         <p class="ios-footnote max-w-xs">{{ t('brand.tagline') }}</p>

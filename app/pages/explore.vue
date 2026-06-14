@@ -4,6 +4,7 @@ import type { Sport } from '~/types'
 const { t } = useI18n()
 const localePath = useLocalePath()
 const { localized } = useLocaleContent()
+const { softBg } = useSportTheme()
 
 useHead({ title: () => t('nav.explore') })
 
@@ -33,7 +34,7 @@ const filteredSports = computed(() =>
         v-for="group in sportGroups"
         :key="group.key"
         type="button"
-        class="ios-segment-item tap-highlight flex-1 min-w-[4.5rem]"
+        class="ios-segment-item tap-highlight flex-1 min-w-[4.5rem] transition-all duration-200"
         :class="{ 'ios-segment-item-active': activeGroup === group.key }"
         @click="activeGroup = group.key"
       >
@@ -41,16 +42,27 @@ const filteredSports = computed(() =>
       </button>
     </div>
 
-    <div v-if="filteredSports.length" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      <NuxtLink
+    <div
+      v-if="filteredSports.length"
+      :key="activeGroup"
+      class="sz-stagger sz-grid-enter grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+    >
+      <SzCard
         v-for="sport in filteredSports"
         :key="sport.id"
         :to="localePath(`/sports/${sport.slug}`)"
-        class="ios-card flex flex-col items-center gap-2 p-5 text-center tap-highlight"
+        :accent="sport.color"
+        themed
+        class="flex flex-col items-center gap-2 p-5 text-center"
       >
-        <span class="text-3xl">{{ sport.icon }}</span>
+        <span
+          class="sz-sport-icon flex h-14 w-14 items-center justify-center rounded-2xl"
+          :style="{ backgroundColor: softBg(sport.color), color: sport.color }"
+        >
+          <SportIcon :slug="sport.slug" size="lg" />
+        </span>
         <span class="font-semibold">{{ t(`sport.${sport.slug}.name`, sport.slug) }}</span>
-      </NuxtLink>
+      </SzCard>
     </div>
     <p v-else class="ios-footnote">{{ t('common.noResults') }}</p>
   </div>

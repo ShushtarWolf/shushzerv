@@ -15,10 +15,10 @@ const localePath = useLocalePath()
       class="ios-card flex flex-col items-center gap-2 p-4 text-center"
     >
       <span
-        class="inline-flex h-12 w-12 items-center justify-center rounded-2xl text-2xl"
-        :style="{ backgroundColor: sport.color + '22' }"
+        class="inline-flex h-12 w-12 items-center justify-center rounded-2xl"
+        :style="{ backgroundColor: sport.color + '22', color: sport.color }"
       >
-        {{ sport.icon }}
+        <SportIcon :slug="sport.slug" size="md" />
       </span>
       <span class="text-xs font-medium text-sz-gray-700">{{ pickName(sport) }}</span>
     </NuxtLink>
