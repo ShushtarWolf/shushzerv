@@ -1,0 +1,665 @@
+[
+  {
+    "step": 1,
+    "frame": "01-home",
+    "button": "باشگاه‌ها",
+    "click_pct": {
+      "x": 58,
+      "y": 4
+    },
+    "click_px": {
+      "x": 742,
+      "y": 32
+    },
+    "result": "03b-clubs-list",
+    "duration_ms": 900,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/03b-clubs-list.png"
+  },
+  {
+    "step": 2,
+    "frame": "03b-clubs-list",
+    "button": "مجموعه تنیس آزادی",
+    "click_pct": {
+      "x": 72,
+      "y": 38
+    },
+    "click_px": {
+      "x": 922,
+      "y": 304
+    },
+    "result": "13-club-detail",
+    "duration_ms": 900,
+    "screenshot": "screenshots/03b-clubs-list.png",
+    "result_screenshot": "screenshots/13-club-detail.png"
+  },
+  {
+    "step": 3,
+    "frame": "13-club-detail",
+    "button": "زمین ۱",
+    "click_pct": {
+      "x": 52,
+      "y": 52
+    },
+    "click_px": {
+      "x": 666,
+      "y": 416
+    },
+    "result": "14b-club-slot-picked-auth",
+    "duration_ms": 900,
+    "screenshot": "screenshots/13-club-detail.png",
+    "result_screenshot": "screenshots/14b-club-slot-picked-auth.png"
+  },
+  {
+    "step": 4,
+    "frame": "14b-club-slot-picked-auth",
+    "button": "سانس آزاد",
+    "click_pct": {
+      "x": 68,
+      "y": 58
+    },
+    "click_px": {
+      "x": 870,
+      "y": 464
+    },
+    "result": "14c-booking-confirm",
+    "duration_ms": 900,
+    "screenshot": "screenshots/14b-club-slot-picked-auth.png",
+    "result_screenshot": "screenshots/14c-booking-confirm.png"
+  },
+  {
+    "step": 5,
+    "frame": "14c-booking-confirm",
+    "button": "تأیید رزرو",
+    "click_pct": {
+      "x": 50,
+      "y": 72
+    },
+    "click_px": {
+      "x": 640,
+      "y": 576
+    },
+    "result": "14c-booking-success",
+    "duration_ms": 1100,
+    "screenshot": "screenshots/14c-booking-confirm.png",
+    "result_screenshot": "screenshots/14c-booking-success.png"
+  },
+  {
+    "step": 6,
+    "frame": "14c-booking-success",
+    "button": "مشاهده رزروها",
+    "click_pct": {
+      "x": 42,
+      "y": 68
+    },
+    "click_px": {
+      "x": 538,
+      "y": 544
+    },
+    "result": "22-dash-athlete-bookings",
+    "duration_ms": 900,
+    "screenshot": "screenshots/14c-booking-success.png",
+    "result_screenshot": "screenshots/22-dash-athlete-bookings.png"
+  },
+  {
+    "step": 7,
+    "frame": "01-home",
+    "button": "کاوش",
+    "click_pct": {
+      "x": 42,
+      "y": 4
+    },
+    "click_px": {
+      "x": 538,
+      "y": 32
+    },
+    "result": "02-explore",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/02-explore.png"
+  },
+  {
+    "step": 8,
+    "frame": "02-explore",
+    "button": "تنیس",
+    "click_pct": {
+      "x": 50,
+      "y": 28
+    },
+    "click_px": {
+      "x": 640,
+      "y": 224
+    },
+    "result": "12-sports-tennis",
+    "duration_ms": 800,
+    "screenshot": "screenshots/02-explore.png",
+    "result_screenshot": "screenshots/12-sports-tennis.png"
+  },
+  {
+    "step": 9,
+    "frame": "01-home",
+    "button": "کلاس‌ها",
+    "click_pct": {
+      "x": 50,
+      "y": 4
+    },
+    "click_px": {
+      "x": 640,
+      "y": 32
+    },
+    "result": "04-classes",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/04-classes.png"
+  },
+  {
+    "step": 10,
+    "frame": "04-classes",
+    "button": "جزئیات کلاس",
+    "click_pct": {
+      "x": 50,
+      "y": 42
+    },
+    "click_px": {
+      "x": 640,
+      "y": 336
+    },
+    "result": "04b-class-detail-full",
+    "duration_ms": 900,
+    "screenshot": "screenshots/04-classes.png",
+    "result_screenshot": "screenshots/04b-class-detail-full.png"
+  },
+  {
+    "step": 11,
+    "frame": "01-home",
+    "button": "همبازی",
+    "click_pct": {
+      "x": 66,
+      "y": 4
+    },
+    "click_px": {
+      "x": 845,
+      "y": 32
+    },
+    "result": "05-matches",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/05-matches.png"
+  },
+  {
+    "step": 12,
+    "frame": "05-matches",
+    "button": "جزئیات همبازی",
+    "click_pct": {
+      "x": 50,
+      "y": 40
+    },
+    "click_px": {
+      "x": 640,
+      "y": 320
+    },
+    "result": "05b-match-detail",
+    "duration_ms": 900,
+    "screenshot": "screenshots/05-matches.png",
+    "result_screenshot": "screenshots/05b-match-detail.png"
+  },
+  {
+    "step": 13,
+    "frame": "01-home",
+    "button": "تورنمنت",
+    "click_pct": {
+      "x": 74,
+      "y": 4
+    },
+    "click_px": {
+      "x": 947,
+      "y": 32
+    },
+    "result": "07-tournaments",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/07-tournaments.png"
+  },
+  {
+    "step": 14,
+    "frame": "07-tournaments",
+    "button": "جزئیات تورنمنت",
+    "click_pct": {
+      "x": 50,
+      "y": 38
+    },
+    "click_px": {
+      "x": 640,
+      "y": 304
+    },
+    "result": "07b-tournament-detail",
+    "duration_ms": 900,
+    "screenshot": "screenshots/07-tournaments.png",
+    "result_screenshot": "screenshots/07b-tournament-detail.png"
+  },
+  {
+    "step": 15,
+    "frame": "01-home",
+    "button": "بیشتر ▾",
+    "click_pct": {
+      "x": 88,
+      "y": 4
+    },
+    "click_px": {
+      "x": 1126,
+      "y": 32
+    },
+    "result": null,
+    "duration_ms": 600,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": null
+  },
+  {
+    "step": 16,
+    "frame": "01-home",
+    "button": "مربیان",
+    "click_pct": {
+      "x": 88,
+      "y": 12
+    },
+    "click_px": {
+      "x": 1126,
+      "y": 96
+    },
+    "result": "06-coaches",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/06-coaches.png"
+  },
+  {
+    "step": 17,
+    "frame": "06-coaches",
+    "button": "پروفایل مربی",
+    "click_pct": {
+      "x": 50,
+      "y": 38
+    },
+    "click_px": {
+      "x": 640,
+      "y": 304
+    },
+    "result": "06b-coach-detail",
+    "duration_ms": 900,
+    "screenshot": "screenshots/06-coaches.png",
+    "result_screenshot": "screenshots/06b-coach-detail.png"
+  },
+  {
+    "step": 18,
+    "frame": "01-home",
+    "button": "بیشتر ▾",
+    "click_pct": {
+      "x": 88,
+      "y": 4
+    },
+    "click_px": {
+      "x": 1126,
+      "y": 32
+    },
+    "result": null,
+    "duration_ms": 500,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": null
+  },
+  {
+    "step": 19,
+    "frame": "01-home",
+    "button": "اخبار",
+    "click_pct": {
+      "x": 88,
+      "y": 16
+    },
+    "click_px": {
+      "x": 1126,
+      "y": 128
+    },
+    "result": "08-news",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/08-news.png"
+  },
+  {
+    "step": 20,
+    "frame": "01-home",
+    "button": "بیشتر ▾",
+    "click_pct": {
+      "x": 88,
+      "y": 4
+    },
+    "click_px": {
+      "x": 1126,
+      "y": 32
+    },
+    "result": null,
+    "duration_ms": 500,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": null
+  },
+  {
+    "step": 21,
+    "frame": "01-home",
+    "button": "چت",
+    "click_pct": {
+      "x": 88,
+      "y": 20
+    },
+    "click_px": {
+      "x": 1126,
+      "y": 160
+    },
+    "result": "16-chat",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/16-chat.png"
+  },
+  {
+    "step": 22,
+    "frame": "01-home",
+    "button": "ورود",
+    "click_pct": {
+      "x": 10,
+      "y": 4
+    },
+    "click_px": {
+      "x": 128,
+      "y": 32
+    },
+    "result": "10-login",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/10-login.png"
+  },
+  {
+    "step": 23,
+    "frame": "10-login",
+    "button": "ورود به حساب",
+    "click_pct": {
+      "x": 50,
+      "y": 55
+    },
+    "click_px": {
+      "x": 640,
+      "y": 440
+    },
+    "result": "20-dash-athlete-overview",
+    "duration_ms": 1200,
+    "screenshot": "screenshots/10-login.png",
+    "result_screenshot": "screenshots/20-dash-athlete-overview.png"
+  },
+  {
+    "step": 24,
+    "frame": "20-dash-athlete-overview",
+    "button": "برنامه",
+    "click_pct": {
+      "x": 18,
+      "y": 22
+    },
+    "click_px": {
+      "x": 230,
+      "y": 176
+    },
+    "result": "21-dash-athlete-schedule",
+    "duration_ms": 800,
+    "screenshot": "screenshots/20-dash-athlete-overview.png",
+    "result_screenshot": "screenshots/21-dash-athlete-schedule.png"
+  },
+  {
+    "step": 25,
+    "frame": "21-dash-athlete-schedule",
+    "button": "رزروها",
+    "click_pct": {
+      "x": 18,
+      "y": 30
+    },
+    "click_px": {
+      "x": 230,
+      "y": 240
+    },
+    "result": "22-dash-athlete-bookings",
+    "duration_ms": 800,
+    "screenshot": "screenshots/21-dash-athlete-schedule.png",
+    "result_screenshot": "screenshots/22-dash-athlete-bookings.png"
+  },
+  {
+    "step": 26,
+    "frame": "22-dash-athlete-bookings",
+    "button": "کیف پول",
+    "click_pct": {
+      "x": 18,
+      "y": 38
+    },
+    "click_px": {
+      "x": 230,
+      "y": 304
+    },
+    "result": "23-dash-athlete-wallet",
+    "duration_ms": 800,
+    "screenshot": "screenshots/22-dash-athlete-bookings.png",
+    "result_screenshot": "screenshots/23-dash-athlete-wallet.png"
+  },
+  {
+    "step": 27,
+    "frame": "23-dash-athlete-wallet",
+    "button": "پروفایل",
+    "click_pct": {
+      "x": 18,
+      "y": 46
+    },
+    "click_px": {
+      "x": 230,
+      "y": 368
+    },
+    "result": "24-dash-athlete-profile",
+    "duration_ms": 800,
+    "screenshot": "screenshots/23-dash-athlete-wallet.png",
+    "result_screenshot": "screenshots/24-dash-athlete-profile.png"
+  },
+  {
+    "step": 28,
+    "frame": "03b-clubs-list",
+    "button": "نقشه",
+    "click_pct": {
+      "x": 42,
+      "y": 18
+    },
+    "click_px": {
+      "x": 538,
+      "y": 144
+    },
+    "result": "03-clubs-map-view",
+    "duration_ms": 900,
+    "screenshot": "screenshots/03b-clubs-list.png",
+    "result_screenshot": "screenshots/03-clubs-map-view.png"
+  },
+  {
+    "step": 29,
+    "frame": "03-clubs-map-view",
+    "button": "پین باشگاه",
+    "click_pct": {
+      "x": 55,
+      "y": 45
+    },
+    "click_px": {
+      "x": 704,
+      "y": 360
+    },
+    "result": "03c-clubs-map-popup",
+    "duration_ms": 900,
+    "screenshot": "screenshots/03-clubs-map-view.png",
+    "result_screenshot": "screenshots/03c-clubs-map-popup.png"
+  },
+  {
+    "step": 30,
+    "frame": "03c-clubs-map-popup",
+    "button": "رزرو",
+    "click_pct": {
+      "x": 72,
+      "y": 62
+    },
+    "click_px": {
+      "x": 922,
+      "y": 496
+    },
+    "result": "13-club-detail",
+    "duration_ms": 900,
+    "screenshot": "screenshots/03c-clubs-map-popup.png",
+    "result_screenshot": "screenshots/13-club-detail.png"
+  },
+  {
+    "step": 31,
+    "frame": "10-login",
+    "button": "ثبت‌نام",
+    "click_pct": {
+      "x": 50,
+      "y": 72
+    },
+    "click_px": {
+      "x": 640,
+      "y": 576
+    },
+    "result": "11-register",
+    "duration_ms": 800,
+    "screenshot": "screenshots/10-login.png",
+    "result_screenshot": "screenshots/11-register.png"
+  },
+  {
+    "step": 32,
+    "frame": "11-register",
+    "button": "ثبت‌نام ورزشکار",
+    "click_pct": {
+      "x": 50,
+      "y": 62
+    },
+    "click_px": {
+      "x": 640,
+      "y": 496
+    },
+    "result": "15-onboarding",
+    "duration_ms": 1000,
+    "screenshot": "screenshots/11-register.png",
+    "result_screenshot": "screenshots/15-onboarding.png"
+  },
+  {
+    "step": 33,
+    "frame": "30-dash-club-overview",
+    "button": "برنامه باشگاه",
+    "click_pct": {
+      "x": 18,
+      "y": 30
+    },
+    "click_px": {
+      "x": 230,
+      "y": 240
+    },
+    "result": "31-dash-club-schedule",
+    "duration_ms": 800,
+    "screenshot": "screenshots/30-dash-club-overview.png",
+    "result_screenshot": "screenshots/31-dash-club-schedule.png"
+  },
+  {
+    "step": 34,
+    "frame": "31-dash-club-schedule",
+    "button": "مدیریت",
+    "click_pct": {
+      "x": 18,
+      "y": 38
+    },
+    "click_px": {
+      "x": 230,
+      "y": 304
+    },
+    "result": "32-dash-club-manage",
+    "duration_ms": 800,
+    "screenshot": "screenshots/31-dash-club-schedule.png",
+    "result_screenshot": "screenshots/32-dash-club-manage.png"
+  },
+  {
+    "step": 35,
+    "frame": "32-dash-club-manage",
+    "button": "رزروها",
+    "click_pct": {
+      "x": 18,
+      "y": 46
+    },
+    "click_px": {
+      "x": 230,
+      "y": 368
+    },
+    "result": "33-dash-club-bookings",
+    "duration_ms": 800,
+    "screenshot": "screenshots/32-dash-club-manage.png",
+    "result_screenshot": "screenshots/33-dash-club-bookings.png"
+  },
+  {
+    "step": 36,
+    "frame": "40-dash-coach-overview",
+    "button": "برنامه‌ها",
+    "click_pct": {
+      "x": 18,
+      "y": 30
+    },
+    "click_px": {
+      "x": 230,
+      "y": 240
+    },
+    "result": "41-dash-coach-plans",
+    "duration_ms": 800,
+    "screenshot": "screenshots/40-dash-coach-overview.png",
+    "result_screenshot": "screenshots/41-dash-coach-plans.png"
+  },
+  {
+    "step": 37,
+    "frame": "50-dash-admin-overview",
+    "button": "کاربران",
+    "click_pct": {
+      "x": 18,
+      "y": 30
+    },
+    "click_px": {
+      "x": 230,
+      "y": 240
+    },
+    "result": "51-dash-admin-users",
+    "duration_ms": 800,
+    "screenshot": "screenshots/50-dash-admin-overview.png",
+    "result_screenshot": "screenshots/51-dash-admin-users.png"
+  },
+  {
+    "step": 38,
+    "frame": "17-mobile-home",
+    "button": "رزرو",
+    "click_pct": {
+      "x": 25,
+      "y": 96
+    },
+    "click_px": {
+      "x": 320,
+      "y": 768
+    },
+    "result": "18-mobile-clubs",
+    "duration_ms": 900,
+    "screenshot": "screenshots/17-mobile-home.png",
+    "result_screenshot": "screenshots/18-mobile-clubs.png"
+  },
+  {
+    "step": 39,
+    "frame": "01-home",
+    "button": "درباره",
+    "click_pct": {
+      "x": 50,
+      "y": 4
+    },
+    "click_px": {
+      "x": 640,
+      "y": 32
+    },
+    "result": "09-about",
+    "duration_ms": 800,
+    "screenshot": "screenshots/01-home.png",
+    "result_screenshot": "screenshots/09-about.png"
+  }
+]

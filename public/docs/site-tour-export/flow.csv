@@ -1,0 +1,40 @@
+step,frame,button,click_x_pct,click_y_pct,click_x_px,click_y_px,result_frame,duration_ms,screenshot
+1,01-home,"باشگاه‌ها",58,4,742,32,03b-clubs-list,900,screenshots/01-home.png
+2,03b-clubs-list,"مجموعه تنیس آزادی",72,38,922,304,13-club-detail,900,screenshots/03b-clubs-list.png
+3,13-club-detail,"زمین ۱",52,52,666,416,14b-club-slot-picked-auth,900,screenshots/13-club-detail.png
+4,14b-club-slot-picked-auth,"سانس آزاد",68,58,870,464,14c-booking-confirm,900,screenshots/14b-club-slot-picked-auth.png
+5,14c-booking-confirm,"تأیید رزرو",50,72,640,576,14c-booking-success,1100,screenshots/14c-booking-confirm.png
+6,14c-booking-success,"مشاهده رزروها",42,68,538,544,22-dash-athlete-bookings,900,screenshots/14c-booking-success.png
+7,01-home,"کاوش",42,4,538,32,02-explore,800,screenshots/01-home.png
+8,02-explore,"تنیس",50,28,640,224,12-sports-tennis,800,screenshots/02-explore.png
+9,01-home,"کلاس‌ها",50,4,640,32,04-classes,800,screenshots/01-home.png
+10,04-classes,"جزئیات کلاس",50,42,640,336,04b-class-detail-full,900,screenshots/04-classes.png
+11,01-home,"همبازی",66,4,845,32,05-matches,800,screenshots/01-home.png
+12,05-matches,"جزئیات همبازی",50,40,640,320,05b-match-detail,900,screenshots/05-matches.png
+13,01-home,"تورنمنت",74,4,947,32,07-tournaments,800,screenshots/01-home.png
+14,07-tournaments,"جزئیات تورنمنت",50,38,640,304,07b-tournament-detail,900,screenshots/07-tournaments.png
+15,01-home,"بیشتر ▾",88,4,1126,32,,600,screenshots/01-home.png
+16,01-home,"مربیان",88,12,1126,96,06-coaches,800,screenshots/01-home.png
+17,06-coaches,"پروفایل مربی",50,38,640,304,06b-coach-detail,900,screenshots/06-coaches.png
+18,01-home,"بیشتر ▾",88,4,1126,32,,500,screenshots/01-home.png
+19,01-home,"اخبار",88,16,1126,128,08-news,800,screenshots/01-home.png
+20,01-home,"بیشتر ▾",88,4,1126,32,,500,screenshots/01-home.png
+21,01-home,"چت",88,20,1126,160,16-chat,800,screenshots/01-home.png
+22,01-home,"ورود",10,4,128,32,10-login,800,screenshots/01-home.png
+23,10-login,"ورود به حساب",50,55,640,440,20-dash-athlete-overview,1200,screenshots/10-login.png
+24,20-dash-athlete-overview,"برنامه",18,22,230,176,21-dash-athlete-schedule,800,screenshots/20-dash-athlete-overview.png
+25,21-dash-athlete-schedule,"رزروها",18,30,230,240,22-dash-athlete-bookings,800,screenshots/21-dash-athlete-schedule.png
+26,22-dash-athlete-bookings,"کیف پول",18,38,230,304,23-dash-athlete-wallet,800,screenshots/22-dash-athlete-bookings.png
+27,23-dash-athlete-wallet,"پروفایل",18,46,230,368,24-dash-athlete-profile,800,screenshots/23-dash-athlete-wallet.png
+28,03b-clubs-list,"نقشه",42,18,538,144,03-clubs-map-view,900,screenshots/03b-clubs-list.png
+29,03-clubs-map-view,"پین باشگاه",55,45,704,360,03c-clubs-map-popup,900,screenshots/03-clubs-map-view.png
+30,03c-clubs-map-popup,"رزرو",72,62,922,496,13-club-detail,900,screenshots/03c-clubs-map-popup.png
+31,10-login,"ثبت‌نام",50,72,640,576,11-register,800,screenshots/10-login.png
+32,11-register,"ثبت‌نام ورزشکار",50,62,640,496,15-onboarding,1000,screenshots/11-register.png
+33,30-dash-club-overview,"برنامه باشگاه",18,30,230,240,31-dash-club-schedule,800,screenshots/30-dash-club-overview.png
+34,31-dash-club-schedule,"مدیریت",18,38,230,304,32-dash-club-manage,800,screenshots/31-dash-club-schedule.png
+35,32-dash-club-manage,"رزروها",18,46,230,368,33-dash-club-bookings,800,screenshots/32-dash-club-manage.png
+36,40-dash-coach-overview,"برنامه‌ها",18,30,230,240,41-dash-coach-plans,800,screenshots/40-dash-coach-overview.png
+37,50-dash-admin-overview,"کاربران",18,30,230,240,51-dash-admin-users,800,screenshots/50-dash-admin-overview.png
+38,17-mobile-home,"رزرو",25,96,320,768,18-mobile-clubs,900,screenshots/17-mobile-home.png
+39,01-home,"درباره",50,4,640,32,09-about,800,screenshots/01-home.png
