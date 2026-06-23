@@ -67,7 +67,19 @@
     "placeholder": "Search clubs, sports or coaches…",
     "action": "Search",
     "allCities": "All cities",
-    "allSports": "All sports"
+    "allSports": "All sports",
+    "open": "Open search",
+    "noResults": "No results found",
+    "hint": "Search clubs, coaches, classes, matches and more",
+    "types": {
+      "club": "Club",
+      "coach": "Coach",
+      "class": "Class",
+      "match": "Match",
+      "tournament": "Tournament",
+      "news": "News",
+      "sport": "Sport"
+    }
   },
   "categories": {
     "title": "Sports",
