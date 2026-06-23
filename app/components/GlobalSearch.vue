@@ -8,12 +8,6 @@ type SearchResult = {
   link: string
 }
 
-const props = withDefaults(defineProps<{
-  variant?: 'bar' | 'icon'
-}>(), {
-  variant: 'bar',
-})
-
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const { localized } = useLocaleContent()
@@ -22,12 +16,9 @@ const query = ref('')
 const results = ref<SearchResult[]>([])
 const pending = ref(false)
 const open = ref(false)
-const overlayOpen = ref(false)
 const inputRef = ref<HTMLInputElement | null>(null)
 
 const isRtl = computed(() => locale.value === 'fa')
-const isBar = computed(() => props.variant === 'bar')
-const isIcon = computed(() => props.variant === 'icon')
 
 const typeLabels: Record<SearchResult['type'], string> = {
   club: 'search.types.club',
@@ -69,20 +60,19 @@ watch(query, (q) => {
   }, 300)
 })
 
-function closeDropdown() {
+function close() {
   open.value = false
 }
 
-function closeAll() {
-  open.value = false
-  overlayOpen.value = false
+function reset() {
+  query.value = ''
+  results.value = []
+  close()
 }
 
 function goTo(link: string) {
   navigateTo(localePath(link))
-  query.value = ''
-  results.value = []
-  closeAll()
+  reset()
 }
 
 function submitSearch() {
@@ -93,126 +83,100 @@ function submitSearch() {
     return
   }
   navigateTo({ path: localePath('/clubs'), query: { q } })
-  query.value = ''
-  results.value = []
-  closeAll()
+  reset()
 }
 
-function openOverlay() {
-  overlayOpen.value = true
+function openSearch() {
   open.value = true
   nextTick(() => inputRef.value?.focus())
 }
 
-watch(overlayOpen, (v) => {
+function onKeydown(e: KeyboardEvent) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault()
+    openSearch()
+  }
+  if (e.key === 'Escape' && open.value) reset()
+}
+
+watch(open, (v) => {
   document.body.style.overflow = v ? 'hidden' : ''
 })
 
+onMounted(() => window.addEventListener('keydown', onKeydown))
 onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
   document.body.style.overflow = ''
 })
 </script>
 
 <template>
-  <!-- Full-width search bar (tablet + desktop) -->
-  <div v-if="isBar" class="relative w-full">
-    <SzIcon name="search" class="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-gray-500" />
-    <input
-      v-model="query"
-      type="search"
-      class="ios-input w-full !border-brand-gray-200 !bg-brand-gray-50 !py-2.5 ps-9 text-sm !shadow-none focus:!border-brand-orange focus:!bg-white"
-      :placeholder="t('search.placeholder')"
-      :dir="isRtl ? 'rtl' : 'ltr'"
-      @focus="open = true"
-      @keydown.enter.prevent="submitSearch"
-      @keydown.esc="closeDropdown(); query = ''"
-    />
-    <div
-      v-if="open && (results.length || pending || query.trim())"
-      class="absolute inset-x-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-xl border border-black/5 bg-white py-1 shadow-float"
-    >
-      <p v-if="pending" class="px-4 py-3 text-sm text-brand-gray-500">{{ t('common.loading') }}</p>
-      <template v-else-if="results.length">
-        <button
-          v-for="(r, i) in results"
-          :key="`${r.type}-${r.link}-${i}`"
-          type="button"
-          class="flex w-full items-start gap-3 px-4 py-2.5 text-start hover:bg-brand-gray-50"
-          @mousedown.prevent="goTo(r.link)"
-        >
-          <span class="mt-0.5 shrink-0 rounded-md bg-brand-orange/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-orange">
-            {{ t(typeLabels[r.type]) }}
-          </span>
-          <span class="min-w-0">
-            <span class="block truncate text-sm font-semibold text-brand-gray-900">{{ labelFor(r) }}</span>
-            <span v-if="subtitleFor(r)" class="block truncate text-xs text-brand-gray-500">{{ subtitleFor(r) }}</span>
-          </span>
-        </button>
-      </template>
-      <p v-else-if="query.trim()" class="px-4 py-3 text-sm text-brand-gray-500">{{ t('search.noResults') }}</p>
-    </div>
-    <div v-if="open" class="fixed inset-0 z-40" @click="closeDropdown" />
-  </div>
-
-  <!-- Mobile icon trigger -->
   <button
-    v-if="isIcon"
     type="button"
     class="inline-flex rounded-lg p-2 text-brand-gray-700 hover:bg-brand-gray-100"
     :aria-label="t('search.open')"
-    @click="openOverlay"
+    :aria-expanded="open"
+    @click="openSearch"
   >
     <SzIcon name="search" />
   </button>
 
-  <!-- Mobile full-screen overlay -->
-  <Teleport v-if="isIcon" to="body">
+  <Teleport to="body">
     <div
-      v-if="overlayOpen"
-      class="fixed inset-0 z-50 flex flex-col bg-white md:hidden"
-      style="padding-top: var(--sz-safe-top)"
+      v-if="open"
+      class="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4 backdrop-blur-sm sm:items-start sm:pt-[12vh]"
+      style="padding-top: max(1rem, var(--sz-safe-top))"
+      @click.self="reset"
     >
-      <div class="flex items-center gap-2 border-b border-black/5 px-4 py-3">
-        <SzIcon name="search" class="h-5 w-5 shrink-0 text-brand-gray-500" />
-        <input
-          ref="inputRef"
-          v-model="query"
-          type="search"
-          class="ios-input min-w-0 flex-1 !border-0 !bg-transparent !py-2 !shadow-none"
-          :placeholder="t('search.placeholder')"
-          :dir="isRtl ? 'rtl' : 'ltr'"
-          @keydown.enter.prevent="submitSearch"
-        />
-        <button
-          type="button"
-          class="shrink-0 rounded-lg px-3 py-2 text-sm font-semibold text-brand-gray-600 hover:bg-brand-gray-100"
-          @click="closeAll(); query = ''; results = []"
-        >
-          {{ t('common.cancel') }}
-        </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto px-2 py-2">
-        <p v-if="pending" class="px-3 py-4 text-sm text-brand-gray-500">{{ t('common.loading') }}</p>
-        <template v-else-if="results.length">
+      <div
+        class="flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-lifted"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="t('search.placeholder')"
+        @click.stop
+      >
+        <div class="flex items-center gap-2 border-b border-black/5 px-4 py-3">
+          <SzIcon name="search" class="h-5 w-5 shrink-0 text-brand-gray-500" />
+          <input
+            ref="inputRef"
+            v-model="query"
+            type="search"
+            class="ios-input min-w-0 flex-1 !border-0 !bg-transparent !py-2 !shadow-none"
+            :placeholder="t('search.placeholder')"
+            :dir="isRtl ? 'rtl' : 'ltr'"
+            @keydown.enter.prevent="submitSearch"
+          />
           <button
-            v-for="(r, i) in results"
-            :key="`${r.type}-${r.link}-${i}`"
             type="button"
-            class="flex w-full items-start gap-3 rounded-xl px-3 py-3 text-start hover:bg-brand-gray-50"
-            @click="goTo(r.link)"
+            class="shrink-0 rounded-lg px-3 py-2 text-sm font-semibold text-brand-gray-600 hover:bg-brand-gray-100"
+            @click="reset"
           >
-            <span class="mt-0.5 shrink-0 rounded-md bg-brand-orange/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-orange">
-              {{ t(typeLabels[r.type]) }}
-            </span>
-            <span class="min-w-0">
-              <span class="block text-sm font-semibold text-brand-gray-900">{{ labelFor(r) }}</span>
-              <span v-if="subtitleFor(r)" class="block text-xs text-brand-gray-500">{{ subtitleFor(r) }}</span>
-            </span>
+            {{ t('common.close') }}
           </button>
-        </template>
-        <p v-else-if="query.trim()" class="px-3 py-4 text-sm text-brand-gray-500">{{ t('search.noResults') }}</p>
-        <p v-else class="px-3 py-4 text-sm text-brand-gray-500">{{ t('search.hint') }}</p>
+        </div>
+
+        <div class="max-h-[min(24rem,50vh)] overflow-y-auto px-2 py-2">
+          <p v-if="pending" class="px-3 py-4 text-sm text-brand-gray-500">{{ t('common.loading') }}</p>
+          <template v-else-if="results.length">
+            <button
+              v-for="(r, i) in results"
+              :key="`${r.type}-${r.link}-${i}`"
+              type="button"
+              class="flex w-full items-start gap-3 rounded-xl px-3 py-3 text-start hover:bg-brand-gray-50"
+              @click="goTo(r.link)"
+            >
+              <span class="mt-0.5 shrink-0 rounded-md bg-brand-orange/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-orange">
+                {{ t(typeLabels[r.type]) }}
+              </span>
+              <span class="min-w-0">
+                <span class="block text-sm font-semibold text-brand-gray-900">{{ labelFor(r) }}</span>
+                <span v-if="subtitleFor(r)" class="block text-xs text-brand-gray-500">{{ subtitleFor(r) }}</span>
+              </span>
+            </button>
+          </template>
+          <p v-else-if="query.trim()" class="px-3 py-4 text-sm text-brand-gray-500">{{ t('search.noResults') }}</p>
+          <p v-else class="px-3 py-4 text-sm text-brand-gray-500">{{ t('search.hint') }}</p>
+        </div>
       </div>
     </div>
   </Teleport>

@@ -40,81 +40,73 @@ function closeMobileNav() {
 
 <template>
   <header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur-xl">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6">
-      <!-- Row 1: brand + actions -->
-      <div class="flex h-14 items-center justify-between gap-3 sm:h-16">
-        <div class="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            class="inline-flex rounded-lg p-2 text-brand-gray-700 hover:bg-brand-gray-100 lg:hidden"
-            :aria-label="t('nav.menu')"
-            @click="showMobileNav = !showMobileNav"
-          >
-            <SzIcon :name="showMobileNav ? 'close' : 'menu'" />
-          </button>
-          <ShushLogo />
-        </div>
-
-        <nav class="hidden shrink-0 items-center gap-0.5 xl:flex">
-          <NuxtLink
-            v-for="link in primaryLinks"
-            :key="link.to"
-            :to="link.to"
-            class="rounded-lg px-2.5 py-2 text-sm font-semibold text-brand-gray-600 transition hover:bg-brand-gray-100 hover:text-brand-gray-900 2xl:px-3"
-            active-class="!text-brand-orange"
-          >
-            {{ link.label }}
-          </NuxtLink>
-          <div class="relative">
-            <button
-              type="button"
-              class="inline-flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-semibold text-brand-gray-600 hover:bg-brand-gray-100 2xl:px-3"
-              @click="showMore = !showMore"
-            >
-              {{ t('nav.more') }}
-              <SzIcon name="chevron-down" size="sm" />
-            </button>
-            <div v-if="showMore" class="absolute top-full mt-1 min-w-[10rem] rounded-xl bg-white py-1 shadow-float ltr:right-0 rtl:left-0">
-              <NuxtLink
-                v-for="link in moreLinks"
-                :key="link.to"
-                :to="link.to"
-                class="block px-4 py-2 text-sm font-medium text-brand-gray-700 hover:bg-brand-gray-50"
-                @click="showMore = false"
-              >
-                {{ link.label }}
-              </NuxtLink>
-            </div>
-          </div>
-        </nav>
-
-        <div class="flex shrink-0 items-center gap-1 sm:gap-1.5">
-          <GlobalSearch variant="icon" class="md:hidden" />
-          <LocaleSwitcher />
-          <NotificationBell />
-          <SzButton :to="localePath('/clubs?book=1')" variant="secondary" size="sm" class="hidden sm:inline-flex">
-            {{ t('nav.book') }}
-          </SzButton>
-          <template v-if="loggedIn">
-            <SzButton :to="dashboardPath" variant="ghost" size="sm" class="hidden sm:inline-flex">
-              {{ firstName || t('nav.dashboard') }}
-            </SzButton>
-            <SzButton variant="ghost" size="sm" @click="logout">{{ t('nav.logout') }}</SzButton>
-          </template>
-          <template v-else>
-            <SzButton :to="localePath('/login')" variant="ghost" size="sm">
-              {{ t('nav.login') }}
-            </SzButton>
-            <SzButton :to="localePath('/register')" size="sm">
-              {{ t('nav.register') }}
-            </SzButton>
-          </template>
-        </div>
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6">
+      <div class="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          class="inline-flex rounded-lg p-2 text-brand-gray-700 hover:bg-brand-gray-100 lg:hidden"
+          :aria-label="t('nav.menu')"
+          @click="showMobileNav = !showMobileNav"
+        >
+          <SzIcon :name="showMobileNav ? 'close' : 'menu'" />
+        </button>
+        <ShushLogo />
       </div>
 
-      <!-- Row 2: global search bar (tablet + desktop) -->
-      <div class="hidden border-t border-black/5 pb-3 pt-2 md:block">
-        <GlobalSearch variant="bar" />
+      <nav class="hidden shrink-0 items-center gap-0.5 lg:flex">
+        <NuxtLink
+          v-for="link in primaryLinks"
+          :key="link.to"
+          :to="link.to"
+          class="rounded-lg px-2.5 py-2 text-sm font-semibold text-brand-gray-600 transition hover:bg-brand-gray-100 hover:text-brand-gray-900 xl:px-3"
+          active-class="!text-brand-orange"
+        >
+          {{ link.label }}
+        </NuxtLink>
+        <div class="relative">
+          <button
+            type="button"
+            class="inline-flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-semibold text-brand-gray-600 hover:bg-brand-gray-100 xl:px-3"
+            @click="showMore = !showMore"
+          >
+            {{ t('nav.more') }}
+            <SzIcon name="chevron-down" size="sm" />
+          </button>
+          <div v-if="showMore" class="absolute top-full mt-1 min-w-[10rem] rounded-xl bg-white py-1 shadow-float ltr:right-0 rtl:left-0">
+            <NuxtLink
+              v-for="link in moreLinks"
+              :key="link.to"
+              :to="link.to"
+              class="block px-4 py-2 text-sm font-medium text-brand-gray-700 hover:bg-brand-gray-50"
+              @click="showMore = false"
+            >
+              {{ link.label }}
+            </NuxtLink>
+          </div>
+        </div>
+      </nav>
+
+      <div class="flex shrink-0 items-center gap-1 sm:gap-1.5">
+        <GlobalSearch />
+        <LocaleSwitcher />
+        <NotificationBell />
+        <SzButton :to="localePath('/clubs?book=1')" variant="secondary" size="sm" class="hidden sm:inline-flex">
+          {{ t('nav.book') }}
+        </SzButton>
+        <template v-if="loggedIn">
+          <SzButton :to="dashboardPath" variant="ghost" size="sm" class="hidden sm:inline-flex">
+            {{ firstName || t('nav.dashboard') }}
+          </SzButton>
+          <SzButton variant="ghost" size="sm" @click="logout">{{ t('nav.logout') }}</SzButton>
+        </template>
+        <template v-else>
+          <SzButton :to="localePath('/login')" variant="ghost" size="sm">
+            {{ t('nav.login') }}
+          </SzButton>
+          <SzButton :to="localePath('/register')" size="sm">
+            {{ t('nav.register') }}
+          </SzButton>
+        </template>
       </div>
     </div>
 
