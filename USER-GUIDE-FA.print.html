@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شوش‌زرو — راهنمای کامل استفاده از وب‌سایت</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #ff5a1f;
+      --navy: #2c4a6e;
+      --ink: #1a1a1a;
+      --muted: #555;
+      --border: #e5e5e0;
+      --bg: #fff;
+      --bg-soft: #f7f7f4;
+    }
+
+    * { box-sizing: border-box; }
+
+    @page {
+      size: A4;
+      margin: 14mm 12mm 16mm;
+    }
+
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.7;
+      color: var(--ink);
+      background: var(--bg);
+      margin: 0;
+      padding: 0;
+    }
+
+    .cover {
+      min-height: 260mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      page-break-after: always;
+      padding: 24mm 16mm;
+    }
+
+    .cover-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #fff3ed, #ffd4c2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 36px;
+    }
+
+    .cover h1 {
+      font-size: 28pt;
+      font-weight: 800;
+      margin: 0 0 8px;
+      color: var(--navy);
+    }
+
+    .cover .subtitle {
+      font-size: 14pt;
+      color: var(--muted);
+      margin: 0 0 24px;
+      max-width: 420px;
+    }
+
+    .cover-meta {
+      font-size: 10pt;
+      color: var(--muted);
+      line-height: 2;
+    }
+
+    .cover-badge {
+      display: inline-block;
+      margin-top: 28px;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 24px;
+      border-radius: 999px;
+      font-size: 11pt;
+    }
+
+    .section {
+      page-break-before: always;
+    }
+
+    .section:first-of-type { page-break-before: auto; }
+
+    header.page-header {
+      border-bottom: 3px solid var(--orange);
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+
+    h1.doc-title {
+      font-size: 18pt;
+      font-weight: 800;
+      margin: 0 0 4px;
+      color: var(--navy);
+    }
+
+    .meta {
+      font-size: 9pt;
+      color: var(--muted);
+    }
+
+    h2 {
+      font-size: 13pt;
+      font-weight: 700;
+      color: var(--orange);
+      margin: 18px 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+      break-after: avoid;
+    }
+
+    h3 {
+      font-size: 11pt;
+      font-weight: 600;
+      color: var(--navy);
+      margin: 14px 0 6px;
+      break-after: avoid;
+    }
+
+    h4 {
+      font-size: 10pt;
+      font-weight: 600;
+      margin: 10px 0 4px;
+    }
+
+    p { margin: 6px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px;
+      font-size: 9pt;
+      break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      text-align: right;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--bg-soft);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td { background: #fafaf8; }
+
+    ul, ol {
+      margin: 6px 0;
+      padding-right: 20px;
+    }
+
+    li { margin: 4px 0; }
+
+    code, .mono {
+      font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+      font-size: 8.5pt;
+      background: #f0f0ec;
+      padding: 1px 5px;
+      border-radius: 3px;
+      direction: ltr;
+      display: inline-block;
+    }
+
+    .steps {
+      counter-reset: step;
+      list-style: none;
+      padding-right: 0;
+    }
+
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding-right: 36px;
+      margin-bottom: 10px;
+    }
+
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 26px;
+      height: 26px;
+      background: var(--orange);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 9pt;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tip-box {
+      background: #fff8f5;
+      border: 1px solid #ffd4c2;
+      border-right: 4px solid var(--orange);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 10px 0;
+      break-inside: avoid;
+    }
+
+    .tip-box strong { color: var(--orange); }
+
+    .info-box {
+      background: #f0f7ff;
+      border: 1px solid #c7d9f0;
+      border-right: 4px solid var(--navy);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 10px 0;
+      break-inside: avoid;
+    }
+
+    .toc {
+      list-style: none;
+      padding: 0;
+    }
+
+    .toc li {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dotted var(--border);
+      padding: 6px 0;
+      font-size: 10pt;
+    }
+
+    .toc a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .toc-num {
+      color: var(--orange);
+      font-weight: 700;
+      margin-left: 8px;
+    }
+
+    .role-chip {
+      display: inline-block;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 8.5pt;
+      font-weight: 600;
+    }
+
+    .role-athlete { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+    .role-club { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+    .role-coach { background: #fdf4ff; border-color: #e9d5ff; color: #7e22ce; }
+    .role-admin { background: #fff7ed; border-color: #fed7aa; color: #c2410c; }
+
+    footer.doc-footer {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+      font-size: 8.5pt;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .avoid-break { break-inside: avoid; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- جلد -->
+  <div class="cover">
+    <div class="cover-logo">🏟</div>
+    <h1>شوش‌زرو</h1>
+    <p class="subtitle">راهنمای کامل استفاده از وب‌سایت<br/>رزرو زمین، کلاس، همبازی و مدیریت باشگاه</p>
+    <div class="cover-meta">
+      نسخه: ۱.۰ — ژوئن ۲۰۲۶<br/>
+      زبان: فارسی (راست‌به‌چپ)<br/>
+      آدرس محلی: <code>http://localhost:3000</code>
+    </div>
+    <span class="cover-badge">راهنمای کاربر — PDF</span>
+  </div>
+
+  <!-- فهرست -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">فهرست مطالب</h1>
+      <p class="meta">راهنمای گام‌به‌گام استفاده از تمام بخش‌های شوش‌زرو</p>
+    </header>
+    <ol class="toc">
+      <li><span><span class="toc-num">۱</span> معرفی و شروع سریع</span></li>
+      <li><span><span class="toc-num">۲</span> ثبت‌نام، ورود و آنبوردینگ</span></li>
+      <li><span><span class="toc-num">۳</span> پیمایش سایت و منوها</span></li>
+      <li><span><span class="toc-num">۴</span> صفحهٔ اصلی و جستجو</span></li>
+      <li><span><span class="toc-num">۵</span> کاوش، ورزش‌ها و شهرها</span></li>
+      <li><span><span class="toc-num">۶</span> باشگاه‌ها — رزرو زمین</span></li>
+      <li><span><span class="toc-num">۷</span> کلاس‌های گروهی</span></li>
+      <li><span><span class="toc-num">۸</span> همبازی (بازی باز)</span></li>
+      <li><span><span class="toc-num">۹</span> مسابقات</span></li>
+      <li><span><span class="toc-num">۱۰</span> مربیان و برنامه تمرینی</span></li>
+      <li><span><span class="toc-num">۱۱</span> چت و پیام‌ها</span></li>
+      <li><span><span class="toc-num">۱۲</span> کیف پول</span></li>
+      <li><span><span class="toc-num">۱۳</span> داشبورد ورزشکار</span></li>
+      <li><span><span class="toc-num">۱۴</span> داشبورد مدیر باشگاه</span></li>
+      <li><span><span class="toc-num">۱۵</span> داشبورد مربی</span></li>
+      <li><span><span class="toc-num">۱۶</span> داشبورد مدیر پلتفرم</span></li>
+      <li><span><span class="toc-num">۱۷</span> شوش‌بات و اخبار</span></li>
+      <li><span><span class="toc-num">۱۸</span> نصب اپ (PWA) و زبان</span></li>
+      <li><span><span class="toc-num">۱۹</span> حساب‌های آزمایشی</span></li>
+      <li><span><span class="toc-num">۲۰</span> سوالات متداول</span></li>
+    </ol>
+  </div>
+
+  <!-- ۱. معرفی -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱. معرفی و شروع سریع</h1>
+    </header>
+
+    <h2>شوش‌زرو چیست؟</h2>
+    <p><strong>شوش‌زرو</strong> یک پلتفرم وب دوزبانه (فارسی و انگلیسی) برای <strong>رزرو زمین ورزشی، ثبت‌نام در کلاس، پیدا کردن همبازی، رزرو مربی</strong> و <strong>مدیریت باشگاه</strong> است. روی موبایل و دسکتاپ کار می‌کند و به‌صورت PWA قابل نصب روی صفحهٔ اصلی گوشی است.</p>
+
+    <h2>چه کارهایی می‌توانید انجام دهید؟</h2>
+    <table>
+      <tr><th>بخش</th><th>کاربرد</th></tr>
+      <tr><td>باشگاه‌ها</td><td>مشاهده زمین‌ها روی نقشه یا لیست، انتخاب سانس و رزرو</td></tr>
+      <tr><td>کلاس‌ها</td><td>ثبت‌نام در کلاس گروهی با مربی</td></tr>
+      <tr><td>همبازی</td><td>ساخت یا پیوستن به بازی باز</td></tr>
+      <tr><td>مسابقات</td><td>ثبت‌نام در تورنمنت باشگاه‌ها</td></tr>
+      <tr><td>مربیان</td><td>مشاهده پروفایل و درخواست جلسه</td></tr>
+      <tr><td>داشبورد</td><td>مدیریت رزروها، کیف پول، برنامه و پروفایل</td></tr>
+    </table>
+
+    <h2>شروع سریع — ۳ دقیقه</h2>
+    <ol class="steps">
+      <li>به آدرس <code>http://localhost:3000</code> بروید (فارسی) یا <code>/en</code> (انگلیسی).</li>
+      <li>از منوی «ورود» با حساب آزمایشی وارد شوید (جدول بخش ۱۹).</li>
+      <li>روی «شروع رزرو» یا «باشگاه‌ها» بزنید، یک باشگاه انتخاب کنید.</li>
+      <li>زمین → سانس → تأیید رزرو (با کیف پول یا پرداخت در محل).</li>
+      <li>از «داشبورد» رزروها و برنامهٔ هفتگی را ببینید.</li>
+    </ol>
+
+    <div class="tip-box">
+      <strong>نکته:</strong> این نسخهٔ <strong>دمو</strong> است. پرداخت واقعی بانکی وجود ندارد؛ کیف پول و «پرداخت در محل باشگاه» برای شبیه‌سازی فرآیند طراحی شده‌اند.
+    </div>
+  </div>
+
+  <!-- ۲. ثبت‌نام -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۲. ثبت‌نام، ورود و آنبوردینگ</h1>
+    </header>
+
+    <h2>ساخت حساب جدید</h2>
+    <ol class="steps">
+      <li>از نوار بالا یا پایین (موبایل) روی <strong>ثبت‌نام</strong> بزنید — مسیر: <code>/register</code></li>
+      <li>نام، ایمیل و رمز عبور را وارد کنید.</li>
+      <li>نقش را انتخاب کنید: ورزشکار، مربی، یا مدیر باشگاه.</li>
+      <li>دکمهٔ «ثبت‌نام» را بزنید.</li>
+    </ol>
+
+    <h2>ورود به حساب</h2>
+    <ol class="steps">
+      <li>به صفحهٔ <code>/login</code> بروید.</li>
+      <li>ایمیل و رمز را وارد کنید و «ورود» را بزنید.</li>
+      <li>پس از ورود، به داشبورد متناسب با نقش هدایت می‌شوید.</li>
+    </ol>
+
+    <table>
+      <tr><th>نقش</th><th>مسیر داشبورد پس از ورود</th></tr>
+      <tr><td>ورزشکار</td><td><code>/dashboard</code></td></tr>
+      <tr><td>مربی</td><td><code>/dashboard/coach</code></td></tr>
+      <tr><td>مدیر باشگاه</td><td><code>/dashboard/club</code></td></tr>
+      <tr><td>مدیر پلتفرم</td><td><code>/dashboard/admin</code></td></tr>
+    </table>
+
+    <h2>آنبوردینگ (فقط ورزشکار)</h2>
+    <p>پس از اولین ورود ورزشکار، اگر پروفایل کامل نباشد به <code>/onboarding</code> می‌روید:</p>
+    <ul>
+      <li>ورزش‌های مورد علاقه را انتخاب کنید (حداکثر ۸ مورد).</li>
+      <li>سطح مهارت (مبتدی تا حرفه‌ای) را مشخص کنید.</li>
+      <li>«بزن بریم!» را بزنید تا به داشبورد بروید.</li>
+    </ul>
+
+    <div class="info-box">
+      برای تست سریع از حساب‌های آمادهٔ بخش ۱۹ استفاده کنید — نیازی به ثبت‌نام جدید نیست.
+    </div>
+  </div>
+
+  <!-- ۳. پیمایش -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۳. پیمایش سایت و منوها</h1>
+    </header>
+
+    <h2>نوار بالا (دسکتاپ)</h2>
+    <p>شامل لوگو، لینک‌های اصلی (خانه، کاوش، باشگاه‌ها، کلاس‌ها، همبازی، اخبار)، زنگ اعلان، تغییر زبان، ورود/داشبورد.</p>
+
+    <h2>نوار پایین (موبایل — Tab Bar)</h2>
+    <table>
+      <tr><th>آیکون</th><th>مقصد</th></tr>
+      <tr><td>خانه</td><td><code>/</code></td></tr>
+      <tr><td>کاوش</td><td><code>/explore</code></td></tr>
+      <tr><td>رزرو</td><td><code>/clubs?book=1</code></td></tr>
+      <tr><td>داشبورد</td><td>داشبورد نقش شما</td></tr>
+      <tr><td>بیشتر</td><td>منوی کامل (مربیان، چت، اخبار، …)</td></tr>
+    </table>
+
+    <h2>داشبورد — منوی کناری</h2>
+    <p>در صفحات داشبورد، منوی سمت راست (یا کشویی در موبایل) شامل:</p>
+    <ul>
+      <li><strong>منوی اصلی:</strong> خانه، کاوش</li>
+      <li><strong>بخش‌ها:</strong> تب‌های اختصاصی هر نقش (خلاصه، رزروها، کیف پول، …)</li>
+      <li><strong>جستجو:</strong> در هدر داشبورد — نتایج متناسب با نقش</li>
+      <li><strong>خروج:</strong> پایین منو</li>
+    </ul>
+
+    <p>تب‌ها با پارامتر URL باز می‌شوند، مثلاً: <code>/dashboard?tab=wallet</code></p>
+  </div>
+
+  <!-- ۴. صفحه اصلی -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۴. صفحهٔ اصلی و جستجو</h1>
+    </header>
+
+    <p>صفحهٔ <code>/</code> نقطهٔ شروع اکثر کاربران است.</p>
+
+    <h2>بخش‌های صفحهٔ اصلی</h2>
+    <ul>
+      <li><strong>جستجوی قهرمان (Hero):</strong> شهر، ورزش و تاریخ — دکمه «شروع رزرو»</li>
+      <li><strong>دسته‌بندی ورزش‌ها:</strong> تنیس، پدل، فوتبال، بدنسازی، یوگا، شنا، …</li>
+      <li><strong>باشگاه‌های منتخب:</strong> کارت باشگاه با قیمت و امتیاز</li>
+      <li><strong>کلاس‌ها و همبازی:</strong> پیش‌نمایش با لینک «مشاهده همه»</li>
+      <li><strong>نقشه باشگاه‌ها:</strong> پین روی نقشه — کلیک برای رزرو</li>
+      <li><strong>شهرها، نظرات، اخبار، چرا شوش‌زرو</strong></li>
+    </ul>
+
+    <h2>جستجوی سریع</h2>
+    <p>در Hero یا صفحهٔ کاوش می‌توانید شهر، ورزش یا نام باشگاه را فیلتر کنید. نتایج به صفحهٔ باشگاه‌ها یا جزئیات باشگاه هدایت می‌شوند.</p>
+
+    <div class="tip-box">
+      <strong>میانبر:</strong> برای رفتن مستقیم به حالت رزرو: <code>/clubs?book=1</code>
+    </div>
+  </div>
+
+  <!-- ۵. کاوش -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۵. کاوش، ورزش‌ها و شهرها</h1>
+    </header>
+
+    <h2>صفحهٔ کاوش — <code>/explore</code></h2>
+    <p>مرور محتوا بر اساس گروه ورزشی (راکتی، توپی، تناسب، آبی، رزمی) و شهر.</p>
+
+    <h2>صفحات ورزش — <code>/sports/:slug</code></h2>
+    <p>هر ورزش صفحهٔ اختصاصی دارد (مثلاً <code>/sports/tennis</code>) با:</p>
+    <ul>
+      <li>توضیح ورزش</li>
+      <li>باشگاه‌های مرتبط</li>
+      <li>دکمه «همین حالا زمین رزرو کن»</li>
+    </ul>
+
+    <h2>شهرها</h2>
+    <p>در صفحهٔ اصلی شبکهٔ شهرها (تهران، اصفهان، شیراز، مشهد، تبریز) نمایش داده می‌شود. کلیک روی شهر، باشگاه‌های آن شهر را فیلتر می‌کند.</p>
+  </div>
+
+  <!-- ۶. باشگاه‌ها -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۶. باشگاه‌ها — رزرو زمین</h1>
+    </header>
+
+    <h2>لیست باشگاه‌ها — <code>/clubs</code></h2>
+    <ul>
+      <li><strong>نمای لیست:</strong> کارت باشگاه با قیمت، امتیاز، شهر</li>
+      <li><strong>نمای نقشه:</strong> Leaflet — پین باشگاه‌ها؛ کلیک روی قیمت برای رزرو</li>
+      <li><strong>فیلتر:</strong> شهر، ورزش، مرتب‌سازی (پیش‌فرض، نزدیک‌ترین، ارزان‌ترین)</li>
+    </ul>
+
+    <h2>صفحهٔ باشگاه — <code>/clubs/:slug</code></h2>
+    <p>مثال: <code>/clubs/azadi-tennis</code></p>
+
+    <h3>مراحل رزرو (۳ گام)</h3>
+    <ol class="steps">
+      <li><strong>انتخاب زمین:</strong> لیست زمین‌های باشگاه (تنیس، پدل، …) — یک زمین را انتخاب کنید.</li>
+      <li><strong>انتخاب سانس:</strong> تقویم هفتگی — روی سانس آزاد (خاکستری) بزنید. سانس‌های پر یا مسدود قابل انتخاب نیستند.</li>
+      <li><strong>تأیید رزرو:</strong> خلاصه (باشگاه، زمین، تاریخ، ساعت، قیمت) را ببینید.</li>
+    </ol>
+
+    <h3>روش پرداخت</h3>
+    <table>
+      <tr><th>روش</th><th>توضیح</th></tr>
+      <tr><td>کیف پول</td><td>اگر موجودی کافی باشد، مبلغ از کیف پول کسر می‌شود.</td></tr>
+      <tr><td>پرداخت در محل</td><td>رزرو ثبت می‌شود؛ در باشگاه نقد/کارت پرداخت می‌کنید. مدیر باشگاه بعداً «تأیید پرداخت» می‌زند.</td></tr>
+    </table>
+
+    <h3>پس از رزرو موفق</h3>
+    <ul>
+      <li>پیام تأیید نمایش داده می‌شود.</li>
+      <li>می‌توانید «مشاهده رزروها» را بزنید (داشبورد → تب رزروها).</li>
+      <li>اختیاری: «ساخت بازی باز بعد از رزرو» برای پیدا کردن همبازی.</li>
+    </ul>
+
+    <h3>لغو رزرو</h3>
+    <p>داشبورد → تب <strong>رزروها</strong> → رزرو پیش‌رو → «لغو رزرو». قوانین لغو بسته به باشگاه (ساعات قبل از سانس) در تنظیمات باشگاه تعریف شده است.</p>
+
+    <h3>نظر دربارهٔ باشگاه</h3>
+    <p>پس از بازدید (رزرو گذشته)، در تب رزروها بخش «ثبت نظر» — امتیاز ۱ تا ۵ و متن نظر.</p>
+  </div>
+
+  <!-- ۷. کلاس‌ها -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۷. کلاس‌های گروهی</h1>
+    </header>
+
+    <h2>لیست کلاس‌ها — <code>/classes</code></h2>
+    <p>کلاس‌های گروهی با عنوان، باشگاه، تاریخ، ساعت، قیمت و ظرفیت.</p>
+
+    <h2>ثبت‌نام در کلاس</h2>
+    <ol class="steps">
+      <li>روی کارت کلاس یا صفحهٔ جزئیات <code>/classes/:id</code> بروید.</li>
+      <li>«ثبت‌نام» را بزنید (ورود لازم است).</li>
+      <li>با کیف پول یا پرداخت در محل ثبت‌نام کنید.</li>
+    </ol>
+
+    <h2>مدیریت ثبت‌نام</h2>
+    <p>داشبورد ورزشکار → تب <strong>ثبت‌نام کلاس‌ها</strong>:</p>
+    <ul>
+      <li>کلاس‌های پیش‌رو و گذشته</li>
+      <li>لغو ثبت‌نام (قبل از برگزاری)</li>
+      <li>لینک به صفحهٔ کلاس</li>
+    </ul>
+  </div>
+
+  <!-- ۸. همبازی -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۸. همبازی (بازی باز)</h1>
+    </header>
+
+    <h2>صفحهٔ همبازی — <code>/matches</code></h2>
+    <p>بازی‌های باز بر اساس ورزش، شهر، تاریخ و سطح مهارت.</p>
+
+    <h2>ساخت بازی جدید</h2>
+    <ol class="steps">
+      <li>«ایجاد بازی» را بزنید.</li>
+      <li>ورزش، شهر، تاریخ، ساعت، حداکثر بازیکن و سطح را وارد کنید.</li>
+      <li>بازی ساخته می‌شود و لینک اشتراک تولید می‌شود.</li>
+    </ol>
+
+    <h2>پیوستن به بازی</h2>
+    <ol class="steps">
+      <li>در لیست بازی‌ها «پیوستن» را بزنید (اگر جا باشد).</li>
+      <li>یا لینک اشتراک را باز کنید: <code>/m/:token</code> (مثلاً <code>/m/demo2match</code>)</li>
+    </ol>
+
+    <h2>مدیریت در داشبورد</h2>
+    <p>تب رزروها → بخش «همبازی» — بازی‌های پیش‌رو با لینک جزئیات.</p>
+
+    <div class="tip-box">
+      پس از پیوستن به بازی، ممکن است گفتگوی چت برای هماهنگی باز شود.
+    </div>
+  </div>
+
+  <!-- ۹. مسابقات -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۹. مسابقات</h1>
+    </header>
+
+    <h2>لیست مسابقات — <code>/tournaments</code></h2>
+    <p>تورنمنت‌های باشگاه‌ها: ورزش، تاریخ، قیمت ثبت‌نام، ظرفیت، وضعیت (باز / تکمیل / پایان‌یافته).</p>
+
+    <h2>ثبت‌نام</h2>
+    <ol class="steps">
+      <li>روی «مشاهده جزئیات» یا <code>/tournaments/:id</code> بروید.</li>
+      <li>«ثبت‌نام» را بزنید (ورود لازم است).</li>
+    </ol>
+
+    <p>مدیر باشگاه مسابقات را از داشبورد باشگاه → تب <strong>مسابقات</strong> ایجاد می‌کند.</p>
+  </div>
+
+  <!-- ۱۰. مربیان -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۰. مربیان و برنامه تمرینی</h1>
+    </header>
+
+    <h2>لیست مربیان — <code>/coaches</code></h2>
+    <p>مربیان با نام، شهر، ورزش، امتیاز و تعداد جلسات.</p>
+
+    <h2>پروفایل مربی — <code>/coaches/:id</code></h2>
+    <ul>
+      <li>بیوگرافی و امتیاز</li>
+      <li>«رزرو جلسه» — درخواست جلسه ارسال می‌شود</li>
+      <li>«رزرو در باشگاه» — هدایت به باشگاه‌های مرتبط</li>
+    </ul>
+
+    <h2>برنامه تمرینی / غذایی (ورزشکار)</h2>
+    <p>مربی برنامه را از داشبورد مربی می‌سازد و به ایمیل ورزشکار اختصاص می‌دهد. ورزشکار در داشبورد → تب <strong>برنامه‌ها</strong>:</p>
+    <ul>
+      <li>مشاهده محتوای برنامه</li>
+      <li>تیک «انجام شد»</li>
+      <li>یادداشت شخصی (ذخیره خودکار)</li>
+    </ul>
+  </div>
+
+  <!-- ۱۱. چت -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۱. چت و پیام‌ها</h1>
+    </header>
+
+    <h2>صفحهٔ پیام‌ها — <code>/chat</code></h2>
+    <p>لیست گفتگوها. اگر گفتگویی ندارید، پس از پیوستن به همبازی ممکن است چت ایجاد شود.</p>
+
+    <h2>گفتگو — <code>/chat/:id</code></h2>
+    <ol class="steps">
+      <li>گفتگو را از لیست انتخاب کنید.</li>
+      <li>پیام بنویسید و «ارسال» را بزنید.</li>
+    </ol>
+  </div>
+
+  <!-- ۱۲. کیف پول -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۲. کیف پول</h1>
+    </header>
+
+    <p>کیف پول در داشبورد → تب <strong>کیف پول</strong> (یا <code>?tab=wallet</code>).</p>
+
+    <h2>شارژ کیف پول (ورزشکار / مربی)</h2>
+    <ol class="steps">
+      <li>مبلغ شارژ (تومان) را وارد کنید.</li>
+      <li>«شارژ کیف پول» را بزنید — در دمو بدون درگاه واقعی، فوری شارژ می‌شود.</li>
+    </ol>
+
+    <h2>برداشت (مدیر باشگاه)</h2>
+    <p>در داشبورد باشگاه → کیف پول → «برداشت» — درخواست برداشت به حساب (شبیه‌سازی دمو).</p>
+
+    <h2>تراکنش‌ها</h2>
+    <p>لیست تراکنش‌ها: شارژ، رزرو زمین، کلاس، بازگشت وجه، برداشت، درآمد مربی، کارمزد پلتفرم.</p>
+
+    <div class="info-box">
+      پس از <code>npm run db:seed</code> کیف پول حساب‌های دمو از قبل شارژ شده است.
+    </div>
+  </div>
+
+  <!-- ۱۳. داشبورد ورزشکار -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۳. داشبورد ورزشکار</h1>
+      <p class="meta"><span class="role-chip role-athlete">ورزشکار</span> مسیر: <code>/dashboard</code></p>
+    </header>
+
+    <table>
+      <tr><th>تب</th><th>محتوا</th></tr>
+      <tr><td><strong>خلاصه</strong></td><td>آمار (کیف پول، هزینه، رزرو، کلاس)، نمودار ۷ روزه، XP و نشان، اقدامات سریع</td></tr>
+      <tr><td><strong>برنامه</strong></td><td>تقویم یکپارچه: رزرو، کلاس، همبازی، جلسه مربی — کلیک برای جزئیات</td></tr>
+      <tr><td><strong>رزروها</strong></td><td>رزرو پیش‌رو/گذشته، همبازی، ثبت نظر باشگاه</td></tr>
+      <tr><td><strong>ثبت‌نام کلاس‌ها</strong></td><td>کلاس‌های فعال و گذشته، لغو ثبت‌نام</td></tr>
+      <tr><td><strong>کیف پول</strong></td><td>شارژ و تراکنش‌ها</td></tr>
+      <tr><td><strong>برنامه‌ها</strong></td><td>برنامه تمرینی/غذایی مربی</td></tr>
+      <tr><td><strong>پروفایل</strong></td><td>نام، تلفن، زبان، ورزش‌های مورد علاقه، اعلان push، سطح مهارت</td></tr>
+    </table>
+
+    <h3>گیمیفیکیشن</h3>
+    <ul>
+      <li><strong>XP و سطح:</strong> با فعالیت (رزرو، کلاس، …) XP جمع می‌کنید.</li>
+      <li><strong>نشان‌ها:</strong> اولین رزرو، بازیکن منظم، بازیکن اجتماعی، …</li>
+      <li><strong>آمار:</strong> تعداد بازی، برد، همبازی‌های پیوسته</li>
+    </ul>
+  </div>
+
+  <!-- ۱۴. داشبورد باشگاه -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۴. داشبورد مدیر باشگاه</h1>
+      <p class="meta"><span class="role-chip role-club">مدیر باشگاه</span> مسیر: <code>/dashboard/club</code></p>
+    </header>
+
+    <p>اگر چند باشگاه دارید، از منوی کشویی بالای صفحه باشگاه را انتخاب کنید.</p>
+
+    <table>
+      <tr><th>تب</th><th>کاربرد</th></tr>
+      <tr><td><strong>خلاصه</strong></td><td>درآمد امروز/ماه/کل، تعداد رزرو، پرداخت در محل معلق، نمودارها</td></tr>
+      <tr><td><strong>برنامه</strong></td><td>تقویم سانس‌ها — کلیک روی سانس آزاد برای ثبت مشتری حضوری یا مسدود کردن</td></tr>
+      <tr><td><strong>کیف پول</strong></td><td>موجودی باشگاه + برداشت</td></tr>
+      <tr><td><strong>مالی</strong></td><td>نمودار ترکیب درآمد + خروجی CSV رزروها</td></tr>
+      <tr><td><strong>مدیریت</strong></td><td>زمین‌ها، تنظیم سانس، رویدادها، کلاس‌ها</td></tr>
+      <tr><td><strong>رزروها</strong></td><td>رزروهای دریافتی — تأیید پرداخت / لغو</td></tr>
+      <tr><td><strong>مسابقات</strong></td><td>ایجاد و مشاهده تورنمنت</td></tr>
+    </table>
+
+    <h3>مدیریت زمین و سانس (تب مدیریت)</h3>
+    <h4>افزودن زمین</h4>
+    <p>نام فارسی/انگلیسی + انتخاب ورزش → «افزودن زمین»</p>
+
+    <h4>تنظیم سانس</h4>
+    <ul>
+      <li>مدت هر سانس (مثلاً ۶۰، ۹۰، ۱۲۰ دقیقه)</li>
+      <li>ساعت شروع و پایان روز</li>
+      <li>قوانین لغو (متن FA/EN + ساعات لغو رایگان)</li>
+      <li>«ذخیره تنظیمات سانس»</li>
+    </ul>
+
+    <h4>ایجاد سانس برای یک روز</h4>
+    <p>زمین + تاریخ → «ایجاد سانس» — سانس‌های آن روز ساخته می‌شوند.</p>
+
+    <h3>ثبت رزرو حضوری (تب برنامه)</h3>
+    <ol class="steps">
+      <li>روی سانس آزاد (خاکستری) بزنید.</li>
+      <li>نام مشتری حضوری و/یا ایمیل کاربر پلتفرم را وارد کنید.</li>
+      <li>«ثبت رزرو باشگاه» یا «مسدود کردن سانس».</li>
+    </ol>
+
+    <h3>رزروهای دریافتی</h3>
+    <p>نشان «رزرو پلتفرم» یا «رزرو باشگاه». برای پرداخت در محل: «تأیید پرداخت». «لغو» برای لغو رزرو.</p>
+  </div>
+
+  <!-- ۱۵. داشبورد مربی -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۵. داشبورد مربی</h1>
+      <p class="meta"><span class="role-chip role-coach">مربی</span> مسیر: <code>/dashboard/coach</code></p>
+    </header>
+
+    <table>
+      <tr><th>تب</th><th>کاربرد</th></tr>
+      <tr><td><strong>خلاصه</strong></td><td>موجودی، جلسات، شاگردان، امتیاز، نمودار درآمد ۷ روزه</td></tr>
+      <tr><td><strong>برنامه</strong></td><td>تقویم جلسات و کلاس‌ها</td></tr>
+      <tr><td><strong>شاگردان</strong></td><td>لیست ورزشکاران با برنامه اختصاص‌یافته</td></tr>
+      <tr><td><strong>کیف پول</strong></td><td>درآمد و تراکنش‌ها</td></tr>
+      <tr><td><strong>برنامه‌ها</strong></td><td>ایجاد/ویرایش/حذف برنامه تمرینی یا غذایی</td></tr>
+      <tr><td><strong>پروفایل</strong></td><td>نام، شهر، بیو، ورزش تخصصی</td></tr>
+    </table>
+
+    <h3>ساخت برنامه برای ورزشکار</h3>
+    <ol class="steps">
+      <li>تب برنامه‌ها → فرم پایین صفحه</li>
+      <li>عنوان و محتوا (FA/EN)، نوع (تمرینی / غذایی)</li>
+      <li>ایمیل ورزشکار (اختیاری — برای اختصاص مستقیم)</li>
+      <li>«ایجاد برنامه»</li>
+    </ol>
+  </div>
+
+  <!-- ۱۶. داشبورد admin -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۶. داشبورد مدیر پلتفرم</h1>
+      <p class="meta"><span class="role-chip role-admin">مدیر پلتفرم</span> مسیر: <code>/dashboard/admin</code></p>
+    </header>
+
+    <table>
+      <tr><th>تب</th><th>کاربرد</th></tr>
+      <tr><td><strong>خلاصه</strong></td><td>کارمزد، کاربران، باشگاه‌ها، رزروها — نمودار ۶ ماهه، تراکنش‌های اخیر</td></tr>
+      <tr><td><strong>کیف پول</strong></td><td>کارمزد پلتفرم و موجودی</td></tr>
+      <tr><td><strong>کاربران</strong></td><td>جستجو، تغییر نقش، تعلیق/رفع تعلیق</td></tr>
+      <tr><td><strong>باشگاه‌ها</strong></td><td>جستجو، ویژه/حذف ویژه</td></tr>
+      <tr><td><strong>رزروها</strong></td><td>مشاهدهٔ همه رزروها (فقط خواندنی)</td></tr>
+      <tr><td><strong>همبازی</strong></td><td>مشاهدهٔ بازی‌های باز</td></tr>
+      <tr><td><strong>کلاس‌ها</strong></td><td>مشاهدهٔ کلاس‌ها</td></tr>
+      <tr><td><strong>اخبار</strong></td><td>ایجاد، ویرایش، حذف مقالات</td></tr>
+    </table>
+  </div>
+
+  <!-- ۱۷. شوش‌بات -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۷. شوش‌بات، اخبار و درباره</h1>
+    </header>
+
+    <h2>شوش‌بات (دستیار)</h2>
+    <p>ویجت گوشهٔ صفحه — راهنمای هوشمند <strong>نسخه آزمایشی</strong> با پاسخ‌های از پیش تعریف‌شده (نه هوش مصنوعی واقعی).</p>
+    <p>نمونه سوالات: «چطور زمین رزرو کنم؟»، «کیف پول»، «رزروهای من»، «همبازی» — دکمه «برو به صفحه» شما را هدایت می‌کند.</p>
+
+    <h2>اخبار — <code>/news</code></h2>
+    <p>مقالات ورزشی دوزبانه. مدیر پلتفرم مقالات را از داشبورد admin مدیریت می‌کند.</p>
+
+    <h2>درباره — <code>/about</code></h2>
+    <p>معرفی پلتفرم و اطلاعات تماس.</p>
+  </div>
+
+  <!-- ۱۸. PWA -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۸. نصب اپ (PWA) و تغییر زبان</h1>
+    </header>
+
+    <h2>نصب روی موبایل (PWA)</h2>
+    <h3>آیفون (Safari)</h3>
+    <ol class="steps">
+      <li>سایت را در Safari باز کنید.</li>
+      <li>دکمهٔ «اشتراک‌گذاری» → «Add to Home Screen» / «افزودن به صفحهٔ اصلی».</li>
+    </ol>
+
+    <h3>اندروید (Chrome)</h3>
+    <ol class="steps">
+      <li>منوی مرورگر → «Install app» / «نصب برنامه».</li>
+      <li>یا بنر نصب PWA (در صورت نمایش).</li>
+    </ol>
+
+    <h2>تغییر زبان</h2>
+    <ul>
+      <li><strong>فارسی (پیش‌فرض):</strong> <code>/</code> — راست‌به‌چپ</li>
+      <li><strong>انگلیسی:</strong> <code>/en</code> — چپ‌به‌راست</li>
+    </ul>
+    <p>از سوئیچر زبان در هدر یا پروفایل داشبورد استفاده کنید.</p>
+  </div>
+
+  <!-- ۱۹. حساب‌های دمو -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۱۹. حساب‌های آزمایشی</h1>
+    </header>
+
+    <p>پس از <code>npm run db:seed</code> این حساب‌ها فعال هستند. رمز همه: <code>demo1234</code></p>
+
+    <table>
+      <tr><th>نقش</th><th>ایمیل</th><th>داشبورد</th></tr>
+      <tr><td>ورزشکار</td><td><code>athlete@shushzerv.local</code></td><td><code>/dashboard</code></td></tr>
+      <tr><td>مربی</td><td><code>coach@shushzerv.local</code></td><td><code>/dashboard/coach</code></td></tr>
+      <tr><td>مدیر باشگاه</td><td><code>club@shushzerv.local</code></td><td><code>/dashboard/club</code></td></tr>
+      <tr><td>مدیر پلتفرم</td><td><code>admin@shushzerv.local</code></td><td><code>/dashboard/admin</code></td></tr>
+    </table>
+
+    <h2>اجرای محلی</h2>
+    <pre style="background:#1e1e1e;color:#f5f5f5;border-radius:8px;padding:12px;direction:ltr;text-align:left;font-size:8.5pt;">npm install
+npm run db:push
+npm run db:seed
+npm run dev
+# باز کنید: http://localhost:3000</pre>
+  </div>
+
+  <!-- ۲۰. FAQ -->
+  <div class="section">
+    <header class="page-header">
+      <h1 class="doc-title">۲۰. سوالات متداول</h1>
+    </header>
+
+    <h3>چطور یک زمین رزرو کنم؟</h3>
+    <p>باشگاه را انتخاب کنید، زمین و سانس دلخواه را بزنید و رزرو را تأیید کنید.</p>
+
+    <h3>آیا باید آنلاین پرداخت کنم؟</h3>
+    <p>می‌توانید با <strong>کیف پول</strong> (دمو) یا <strong>پرداخت در محل باشگاه</strong> رزرو کنید. درگاه بانکی واقعی در این نسخه نیست.</p>
+
+    <h3>چطور حساب کاربری بسازم؟</h3>
+    <p>از صفحهٔ ثبت‌نام با ایمیل و رمز عبور.</p>
+
+    <h3>نقش‌های کاربری چیست؟</h3>
+    <p>ورزشکار، مربی، مدیر باشگاه، مدیر پلتفرم — هرکدام داشبورد مخصوص.</p>
+
+    <h3>آیا برنامه قابل نصب است؟</h3>
+    <p>بله — PWA روی iOS و Android.</p>
+
+    <h3>دیتابیس reset شد و باشگاهم نیست؟</h3>
+    <p>دوباره <code>npm run db:seed</code> بزنید و با حساب دمو وارد شوید.</p>
+
+    <h3>PDF این راهنما کجاست؟</h3>
+    <p><code>/docs/USER-GUIDE-FA.pdf</code> — یا فایل <code>USER-GUIDE-FA.pdf</code> در ریشهٔ پروژه.</p>
+
+    <div class="summary-box avoid-break" style="background:#fff8f5;border:1px solid #ffd4c2;border-right:4px solid var(--orange);border-radius:8px;padding:12px;margin-top:16px;">
+      <h3 style="margin-top:0;color:var(--navy);">پشتیبانی</h3>
+      <p>برای جزئیات فنی انگلیسی: <code>README.md</code> و <code>APP.md</code><br/>
+      شوش‌زرو — پلتفرم رزرو ورزشی · نسخه دمو ۲۰۲۶</p>
+    </div>
+
+    <footer class="doc-footer">
+      © شوش‌زرو — راهنمای کاربر فارسی · تولید شده برای shushzerv
+    </footer>
+  </div>
+
+</body>
+</html>
