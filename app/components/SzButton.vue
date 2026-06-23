@@ -10,7 +10,6 @@ const props = withDefaults(
     type?: 'button' | 'submit'
     block?: boolean
     pulse?: boolean
-    sportColor?: string
     disabled?: boolean
   }>(),
   { variant: 'primary', size: 'md', type: 'button', block: false, pulse: false },
@@ -34,28 +33,37 @@ const variantClass = computed(() => {
     case 'ghost':
       return 'bg-brand-gray-100 text-brand-gray-900 hover:bg-brand-gray-200'
     case 'sport':
-      return 'text-white shadow-card'
+      return 'bg-white text-brand-orange border-2 border-brand-orange/40 shadow-card hover:bg-brand-orange/5 ring-1 ring-brand-orange/20'
     default:
-      return 'bg-brand-orange text-white shadow-card hover:bg-brand-orange-dark'
+      return 'bg-brand-orange text-brand-primary shadow-card hover:bg-brand-orange-dark'
   }
 })
 
-const sportStyle = computed(() =>
-  props.variant === 'sport' && props.sportColor ? { backgroundColor: props.sportColor } : undefined,
-)
+const sharedClass = computed(() => [
+  sizeClass.value,
+  variantClass.value,
+  { 'w-full': props.block, 'animate-pulse-soft motion-reduce:animate-none': props.pulse },
+])
 </script>
 
 <template>
-  <component
-    :is="to ? resolveComponent('NuxtLink') : 'button'"
+  <NuxtLink
+    v-if="to"
     :to="to"
-    :type="to ? undefined : type"
-    :disabled="disabled"
-    :style="sportStyle"
-    class="inline-flex items-center justify-center gap-2 font-semibold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none"
-    :class="[sizeClass, variantClass, { 'w-full': block, 'animate-pulse-soft motion-reduce:animate-none': pulse }]"
+    class="inline-flex items-center justify-center gap-2 font-semibold transition-transform duration-150 active:scale-[0.97]"
+    :class="sharedClass"
     v-bind="$attrs"
   >
     <slot />
-  </component>
+  </NuxtLink>
+  <button
+    v-else
+    :type="type"
+    :disabled="disabled"
+    class="inline-flex items-center justify-center gap-2 font-semibold transition-transform duration-150 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none"
+    :class="sharedClass"
+    v-bind="$attrs"
+  >
+    <slot />
+  </button>
 </template>

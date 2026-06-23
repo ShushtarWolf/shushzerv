@@ -1,7 +1,8 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const localePath = useLocalePath()
-const year = new Date().getFullYear()
+const { formatNumber } = useLocaleContent()
+const year = computed(() => formatNumber(new Date().getFullYear()))
 </script>
 
 <template>

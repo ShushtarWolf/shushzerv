@@ -2,8 +2,13 @@
 import type { Review } from '~/types'
 
 const { data: reviews } = await useApiFetch<Review[]>('/api/reviews')
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { localized } = useLocaleContent()
+
+function reviewerName(r: Review) {
+  if (!r.user) return t('testimonials.anonymous')
+  return userDisplayName(r.user, locale.value)
+}
 </script>
 
 <template>
@@ -20,7 +25,7 @@ const { localized } = useLocaleContent()
       <p class="text-sm leading-relaxed text-brand-gray-700">
         "{{ localized(r.bodyFa, r.bodyEn) }}"
       </p>
-      <p class="mt-3 text-sm font-bold">{{ r.user?.name ?? t('testimonials.anonymous') }}</p>
+      <p class="mt-3 text-sm font-bold">{{ reviewerName(r) }}</p>
     </div>
   </div>
 </template>

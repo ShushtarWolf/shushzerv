@@ -6,7 +6,15 @@ export async function requireUser(event: H3Event) {
   if (!session?.user) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
-  return session.user as { id: string; email: string; name: string; role: Role }
+  const dbUser = await prisma.user.findUnique({ where: { id: session.user.id } })
+  if (!dbUser) {
+    await clearUserSession(event)
+    throw createError({ statusCode: 401, statusMessage: 'Session expired' })
+  }
+  if (dbUser.suspendedAt) {
+    throw createError({ statusCode: 403, statusMessage: 'Account suspended' })
+  }
+  return { id: dbUser.id, email: dbUser.email, name: dbUser.name, role: dbUser.role }
 }
 
 export const requireAuth = requireUser

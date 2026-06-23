@@ -2,14 +2,21 @@
 import type { NewsArticle } from '~/types'
 
 const props = defineProps<{ article: NewsArticle }>()
-const { resolveAccent, darken } = useSportTheme()
+const { accent, darken } = useSportTheme()
 
-const topicColor = computed(() => resolveAccent(props.article.sport))
+const topicColor = computed(() => accent)
 const topicColorDark = computed(() => darken(topicColor.value, 0.2))
 </script>
 
 <template>
-  <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" preserveAspectRatio="xMidYMid slice" role="img">
+  <img
+    v-if="article.coverUrl"
+    :src="article.coverUrl"
+    :alt="article.titleEn"
+    class="h-full w-full object-cover"
+    loading="lazy"
+  />
+  <svg v-else viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" preserveAspectRatio="xMidYMid slice" role="img">
     <defs>
       <linearGradient :id="`news-${article.slug}`" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" :stop-color="topicColor" />

@@ -7,6 +7,7 @@ const CITY_KEYS: Record<string, string> = {
 }
 
 export const CITY_VALUES = Object.keys(CITY_KEYS)
+export const DEFAULT_CITY = CITY_VALUES[0]!
 
 export function useCities() {
   const { t } = useI18n()

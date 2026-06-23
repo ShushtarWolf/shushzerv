@@ -2,9 +2,9 @@
 const { t } = useI18n()
 
 const pillars = [
-  { key: 'freedom', sport: 'yoga', color: '#34c759' },
-  { key: 'pricing', icon: 'star' as const, color: '#007aff' },
-  { key: 'realtime', icon: 'bolt' as const, color: '#ff5a1f' },
+  { key: 'freedom', sport: 'yoga' as const },
+  { key: 'pricing', icon: 'star' as const },
+  { key: 'realtime', icon: 'bolt' as const },
 ] as const
 </script>
 
@@ -14,17 +14,14 @@ const pillars = [
     <div
       v-for="p in pillars"
       :key="p.key"
-      class="ios-card overflow-hidden"
+      class="ios-card overflow-hidden rounded-2xl p-6"
     >
-      <div class="h-1.5" :style="{ backgroundColor: p.color }" />
-      <div class="p-6">
-        <span class="inline-flex" :style="{ color: p.color }">
-          <SportIcon v-if="'sport' in p" :slug="p.sport" size="lg" />
-          <SzIcon v-else :name="p.icon" size="lg" />
-        </span>
-        <h3 class="mt-3 text-lg font-extrabold">{{ t(`whyBook.${p.key}.title`) }}</h3>
-        <p class="mt-2 text-sm text-brand-gray-600">{{ t(`whyBook.${p.key}.desc`) }}</p>
-      </div>
+      <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-orange/10 text-brand-orange">
+        <SportIcon v-if="'sport' in p" :slug="p.sport" size="md" />
+        <SzIcon v-else :name="p.icon" size="md" />
+      </span>
+      <h3 class="mt-4 text-lg font-extrabold text-brand-gray-900">{{ t(`whyBook.${p.key}.title`) }}</h3>
+      <p class="mt-2 text-sm leading-relaxed text-brand-gray-600">{{ t(`whyBook.${p.key}.desc`) }}</p>
     </div>
   </div>
 </template>

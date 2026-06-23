@@ -1,0 +1,152 @@
+{
+  "finishedAt": "2026-06-18T14:55:55.647Z",
+  "baseUrl": "http://localhost:3000",
+  "passed": 24,
+  "failed": 0,
+  "results": [
+    {
+      "phase": "athlete",
+      "label": "onboarding already done or profile exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "booking",
+      "label": "create booking (pay at club)",
+      "ok": true,
+      "detail": "slot cmqfibbh50046u9t7r7etez7q"
+    },
+    {
+      "phase": "class",
+      "label": "already enrolled",
+      "ok": true,
+      "detail": "cmqfibc3003dqu9t7o65j9gpc"
+    },
+    {
+      "phase": "match",
+      "label": "already joined match",
+      "ok": true,
+      "detail": "cmqfibc6403eju9t7qy2fkx96"
+    },
+    {
+      "phase": "match",
+      "label": "join by token demo1match",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "tournament",
+      "label": "already registered",
+      "ok": true,
+      "detail": "cmqfibcac03fmu9t7hozv9m5a"
+    },
+    {
+      "phase": "coach",
+      "label": "public busy slots",
+      "ok": true,
+      "detail": "8 slots"
+    },
+    {
+      "phase": "coach",
+      "label": "book coach session",
+      "ok": true,
+      "detail": "cmqfibbxv03cwu9t7t3zlh90q"
+    },
+    {
+      "phase": "coach",
+      "label": "coach confirms session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "coach",
+      "label": "athlete cancels session",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "coach",
+      "label": "conflict detection",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "review",
+      "label": "review already exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "review",
+      "label": "coach review already exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "review",
+      "label": "list coach reviews",
+      "ok": true,
+      "detail": "1 items"
+    },
+    {
+      "phase": "chat",
+      "label": "send message",
+      "ok": true,
+      "detail": "cmqfibc9h03feu9t7id8it93n"
+    },
+    {
+      "phase": "coach-admin",
+      "label": "create training plan",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "coach-admin",
+      "label": "seeded coach onboarded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "coach-admin",
+      "label": "export csv",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "club-admin",
+      "label": "create activity",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "admin",
+      "label": "create news article",
+      "ok": true,
+      "detail": "qa-1781794554673"
+    },
+    {
+      "phase": "admin",
+      "label": "delete news article",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "admin",
+      "label": "list coaches",
+      "ok": true,
+      "detail": "10 coaches"
+    },
+    {
+      "phase": "admin",
+      "label": "toggle coach featured",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "phase": "assistant",
+      "label": "chat reply received",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

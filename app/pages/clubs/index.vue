@@ -2,13 +2,17 @@
 import type { Club, Sport } from '~/types'
 
 const { t, locale } = useI18n()
-const isRtl = computed(() => locale.value === 'fa')
+const localePath = useLocalePath()
 const route = useRoute()
+const isRtl = computed(() => locale.value === 'fa')
+useHead({ title: () => t('nav.clubs') })
 const { coords, request, distanceKm } = useGeolocation()
 
-useHead({ title: () => t('nav.clubs') })
+const bookingIntent = computed(() => route.query.book === '1' || route.query.book === 'true')
 
-const view = ref<'map' | 'list'>('map')
+const view = ref<'map' | 'list'>('list')
+const indoorFilter = ref('')
+const genderFilter = ref('')
 const sportFilter = ref(String(route.query.sport ?? ''))
 const cityFilter = ref(String(route.query.city ?? ''))
 const dateFilter = ref(String(route.query.date ?? ''))
@@ -28,13 +32,15 @@ const dateOptions = computed(() => {
   return opts
 })
 
-watch([sportFilter, cityFilter, dateFilter, q], () => {
+watch([sportFilter, cityFilter, dateFilter, q, indoorFilter, genderFilter], () => {
   navigateTo({
     query: {
       ...(sportFilter.value ? { sport: sportFilter.value } : {}),
       ...(cityFilter.value ? { city: cityFilter.value } : {}),
       ...(dateFilter.value ? { date: dateFilter.value } : {}),
       ...(q.value ? { q: q.value } : {}),
+      ...(indoorFilter.value ? { indoor: indoorFilter.value } : {}),
+      ...(genderFilter.value ? { gender: genderFilter.value } : {}),
     },
     replace: true,
   })
@@ -42,6 +48,7 @@ watch([sportFilter, cityFilter, dateFilter, q], () => {
 
 onMounted(() => {
   if (route.query.near === '1') request()
+  if (bookingIntent.value) view.value = 'list'
 })
 
 const { data: sports } = await useApiFetch<Sport[]>('/api/sports')
@@ -49,6 +56,9 @@ const { data: clubs, pending } = await useApiFetch<Club[]>('/api/clubs', {
   query: computed(() => ({
     ...(sportFilter.value ? { sport: sportFilter.value } : {}),
     ...(cityFilter.value ? { city: cityFilter.value } : {}),
+    ...(dateFilter.value ? { date: dateFilter.value } : {}),
+    ...(indoorFilter.value ? { indoor: indoorFilter.value } : {}),
+    ...(genderFilter.value ? { genderPolicy: genderFilter.value } : {}),
     ...(q.value ? { q: q.value } : {}),
   })),
 })
@@ -101,6 +111,27 @@ const sortedClubs = computed(() => {
       </div>
     </div>
 
+    <section
+      class="mb-6 rounded-2xl border border-brand-orange/25 bg-gradient-to-br from-brand-orange/10 to-white p-4 sm:p-5"
+      :class="bookingIntent ? 'ring-2 ring-brand-orange/20' : ''"
+    >
+      <h2 class="text-sm font-bold text-brand-gray-900 sm:text-base">{{ t('clubs.bookGuideTitle') }}</h2>
+      <ol class="mt-3 grid gap-2 text-sm text-brand-gray-700 sm:grid-cols-3">
+        <li class="rounded-xl bg-white/80 px-3 py-2 font-semibold shadow-sm">{{ t('clubs.bookStep1') }}</li>
+        <li class="rounded-xl bg-white/80 px-3 py-2 font-semibold shadow-sm">{{ t('clubs.bookStep2') }}</li>
+        <li class="rounded-xl bg-white/80 px-3 py-2 font-semibold shadow-sm">{{ t('clubs.bookStep3') }}</li>
+      </ol>
+      <p class="mt-3 text-sm text-brand-gray-600">{{ t('clubs.bookGuideHint') }}</p>
+      <button
+        v-if="view === 'map'"
+        type="button"
+        class="mt-3 text-sm font-bold text-brand-orange tap-highlight hover:underline"
+        @click="view = 'list'"
+      >
+        {{ t('clubs.switchToList') }}
+      </button>
+    </section>
+
     <div class="mb-4 flex flex-wrap gap-2">
       <button
         type="button"
@@ -115,8 +146,7 @@ const sortedClubs = computed(() => {
         :key="s.id"
         type="button"
         class="ios-segment-item tap-highlight transition-all duration-200"
-        :class="sportFilter === s.slug ? 'text-white shadow-sm' : ''"
-        :style="sportFilter === s.slug ? { backgroundColor: s.color } : undefined"
+        :class="sportFilter === s.slug ? 'ios-segment-item-active bg-brand-orange text-brand-primary' : ''"
         @click="sportFilter = s.slug"
       >
         <span class="inline-flex items-center gap-1.5">
@@ -141,16 +171,31 @@ const sortedClubs = computed(() => {
       </div>
       <input v-model="q" type="search" class="ios-input min-w-0 flex-1" :placeholder="t('search.placeholder')" :dir="isRtl ? 'rtl' : 'ltr'" />
       <div class="ios-select-wrap w-full sm:max-w-[10rem]">
+        <select v-model="indoorFilter" class="ios-input">
+          <option value="">{{ t('clubs.indoorOutdoor') }}</option>
+          <option value="true">{{ t('clubs.indoor') }}</option>
+          <option value="false">{{ t('clubs.outdoor') }}</option>
+        </select>
+      </div>
+      <div class="ios-select-wrap w-full sm:max-w-[10rem]">
+        <select v-model="genderFilter" class="ios-input">
+          <option value="">{{ t('clubs.courtType') }}</option>
+          <option value="MEN">{{ t('clubs.men') }}</option>
+          <option value="WOMEN">{{ t('clubs.women') }}</option>
+          <option value="FAMILY">{{ t('clubs.family') }}</option>
+        </select>
+      </div>
+      <div class="ios-select-wrap w-full sm:max-w-[10rem]">
         <select v-model="sortBy" class="ios-input">
           <option value="default">{{ t('clubs.sortDefault') }}</option>
           <option value="distance">{{ t('clubs.sortDistance') }}</option>
           <option value="price">{{ t('clubs.sortPrice') }}</option>
         </select>
       </div>
-      <button type="button" class="ios-btn-secondary inline-flex items-center gap-2 text-sm" @click="request">
+      <SzButton variant="secondary" size="sm" class="inline-flex items-center gap-2" @click="request">
         <SzIcon name="location" size="sm" />
         {{ t('hero.nearby') }}
-      </button>
+      </SzButton>
     </div>
 
     <SzSkeleton v-if="pending" :lines="3" class="mb-6" />
@@ -159,8 +204,13 @@ const sortedClubs = computed(() => {
       <ClubsMap :clubs="sortedClubs" />
     </div>
     <div v-else-if="sortedClubs.length" :key="sportFilter" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <ClubCard v-for="club in sortedClubs" :key="club.id" :club="club" />
+      <ClubCard v-for="club in sortedClubs" :key="club.id" :club="club" :date="dateFilter" />
     </div>
-    <p v-else class="ios-footnote">{{ t('common.noResults') }}</p>
+    <SzEmptyState
+      v-else
+      :message="t('common.noResults')"
+      :action-label="t('common.browseClubs')"
+      :action-to="localePath('/clubs')"
+    />
   </div>
 </template>

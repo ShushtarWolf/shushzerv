@@ -26,7 +26,7 @@ export default defineNuxtConfig({
       ],
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
-        { name: 'theme-color', content: '#f7f7f4' },
+        { name: 'theme-color', content: '#1E3A5F' },
         { name: 'description', content: 'Shushzerv — book sports courts, classes, and coaches' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
@@ -62,8 +62,8 @@ export default defineNuxtConfig({
       description: 'Book sports courts, classes, and coaches',
       lang: 'fa',
       dir: 'rtl',
-      theme_color: '#ff5a1f',
-      background_color: '#f7f7f4',
+      theme_color: '#1E3A5F',
+      background_color: '#fafaf9',
       display: 'standalone',
       start_url: '/',
       icons: [

@@ -6,7 +6,7 @@ const size = computed(() => props.size ?? 128)
 
 const sport = computed(() => props.coach.sport?.slug ?? 'fitness')
 
-const { resolveAccent, darken } = useSportTheme()
+const { accent, darken } = useSportTheme()
 
 const palette = computed(() => {
   const skins = [
@@ -18,13 +18,23 @@ const palette = computed(() => {
   ]
   let h = 0
   for (const c of props.coach.id) h = (h + c.charCodeAt(0)) % skins.length
-  const bg = resolveAccent(props.coach.sport)
+  const bg = accent
   return { bg, bgDark: darken(bg, 0.25), ...skins[h]! }
 })
 </script>
 
 <template>
+  <img
+    v-if="coach.photo"
+    :src="coach.photo"
+    :alt="coach.nameEn"
+    :width="size"
+    :height="size"
+    class="block object-cover"
+    loading="lazy"
+  />
   <svg
+    v-else
     :width="size"
     :height="size"
     viewBox="0 0 128 128"
@@ -96,7 +106,7 @@ const palette = computed(() => {
       <path d="M80 60 L100 60" stroke="#fff" stroke-width="1.5" opacity="0.7" />
     </g>
     <g v-else-if="sport === 'basketball'">
-      <circle cx="90" cy="58" r="11" fill="#ff9500" opacity="0.9" />
+      <circle cx="90" cy="58" r="11" fill="#A67C52" opacity="0.9" />
       <path d="M90 47 L90 69 M79 58 L101 58" stroke="#333" stroke-width="1" opacity="0.4" />
     </g>
     <g v-else-if="sport === 'boxing'">

@@ -2,6 +2,7 @@
 import type { Coach } from '~/types'
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 useHead({ title: () => t('nav.coaches') })
 
 const { data: coaches, pending } = await useApiFetch<Coach[]>('/api/coaches')
@@ -14,6 +15,11 @@ const { data: coaches, pending } = await useApiFetch<Coach[]>('/api/coaches')
     <div v-else-if="coaches?.length" class="sz-stagger grid items-stretch gap-3 sm:grid-cols-2">
       <CoachCard v-for="coach in coaches" :key="coach.id" :coach="coach" />
     </div>
-    <SzEmptyState v-else :message="t('common.noResults')" />
+    <SzEmptyState
+      v-else
+      :message="t('common.noResults')"
+      :action-label="t('common.browseClubs')"
+      :action-to="localePath('/clubs')"
+    />
   </div>
 </template>

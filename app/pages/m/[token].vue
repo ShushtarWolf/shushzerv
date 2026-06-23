@@ -5,7 +5,8 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const route = useRoute()
 const { loggedIn } = useUserSession()
-const { localized, formatDate } = useLocaleContent()
+const { requireLogin } = useAuthRedirect()
+const { localized, formatDate, formatTime, formatFraction } = useLocaleContent()
 const { levelLabel } = useSkillLevel()
 const { cityLabel } = useCities()
 
@@ -15,6 +16,16 @@ const { data: match, refresh } = await useApiFetch<OpenMatch & { joined?: boolea
   () => `/api/matches/by-token/${token.value}`,
 )
 
+useHead({
+  title: () => {
+    if (!match.value) return t('matchShare.title')
+    const sport = match.value.sport ? localized(match.value.sport.nameFa, match.value.sport.nameEn) : ''
+    const place = cityLabel(match.value.city)
+    const when = `${formatDate(match.value.date)} · ${formatTime(match.value.startTime)}`
+    return sport ? `${t('matchShare.title')} — ${sport} · ${place}` : `${t('matchShare.title')} — ${place} · ${when}`
+  },
+})
+
 const pending = ref(false)
 const joined = ref(false)
 const error = ref('')
@@ -22,7 +33,7 @@ const error = ref('')
 watch(() => match.value?.joined, (v) => { if (v) joined.value = true }, { immediate: true })
 
 async function join() {
-  if (!loggedIn.value) return navigateTo(localePath('/login'))
+  if (!loggedIn.value) return requireLogin()
   pending.value = true
   error.value = ''
   try {
@@ -44,18 +55,18 @@ onMounted(() => { shareUrl.value = window.location.href })
 <template>
   <div v-if="match" class="page-enter mx-auto max-w-lg px-4 py-10 sm:px-6">
     <div class="ios-card overflow-hidden">
-      <div class="bg-brand-orange p-6 text-white">
+      <div class="bg-brand-primary p-6 text-white">
         <span v-if="match.sport" class="inline-flex text-white">
           <SportIcon :slug="match.sport.slug" size="xl" />
         </span>
         <h1 class="sz-headline mt-3 text-white">{{ t('matchShare.title') }}</h1>
-        <p class="mt-2 text-white/85">{{ cityLabel(match.city) }} · {{ formatDate(match.date) }} · {{ match.startTime }}</p>
+        <p class="mt-2 text-white/85">{{ cityLabel(match.city) }} · {{ formatDate(match.date) }} · {{ formatTime(match.startTime) }}</p>
       </div>
       <div class="space-y-3 p-6">
         <p v-if="match.club" class="font-bold">{{ localized(match.club.nameFa, match.club.nameEn) }}</p>
         <p class="text-sm text-brand-gray-600">
           {{ levelLabel(match.minLevel) }} – {{ levelLabel(match.maxLevel) }} ·
-          {{ match.joinedCount }}/{{ match.maxPlayers }} {{ t('matches.players') }}
+          {{ formatFraction(match.joinedCount, match.maxPlayers) }} {{ t('matches.players') }}
         </p>
         <p v-if="error" class="text-sm text-brand-pink">{{ error }}</p>
         <SzButton v-if="!joined" block :disabled="pending" @click="join">{{ t('matches.join') }}</SzButton>
@@ -66,14 +77,15 @@ onMounted(() => { shareUrl.value = window.location.href })
             {{ t('matchShare.viewMatch') }}
           </NuxtLink>
         </div>
-        <button
+        <SzButton
           v-if="shareUrl"
-          type="button"
-          class="ios-btn-secondary w-full text-sm"
+          variant="secondary"
+          block
+          class="text-sm"
           @click="navigator.clipboard.writeText(shareUrl)"
         >
           {{ t('matchShare.copyLink') }}
-        </button>
+        </SzButton>
       </div>
     </div>
   </div>

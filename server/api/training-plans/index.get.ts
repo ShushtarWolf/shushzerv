@@ -7,7 +7,12 @@ export default defineEventHandler(async (event) => {
       where: { athleteId: session.user.id },
       include: { plan: { include: { coach: true, sport: true } } },
     })
-    return assignments.map((a) => a.plan)
+    return assignments.map((a) => ({
+      ...a.plan,
+      assignmentId: a.id,
+      completedAt: a.completedAt,
+      notes: a.notes,
+    }))
   }
 
   if (session.user.role === 'COACH') {
@@ -15,7 +20,14 @@ export default defineEventHandler(async (event) => {
     if (!coach) return []
     return prisma.trainingPlan.findMany({
       where: { coachId: coach.id },
-      include: { sport: true, assignments: { include: { athlete: { select: { id: true, name: true } } } } },
+      include: {
+        sport: true,
+        assignments: {
+          include: {
+            athlete: { select: { id: true, name: true, nameEn: true, email: true } },
+          },
+        },
+      },
     })
   }
 

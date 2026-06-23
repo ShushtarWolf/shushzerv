@@ -7,7 +7,7 @@ const { dashboardPath } = useDashboardPath()
 const tabs = computed(() => [
   { to: localePath('/'), label: t('nav.home'), icon: 'home' },
   { to: localePath('/explore'), label: t('nav.explore'), icon: 'explore' },
-  { to: localePath('/clubs'), label: t('nav.book'), icon: 'book', center: true },
+  { to: localePath('/clubs?book=1'), label: t('nav.book'), icon: 'book', center: true },
   { to: localePath('/matches'), label: t('nav.matches'), icon: 'matches' },
   { to: loggedIn.value ? dashboardPath.value : localePath('/login'), label: loggedIn.value ? t('nav.profile') : t('nav.login'), icon: 'profile' },
 ])
@@ -29,7 +29,7 @@ const tabs = computed(() => [
       >
         <span
           v-if="tab.center"
-          class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-white shadow-lifted"
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-brand-primary shadow-lifted"
         >
           <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 10h18M8 14h8" /></svg>
         </span>

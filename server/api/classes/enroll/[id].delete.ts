@@ -4,9 +4,23 @@ export default defineEventHandler(async (event) => {
 
   const enrollment = await prisma.classEnrollment.findUnique({
     where: { userId_classSessionId: { userId: user.id, classSessionId: classSessionId! } },
+    include: {
+      classSession: { include: { coach: { select: { userId: true } } } },
+    },
   })
   if (!enrollment) {
     throw createError({ statusCode: 404, statusMessage: 'Enrollment not found' })
+  }
+
+  const classSession = enrollment.classSession
+  if (enrollment.paymentStatus === 'PAID' && classSession) {
+    await refundClassFromWallet(
+      user.id,
+      classSessionId!,
+      classSession.price,
+      classSession.clubId,
+      classSession.coach?.userId,
+    )
   }
 
   await prisma.$transaction([

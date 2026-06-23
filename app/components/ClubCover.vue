@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Club } from '~/types'
 
-const props = defineProps<{ club: Club }>()
+const props = withDefaults(defineProps<{ club: Club; illustration?: boolean }>(), {
+  illustration: false,
+})
 
 const sport = computed(() => {
   const map: Record<string, string> = {
@@ -16,16 +18,27 @@ const sport = computed(() => {
   return props.club.courts?.[0]?.sport?.slug ?? map[props.club.slug] ?? 'fitness'
 })
 
-const { resolveAccent, darken } = useSportTheme()
+const { accent, darken } = useSportTheme()
 
 const colors = computed(() => {
-  const primary = resolveAccent(props.club.courts?.[0]?.sport)
+  const primary = accent
   return { a: primary, b: darken(primary, 0.25) }
 })
+
+const coverSrc = computed(
+  () => props.club.image || `/demo/clubs/${props.club.slug}.jpg`,
+)
 </script>
 
 <template>
-  <svg viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" preserveAspectRatio="xMidYMid slice" role="img">
+  <img
+    v-if="!illustration"
+    :src="coverSrc"
+    :alt="club.nameEn"
+    class="h-full w-full object-cover"
+    loading="lazy"
+  />
+  <svg v-else viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" class="h-full w-full" preserveAspectRatio="xMidYMid slice" role="img">
     <defs>
       <linearGradient :id="`sky-${club.slug}`" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" :stop-color="colors.a" />
@@ -83,7 +96,7 @@ const colors = computed(() => {
       <rect x="280" y="60" width="8" height="200" fill="#fff" opacity="0.5" />
       <rect x="240" y="60" width="88" height="50" fill="none" stroke="#fff" stroke-width="3" opacity="0.6" />
       <circle cx="284" cy="85" r="20" fill="none" stroke="#fff" stroke-width="2" opacity="0.5" />
-      <circle cx="520" cy="280" r="30" fill="#ff9500" opacity="0.7" />
+      <circle cx="520" cy="280" r="30" fill="#A67C52" opacity="0.7" />
     </g>
 
     <!-- Boxing ring -->

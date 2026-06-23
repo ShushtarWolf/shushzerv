@@ -20,6 +20,8 @@ export default defineEventHandler(async (event) => {
     role?: string
     sport?: string
     city?: string
+    bioFa?: string
+    sessionPrice?: number
   }>(event)
   const name = body.name?.trim()
   const email = body.email?.trim().toLowerCase()
@@ -61,6 +63,9 @@ export default defineEventHandler(async (event) => {
           city,
           sportId: sport.id,
           userId: created.id,
+          bioFa: body.bioFa?.trim() || null,
+          bioEn: body.bioEn?.trim() || body.bioFa?.trim() || null,
+          sessionPrice: body.sessionPrice !== undefined ? Math.round(body.sessionPrice) : 300000,
         },
       })
     }
@@ -111,5 +116,5 @@ export default defineEventHandler(async (event) => {
     user: toSessionUser(user),
   })
 
-  return { id: user.id, email: user.email, name: user.name, role: user.role }
+  return { id: user.id, email: user.email, name: user.name, nameEn: user.nameEn, role: user.role }
 })

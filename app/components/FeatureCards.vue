@@ -1,23 +1,23 @@
 <script setup lang="ts">
+import { brandSurface } from '#shared/palette'
+
 const { t } = useI18n()
 const localePath = useLocalePath()
-const { color: selectedColor } = useSelectedSportColor()
-
 const cards = [
-  { key: 'classes', sport: 'fitness', to: '/classes', color: '#ff9500' },
-  { key: 'matches', sport: 'football', to: '/matches', color: '#34c759' },
-  { key: 'coaches', sport: 'tennis', to: '/coaches', color: '#007aff' },
-  { key: 'clubs', sport: 'padel', to: '/clubs', color: '#ff5a1f' },
+  { key: 'classes', sport: 'fitness', to: '/classes' },
+  { key: 'matches', sport: 'football', to: '/matches' },
+  { key: 'coaches', sport: 'tennis', to: '/coaches' },
+  { key: 'clubs', sport: 'padel', to: '/clubs' },
 ] as const
 </script>
 
 <template>
-  <div :key="selectedColor ?? 'default'" class="sz-stagger sz-grid-enter grid items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="sz-stagger sz-grid-enter grid items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-4">
     <SzHeroCard
-      v-for="card in cards"
+      v-for="(card, i) in cards"
       :key="card.key"
       :to="localePath(card.to)"
-      :color="selectedColor ?? card.color"
+      :color="brandSurface(i)"
       class="h-full"
     >
       <div class="flex h-full flex-col p-5">

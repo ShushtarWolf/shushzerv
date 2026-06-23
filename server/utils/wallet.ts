@@ -169,6 +169,28 @@ export async function payoutClubWallet(userId: string, clubId: string, amount: n
   })
 }
 
+export async function payoutUserWallet(userId: string, amount: number) {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } })
+  if (!user || user.role !== 'COACH') {
+    throw createError({ statusCode: 403, statusMessage: 'Coach payout only' })
+  }
+
+  if (amount < 10000) {
+    throw createError({ statusCode: 400, statusMessage: 'Minimum payout is 10,000' })
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const balanceAfter = await debitUserWallet(
+      tx,
+      userId,
+      amount,
+      'PAYOUT',
+      { noteFa: 'برداشت به حساب بانکی', noteEn: 'Bank payout' },
+    )
+    return { balance: balanceAfter }
+  })
+}
+
 export async function payBookingFromWallet(userId: string, slotId: string, bookingId: string, price: number, clubId: string) {
   return prisma.$transaction((tx) => payBookingFromWalletTx(tx, userId, bookingId, price, clubId))
 }
@@ -307,6 +329,151 @@ export async function payClassFromWallet(
         'PLATFORM_FEE',
         { noteFa: 'کارمزد پلتفرم — کلاس', noteEn: 'Platform fee — class' },
         classSessionId,
+      )
+    }
+  })
+}
+
+export async function refundClassFromWallet(
+  userId: string,
+  classSessionId: string,
+  price: number,
+  clubId: string,
+  coachUserId?: string | null,
+) {
+  const { platformFee, net } = splitPayment(price)
+  const coachShare = coachUserId ? Math.round((price * COACH_SHARE_PERCENT) / 100) : 0
+  const clubShare = net - coachShare
+
+  return prisma.$transaction(async (tx) => {
+    if (clubShare > 0) {
+      await debitClubWallet(
+        tx,
+        clubId,
+        clubShare,
+        'REFUND',
+        { noteFa: 'بازگشت ثبت‌نام کلاس', noteEn: 'Class enrollment refund' },
+        classSessionId,
+      )
+    }
+    if (coachUserId && coachShare > 0) {
+      await debitUserWallet(
+        tx,
+        coachUserId,
+        coachShare,
+        'REFUND',
+        { noteFa: 'برگشت سهم مربی — کلاس', noteEn: 'Coach share reversal — class' },
+        classSessionId,
+      )
+    }
+    await creditUserWallet(
+      tx,
+      userId,
+      price,
+      'REFUND',
+      { noteFa: 'بازگشت وجه کلاس', noteEn: 'Class refund' },
+      classSessionId,
+    )
+
+    const admin = await tx.user.findFirst({ where: { role: 'PLATFORM_ADMIN' }, select: { id: true } })
+    if (admin && platformFee > 0) {
+      await debitUserWallet(
+        tx,
+        admin.id,
+        platformFee,
+        'REFUND',
+        { noteFa: 'برگشت کارمزد پلتفرم — کلاس', noteEn: 'Platform fee reversal — class' },
+        classSessionId,
+      )
+    }
+  })
+}
+
+export async function payCoachSessionFromWalletTx(
+  tx: TxClient,
+  athleteId: string,
+  coachUserId: string,
+  sessionId: string,
+  price: number,
+) {
+  const { platformFee, net } = splitPayment(price)
+
+  await debitUserWallet(
+    tx,
+    athleteId,
+    price,
+    'COACH_SESSION',
+    { noteFa: 'پرداخت جلسه مربی', noteEn: 'Coach session payment' },
+    sessionId,
+  )
+  await creditUserWallet(
+    tx,
+    coachUserId,
+    net,
+    'COACH_EARNING',
+    { noteFa: 'درآمد جلسه خصوصی', noteEn: 'Private session earning' },
+    sessionId,
+  )
+
+  const admin = await tx.user.findFirst({ where: { role: 'PLATFORM_ADMIN' }, select: { id: true } })
+  if (admin && platformFee > 0) {
+    await creditUserWallet(
+      tx,
+      admin.id,
+      platformFee,
+      'PLATFORM_FEE',
+      { noteFa: 'کارمزد پلتفرم — جلسه مربی', noteEn: 'Platform fee — coach session' },
+      sessionId,
+    )
+  }
+}
+
+export async function payCoachSessionFromWallet(
+  athleteId: string,
+  coachUserId: string,
+  sessionId: string,
+  price: number,
+) {
+  return prisma.$transaction((tx) =>
+    payCoachSessionFromWalletTx(tx, athleteId, coachUserId, sessionId, price),
+  )
+}
+
+export async function refundCoachSessionToWallet(
+  athleteId: string,
+  coachUserId: string,
+  sessionId: string,
+  price: number,
+) {
+  const { platformFee, net } = splitPayment(price)
+
+  return prisma.$transaction(async (tx) => {
+    await debitUserWallet(
+      tx,
+      coachUserId,
+      net,
+      'REFUND',
+      { noteFa: 'برگشت جلسه لغو‌شده', noteEn: 'Cancelled session reversal' },
+      sessionId,
+    )
+    await creditUserWallet(
+      tx,
+      athleteId,
+      price,
+      'REFUND',
+      { noteFa: 'بازگشت وجه جلسه مربی', noteEn: 'Coach session refund' },
+      sessionId,
+    )
+
+    const admin = await tx.user.findFirst({ where: { role: 'PLATFORM_ADMIN' }, select: { id: true } })
+    if (admin && platformFee > 0) {
+      await debitUserWallet(
+        tx,
+        admin.id,
+        platformFee,
+        'REFUND',
+        { noteFa: 'برگشت کارمزد پلتفرم — جلسه', noteEn: 'Platform fee reversal — session' },
+        sessionId,
       )
     }
   })

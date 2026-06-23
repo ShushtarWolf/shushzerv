@@ -15,7 +15,21 @@
     "db:studio": "prisma studio",
     "tutorial:pdf": "bash scripts/generate-tutorial-pdf.sh tutorial",
     "shushbot:pdf": "bash scripts/generate-tutorial-pdf.sh shushbot",
-    "docs:pdf": "bash scripts/generate-tutorial-pdf.sh all"
+    "guide:pdf": "bash scripts/generate-tutorial-pdf.sh guide",
+    "guide:screenshots": "node scripts/capture-guide-screenshots.mjs && node scripts/capture-guide-extra.mjs",
+    "guide:visual-pdf": "node scripts/build-visual-guide-html.mjs && bash scripts/generate-tutorial-pdf.sh visual",
+    "guide:build": "node scripts/build-visual-guide-html.mjs",
+    "guide:tour": "node scripts/build-site-tour.mjs",
+    "guide:tour:export": "node scripts/build-site-tour.mjs && node scripts/export-site-tour.mjs",
+    "guide:all": "npm run guide:screenshots && npm run guide:build && npm run guide:visual-pdf",
+    "docs:pdf": "bash scripts/generate-tutorial-pdf.sh all",
+    "smoke": "node scripts/smoke.mjs",
+    "qa": "node scripts/qa-checklist.mjs",
+    "qa:fast": "QA_STEP_MS=0 node scripts/qa-checklist.mjs",
+    "qa:flows": "node scripts/qa-flows.mjs",
+    "demo:images": "node scripts/fetch-demo-images.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "prisma": {
     "seed": "node --import tsx prisma/seed.ts"
@@ -26,6 +40,7 @@
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@prisma/client": "^6.19.3",
     "@vite-pwa/nuxt": "^1.1.1",
+    "apexcharts": "^5.15.0",
     "leaflet": "^1.9.4",
     "nuxt": "^4.4.7",
     "nuxt-auth-utils": "^0.5.29",
@@ -33,9 +48,11 @@
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "vue": "^3.5.35",
-    "vue-router": "^5.1.0"
+    "vue-router": "^5.1.0",
+    "vue3-apexcharts": "^1.11.1"
   },
   "devDependencies": {
-    "@types/leaflet": "^1.9.21"
+    "@types/leaflet": "^1.9.21",
+    "vitest": "^3.2.6"
   }
 }

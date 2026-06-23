@@ -9,12 +9,11 @@ const props = withDefaults(
   { interactive: true, themed: false },
 )
 
-const { cardVars, DEFAULT_SPORT_COLOR } = useSportTheme()
-const { color: selectedColor } = useSelectedSportColor()
+const { cardVars, BRAND_PRIMARY } = useSportTheme()
 
 const resolvedAccent = computed(() => {
   if (props.accent) return props.accent
-  if (props.themed) return selectedColor.value ?? DEFAULT_SPORT_COLOR
+  if (props.themed) return BRAND_PRIMARY
   return undefined
 })
 
@@ -23,24 +22,19 @@ const cardStyle = computed(() => {
   if (!color) return undefined
   return cardVars(color)
 })
+
+const cardClass = computed(() => [
+  'group sz-card relative block overflow-hidden rounded-2xl border-0 bg-white shadow-card transition-all duration-300 ease-out',
+  props.interactive ? 'sz-card-interactive' : '',
+  resolvedAccent.value ? 'sz-card-sport' : '',
+])
 </script>
 
 <template>
-  <component
-    :is="to ? resolveComponent('NuxtLink') : 'div'"
-    :to="to"
-    class="group sz-card relative block overflow-hidden rounded-ios-lg bg-white shadow-card transition-all duration-300 ease-out"
-    :class="[
-      interactive ? 'sz-card-interactive' : '',
-      resolvedAccent ? 'sz-card-sport' : '',
-    ]"
-    :style="cardStyle"
-  >
-    <span
-      v-if="resolvedAccent"
-      class="sz-card-accent absolute inset-x-0 top-0 h-1.5 transition-all duration-300 group-hover:h-2.5"
-      :style="{ backgroundColor: resolvedAccent }"
-    />
+  <NuxtLink v-if="to" :to="to" :class="cardClass" :style="cardStyle">
     <slot />
-  </component>
+  </NuxtLink>
+  <div v-else :class="cardClass" :style="cardStyle">
+    <slot />
+  </div>
 </template>

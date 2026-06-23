@@ -4,7 +4,14 @@ const LEVELS: SkillLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'PRO']
 
 export default defineEventHandler(async (event) => {
   const user = await requireRole(event, 'ATHLETE')
-  const body = await readBody<{ level?: SkillLevel; sport?: string }>(event)
+  const body = await readBody<{
+    level?: SkillLevel
+    sport?: string
+    name?: string
+    phone?: string
+    locale?: string
+    favoriteSports?: string
+  }>(event)
 
   const profile = await prisma.athleteProfile.findUnique({ where: { userId: user.id } })
   if (!profile) throw createError({ statusCode: 404, statusMessage: 'Profile not found' })
@@ -16,11 +23,24 @@ export default defineEventHandler(async (event) => {
     if (sport) data.sportId = sport.id
   }
 
-  const updated = await prisma.athleteProfile.update({
-    where: { userId: user.id },
-    data,
-    include: { sport: true },
-  })
+  const userData: { name?: string; phone?: string; locale?: string; favoriteSports?: string } = {}
+  if (body.name?.trim()) userData.name = body.name.trim()
+  if (body.phone !== undefined) userData.phone = body.phone
+  if (body.locale === 'fa' || body.locale === 'en') userData.locale = body.locale
+  if (body.favoriteSports !== undefined) userData.favoriteSports = body.favoriteSports
 
-  return updated
+  const [updated, updatedUser] = await prisma.$transaction([
+    prisma.athleteProfile.update({
+      where: { userId: user.id },
+      data,
+      include: { sport: true },
+    }),
+    Object.keys(userData).length
+      ? prisma.user.update({ where: { id: user.id }, data: userData })
+      : prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
+  ])
+
+  await setUserSession(event, { user: toSessionUser(updatedUser) })
+
+  return { profile: updated, user: updatedUser }
 })

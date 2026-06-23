@@ -1,0 +1,173 @@
+#!/usr/bin/env node
+/**
+ * Build token-minimal click-through site tour (HTML + compact flow JSON).
+ * Uses existing public/docs/guide/*.png screenshots.
+ * Run: node scripts/build-site-tour.mjs
+ */
+import { writeFileSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
+const OUT_HTML = path.join(ROOT, 'public/docs/site-tour.html')
+const OUT_FLOW = path.join(ROOT, 'public/docs/site-tour.flow.json')
+const IMG = 'guide'
+
+/**
+ * Compact scene: [image, x%, y%, label, nextImage|null, holdMs]
+ * Cursor moves → click ripple → crossfade to next (or hold on same frame).
+ */
+const scenes = [
+  ['01-home', 58, 4, 'باشگاه‌ها', '03b-clubs-list', 900],
+  ['03b-clubs-list', 72, 38, 'مجموعه تنیس آزادی', '13-club-detail', 900],
+  ['13-club-detail', 52, 52, 'زمین ۱', '14b-club-slot-picked-auth', 900],
+  ['14b-club-slot-picked-auth', 68, 58, 'سانس آزاد', '14c-booking-confirm', 900],
+  ['14c-booking-confirm', 50, 72, 'تأیید رزرو', '14c-booking-success', 1100],
+  ['14c-booking-success', 42, 68, 'مشاهده رزروها', '22-dash-athlete-bookings', 900],
+  ['01-home', 42, 4, 'کاوش', '02-explore', 800],
+  ['02-explore', 50, 28, 'تنیس', '12-sports-tennis', 800],
+  ['01-home', 50, 4, 'کلاس‌ها', '04-classes', 800],
+  ['04-classes', 50, 42, 'جزئیات کلاس', '04b-class-detail-full', 900],
+  ['01-home', 66, 4, 'همبازی', '05-matches', 800],
+  ['05-matches', 50, 40, 'جزئیات همبازی', '05b-match-detail', 900],
+  ['01-home', 74, 4, 'تورنمنت', '07-tournaments', 800],
+  ['07-tournaments', 50, 38, 'جزئیات تورنمنت', '07b-tournament-detail', 900],
+  ['01-home', 88, 4, 'بیشتر ▾', null, 600],
+  ['01-home', 88, 12, 'مربیان', '06-coaches', 800],
+  ['06-coaches', 50, 38, 'پروفایل مربی', '06b-coach-detail', 900],
+  ['01-home', 88, 4, 'بیشتر ▾', null, 500],
+  ['01-home', 88, 16, 'اخبار', '08-news', 800],
+  ['01-home', 88, 4, 'بیشتر ▾', null, 500],
+  ['01-home', 88, 20, 'چت', '16-chat', 800],
+  ['01-home', 10, 4, 'ورود', '10-login', 800],
+  ['10-login', 50, 55, 'ورود به حساب', '20-dash-athlete-overview', 1200],
+  ['20-dash-athlete-overview', 18, 22, 'برنامه', '21-dash-athlete-schedule', 800],
+  ['21-dash-athlete-schedule', 18, 30, 'رزروها', '22-dash-athlete-bookings', 800],
+  ['22-dash-athlete-bookings', 18, 38, 'کیف پول', '23-dash-athlete-wallet', 800],
+  ['23-dash-athlete-wallet', 18, 46, 'پروفایل', '24-dash-athlete-profile', 800],
+  ['03b-clubs-list', 42, 18, 'نقشه', '03-clubs-map-view', 900],
+  ['03-clubs-map-view', 55, 45, 'پین باشگاه', '03c-clubs-map-popup', 900],
+  ['03c-clubs-map-popup', 72, 62, 'رزرو', '13-club-detail', 900],
+  ['10-login', 50, 72, 'ثبت‌نام', '11-register', 800],
+  ['11-register', 50, 62, 'ثبت‌نام ورزشکار', '15-onboarding', 1000],
+  ['30-dash-club-overview', 18, 30, 'برنامه باشگاه', '31-dash-club-schedule', 800],
+  ['31-dash-club-schedule', 18, 38, 'مدیریت', '32-dash-club-manage', 800],
+  ['32-dash-club-manage', 18, 46, 'رزروها', '33-dash-club-bookings', 800],
+  ['40-dash-coach-overview', 18, 30, 'برنامه‌ها', '41-dash-coach-plans', 800],
+  ['50-dash-admin-overview', 18, 30, 'کاربران', '51-dash-admin-users', 800],
+  ['17-mobile-home', 25, 96, 'رزرو', '18-mobile-clubs', 900],
+  ['01-home', 50, 4, 'درباره', '09-about', 800],
+]
+
+const html = `<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>شوش‌رزرو — تور کلیک</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0b1220;overflow:hidden;font-family:system-ui,sans-serif;display:flex;flex-direction:column}
+#wrap{flex:1;min-height:0;position:relative;width:100%;display:flex;align-items:center;justify-content:center;padding:8px}
+#stage{position:relative;width:min(92vw,calc((100vh - 52px)*1.6));aspect-ratio:16/10;overflow:hidden;border-radius:12px;box-shadow:0 20px 60px #0008}
+#frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;opacity:1;transition:opacity .35s}
+#frame.out{opacity:0}
+#cur{position:absolute;width:22px;height:22px;margin:-2px 0 0 -2px;pointer-events:none;z-index:5;transition:left .55s cubic-bezier(.4,0,.2,1),top .55s cubic-bezier(.4,0,.2,1)}
+#cur svg{display:block;filter:drop-shadow(0 1px 2px #0006)}
+#ring{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border:2px solid #22c55e;border-radius:50%;pointer-events:none;z-index:4;opacity:0;transform:scale(.4)}
+#ring.on{animation:clk .45s ease-out forwards}
+@keyframes clk{0%{opacity:.9;transform:scale(.4)}100%{opacity:0;transform:scale(1.6)}}
+#lbl{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:6;background:#000c;color:#fff;padding:6px 14px;border-radius:999px;font-size:13px;white-space:nowrap;backdrop-filter:blur(6px)}
+#bar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;gap:8px;align-items:center;padding:8px 12px;background:#000a;color:#fff;font-size:12px}
+#bar button{background:#22c55e;border:0;color:#fff;padding:5px 12px;border-radius:6px;cursor:pointer;font:inherit}
+#bar button.sec{background:#334155}
+#prog{flex:1;height:4px;background:#ffffff22;border-radius:2px;overflow:hidden}
+#prog i{display:block;height:100%;background:#22c55e;width:0;transition:width .3s}
+</style>
+</head>
+<body>
+<div id="bar">
+  <button id="play">▶</button>
+  <button id="rst" class="sec">↺</button>
+  <span id="step">0/${scenes.length}</span>
+  <div id="prog"><i id="fill"></i></div>
+</div>
+<div id="wrap"><div id="stage">
+  <img id="frame" alt="">
+  <div id="cur"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="#fff" stroke="#111" stroke-width="1.2" d="M5 3l14 8.5-6.5 1.5 2.5 7.5-3-1.5-2.5-7.5L5 3z"/></svg></div>
+  <div id="ring"></div>
+  <div id="lbl"></div>
+</div></div>
+<script>
+const I='${IMG}/',S=${JSON.stringify(scenes)};
+let i=0,on=true,tid;
+const $=id=>document.getElementById(id);
+const fr=$('frame'),cur=$('cur'),ring=$('ring'),lbl=$('lbl'),fill=$('fill'),step=$('step');
+const stage=$('stage');
+let px=10,py=10;
+
+function pct(x,y){return{x:stage.clientWidth*x/100,y:stage.clientHeight*y/100}}
+
+function move(x,y,cb){
+  const p=pct(x,y);
+  cur.style.left=p.x+'px';cur.style.top=p.y+'px';
+  ring.style.left=p.x+'px';ring.style.top=p.y+'px';
+  px=x;py=y;
+  setTimeout(cb,580);
+}
+
+function click(){
+  ring.classList.remove('on');
+  void ring.offsetWidth;
+  ring.classList.add('on');
+}
+
+function show(img,tx,ty,next,hold,lblText){
+  return new Promise(res=>{
+    lbl.textContent='🖱 '+lblText;
+    move(tx,ty,()=>{
+      click();
+      setTimeout(()=>{
+        if(next&&next!==img){
+          fr.classList.add('out');
+          setTimeout(()=>{fr.src=I+next+'.png';fr.onload=()=>{fr.classList.remove('out');res()}},320);
+        }else res();
+      },hold||700);
+    });
+  });
+}
+
+async function run(){
+  if(!on)return;
+  const[s,tx,ty,lb,nx,hold]=S[i];
+  fr.src=I+s+'.png';
+  await new Promise(r=>{fr.onload=r;fr.complete&&r()});
+  await show(s,tx,ty,nx||s,hold||700,lb);
+  fill.style.width=((i+1)/S.length*100)+'%';
+  step.textContent=(i+1)+'/'+S.length;
+  i=(i+1)%S.length;
+  if(on)tid=setTimeout(run,400);
+}
+
+$('play').onclick=()=>{on=!on;$('play').textContent=on?'⏸':'▶';on&&!tid&&run()};
+$('rst').onclick=()=>{clearTimeout(tid);tid=null;i=0;on=true;$('play').textContent='⏸';fill.style.width='0';step.textContent='0/'+S.length;run()};
+$('play').textContent='⏸';
+run();
+</script>
+</body>
+</html>`
+
+writeFileSync(OUT_HTML, html, 'utf8')
+
+const flow = scenes.map(([img, x, y, label, next, hold]) => ({
+  f: img,
+  c: [x, y],
+  l: label,
+  t: next,
+  ms: hold,
+}))
+
+writeFileSync(OUT_FLOW, JSON.stringify(flow), 'utf8')
+
+console.log('✓', OUT_HTML)
+console.log('✓', OUT_FLOW, `(${flow.length} scenes, ${JSON.stringify(flow).length} bytes)`)

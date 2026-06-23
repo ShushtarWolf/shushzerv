@@ -1,23 +1,18 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const { color: sportColor } = useSelectedSportColor()
-const { DEFAULT_SPORT_COLOR } = useSportTheme()
+const { formatNumber } = useLocaleContent()
+const ratingSuffix = computed(() => `/${formatNumber(5)}`)
 
-const accent = computed(() => sportColor.value ?? DEFAULT_SPORT_COLOR)
-
-const items = [
-  { icon: 'star' as const, value: 4.8, suffix: '/5', labelKey: 'trust.rating', decimals: 1 },
-  { icon: 'users' as const, value: 10000, prefix: '+', labelKey: 'trust.players' },
-  { icon: 'building' as const, value: 50, prefix: '+', labelKey: 'trust.clubs' },
-  { icon: 'bolt' as const, value: 0, labelKey: 'trust.realtime', text: true },
-]
+const items = computed(() => [
+  { icon: 'star' as const, value: 4.8, suffix: ratingSuffix.value, label: t('trust.rating'), decimals: 1 },
+  { icon: 'users' as const, value: 10000, prefix: '+', label: t('trust.players') },
+  { icon: 'building' as const, value: 50, prefix: '+', label: t('trust.clubs') },
+  { icon: 'bolt' as const, value: 0, label: t('trust.realtime'), text: true },
+])
 </script>
 
 <template>
-  <div
-    class="overflow-hidden rounded-ios-xl p-4 text-white shadow-card transition-colors duration-300"
-    :style="{ backgroundColor: accent }"
-  >
+  <div class="overflow-hidden rounded-ios-xl bg-brand-primary p-4 text-white shadow-card">
     <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
       <div
         v-for="(item, i) in items"
@@ -36,7 +31,7 @@ const items = [
           class="!text-white"
         />
         <span v-else class="sz-stat text-white">{{ t('trust.realtimeValue') }}</span>
-        <span class="text-xs font-medium text-white/85">{{ t(item.labelKey) }}</span>
+        <span class="text-xs font-medium text-white/85">{{ item.label }}</span>
       </div>
     </div>
   </div>

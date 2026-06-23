@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { OpenMatch, Sport } from '~/types'
+import { DEFAULT_CITY } from '~/composables/useCities'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
 const { loggedIn } = useUserSession()
+const { requireLogin } = useAuthRedirect()
 const { levels, levelLabel } = useSkillLevel()
 const { cities } = useCities()
 const { localDateISO } = useLocaleContent()
@@ -26,7 +28,7 @@ watch(
 const showForm = ref(false)
 const form = ref({
   sport: 'tennis',
-  city: 'تهران',
+  city: DEFAULT_CITY,
   date: localDateISO(),
   startTime: '18:00',
   maxPlayers: 4,
@@ -38,7 +40,7 @@ const pending = ref(false)
 const shareMsg = ref('')
 
 async function createMatch() {
-  if (!loggedIn.value) return navigateTo(localePath('/login'))
+  if (!loggedIn.value) return requireLogin()
   pending.value = true
   shareMsg.value = ''
   try {
@@ -67,7 +69,7 @@ function copyShare() {
     <section class="mb-8 rounded-ios-xl bg-brand-orange/10 p-6 sm:p-8">
       <h1 class="sz-headline">{{ t('matches.title') }}</h1>
       <p class="mt-2 text-brand-gray-600">{{ t('matches.subtitle') }}</p>
-      <SzButton class="mt-4" @click="loggedIn ? (showForm = true) : navigateTo(localePath('/login'))">
+      <SzButton class="mt-4" @click="loggedIn ? (showForm = true) : requireLogin()">
         {{ t('matches.create') }}
       </SzButton>
     </section>
@@ -89,8 +91,7 @@ function copyShare() {
                   :key="s.id"
                   type="button"
                   class="sz-chip tap-highlight"
-                  :class="form.sport === s.slug ? 'text-white shadow-card' : 'bg-white shadow-card'"
-                  :style="form.sport === s.slug ? { backgroundColor: s.color } : undefined"
+                  :class="form.sport === s.slug ? 'bg-brand-orange text-brand-primary shadow-card' : 'bg-white shadow-card'"
                   @click="form.sport = s.slug"
                 >
                   <span class="inline-flex items-center gap-1.5">
@@ -116,7 +117,7 @@ function copyShare() {
           </div>
           <div class="mt-4 flex gap-2">
             <SzButton type="submit" block :disabled="pending">{{ t('matches.create') }}</SzButton>
-            <button type="button" class="ios-btn-ghost" @click="showForm = false">{{ t('common.close') }}</button>
+            <SzButton variant="ghost" @click="showForm = false">{{ t('common.close') }}</SzButton>
           </div>
         </form>
       </div>
@@ -142,8 +143,7 @@ function copyShare() {
         :key="s.id"
         type="button"
         class="ios-segment-item tap-highlight transition-all duration-200"
-        :class="sportFilter === s.slug ? 'text-white shadow-sm' : ''"
-        :style="sportFilter === s.slug ? { backgroundColor: s.color } : undefined"
+        :class="sportFilter === s.slug ? 'ios-segment-item-active bg-brand-orange text-brand-primary' : ''"
         @click="sportFilter = s.slug"
       >
         <span class="inline-flex items-center gap-1.5">
@@ -156,6 +156,11 @@ function copyShare() {
     <div v-if="matches?.length" :key="sportFilter" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <MatchCard v-for="m in matches" :key="m.id" :match="m" />
     </div>
-    <p v-else class="ios-footnote">{{ t('common.noResults') }}</p>
+    <SzEmptyState
+      v-else
+      :message="t('common.noResults')"
+      :action-label="t('common.createMatch')"
+      :action-to="localePath('/matches')"
+    />
   </div>
 </template>

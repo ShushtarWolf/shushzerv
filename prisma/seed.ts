@@ -1,15 +1,14 @@
 import { PrismaClient } from '@prisma/client'
+import { BRAND_PRIMARY } from '../server/utils/palette.ts'
 import { hashSecret } from '../server/utils/password.ts'
+import { buildSlotTimes } from '../server/utils/slotSchedule.ts'
 
 const prisma = new PrismaClient()
 
-const TIME_SLOTS: Array<[string, string]> = [
-  ['08:00', '09:30'],
-  ['10:00', '11:30'],
-  ['16:00', '17:30'],
-  ['18:00', '19:30'],
-  ['20:00', '21:30'],
-]
+const SEED_SLOT_DURATION = 120
+const SEED_OPEN = '08:00'
+const SEED_CLOSE = '22:00'
+const SEED_SLOT_TIMES = buildSlotTimes(SEED_SLOT_DURATION, SEED_OPEN, SEED_CLOSE)
 
 function isoDate(offsetDays: number) {
   const d = new Date()
@@ -19,14 +18,14 @@ function isoDate(offsetDays: number) {
 }
 
 const sportsData = [
-  { slug: 'tennis', nameFa: 'تنیس', nameEn: 'Tennis', icon: 'tennis', color: '#B8C93E', group: 'racket' },
-  { slug: 'padel', nameFa: 'پدل', nameEn: 'Padel', icon: 'padel', color: '#1D6FD4', group: 'racket' },
-  { slug: 'football', nameFa: 'فوتبال', nameEn: 'Football', icon: 'football', color: '#000000', group: 'ball' },
-  { slug: 'fitness', nameFa: 'بدنسازی', nameEn: 'Fitness', icon: 'fitness', color: '#DC3C3C', group: 'fitness' },
-  { slug: 'yoga', nameFa: 'یوگا', nameEn: 'Yoga', icon: 'yoga', color: '#8A7AAF', group: 'fitness' },
-  { slug: 'swim', nameFa: 'شنا', nameEn: 'Swimming', icon: 'swim', color: '#0077BE', group: 'water' },
-  { slug: 'basketball', nameFa: 'بسکتبال', nameEn: 'Basketball', icon: 'basketball', color: '#FF6B00', group: 'ball' },
-  { slug: 'boxing', nameFa: 'بوکس', nameEn: 'Boxing', icon: 'boxing', color: '#9E1B28', group: 'combat' },
+  { slug: 'tennis', nameFa: 'تنیس', nameEn: 'Tennis', icon: 'tennis', color: BRAND_PRIMARY, group: 'racket' },
+  { slug: 'padel', nameFa: 'پدل', nameEn: 'Padel', icon: 'padel', color: BRAND_PRIMARY, group: 'racket' },
+  { slug: 'football', nameFa: 'فوتبال', nameEn: 'Football', icon: 'football', color: BRAND_PRIMARY, group: 'ball' },
+  { slug: 'fitness', nameFa: 'بدنسازی', nameEn: 'Fitness', icon: 'fitness', color: BRAND_PRIMARY, group: 'fitness' },
+  { slug: 'yoga', nameFa: 'یوگا', nameEn: 'Yoga', icon: 'yoga', color: BRAND_PRIMARY, group: 'fitness' },
+  { slug: 'swim', nameFa: 'شنا', nameEn: 'Swimming', icon: 'swim', color: BRAND_PRIMARY, group: 'water' },
+  { slug: 'basketball', nameFa: 'بسکتبال', nameEn: 'Basketball', icon: 'basketball', color: BRAND_PRIMARY, group: 'ball' },
+  { slug: 'boxing', nameFa: 'بوکس', nameEn: 'Boxing', icon: 'boxing', color: BRAND_PRIMARY, group: 'combat' },
 ]
 
 const cities = ['تهران', 'اصفهان', 'شیراز', 'مشهد', 'تبریز']
@@ -80,6 +79,12 @@ function clubCoords(city: string, district: string, index: number): [number, num
   return [lat + index * 0.012, lng + index * 0.01]
 }
 
+const demoImage = {
+  club: (slug: string) => `/demo/clubs/${slug}.jpg`,
+  coach: (index: number) => `/demo/coaches/coach-${index + 1}.jpg`,
+  news: (slug: string) => `/demo/news/${slug}.jpg`,
+}
+
 const clubSeeds = [
   { slug: 'azadi-tennis', nameFa: 'مجموعه تنیس آزادی', nameEn: 'Azadi Tennis Complex', sport: 'tennis', city: 'تهران', district: 'سعادت‌آباد', rating: 4.8, priceFrom: 250000, discount: 15, featured: true },
   { slug: 'enghelab-tennis', nameFa: 'باشگاه تنیس انقلاب', nameEn: 'Enghelab Tennis Club', sport: 'tennis', city: 'تهران', district: 'الهیه', rating: 4.6, priceFrom: 300000, featured: true },
@@ -112,13 +117,77 @@ const coachSeeds = [
   { nameFa: 'کیان عباسی', nameEn: 'Kian Abbasi', sport: 'boxing', city: 'تهران', rating: 4.7, sessions: 200, bioFa: 'مربی بوکس حرفه‌ای و آماتور.', bioEn: 'Professional and amateur boxing coach.' },
 ]
 
+const sportClubMap: Record<string, string> = {
+  tennis: 'azadi-tennis',
+  padel: 'padel-zone-tehran',
+  football: 'green-turf-arena',
+  fitness: 'iron-house-gym',
+  yoga: 'zen-yoga-studio',
+  swim: 'aqua-swim-center',
+  basketball: 'hoops-basketball-arena',
+  boxing: 'knockout-boxing-club',
+}
+
 const newsSeeds = [
-  { slug: 'shushzerv-launch', sport: 'tennis', titleFa: 'شوش‌زرو رسماً راه‌اندازی شد', titleEn: 'Shushzerv officially launches', excerptFa: 'پلتفرم رزرو ورزشی شوش‌زرو با ده‌ها باشگاه آغاز به کار کرد.', excerptEn: 'The Shushzerv sports booking platform launches with dozens of clubs.' },
-  { slug: 'padel-rising', sport: 'padel', titleFa: 'پدل؛ ورزش در حال رشد ایران', titleEn: 'Padel: Iran’s fastest growing sport', excerptFa: 'محبوبیت پدل در شهرهای بزرگ به‌سرعت در حال افزایش است.', excerptEn: 'Padel popularity is rising fast in major cities.' },
-  { slug: 'winter-fitness-tips', sport: 'fitness', titleFa: 'نکات تمرین در فصل سرد', titleEn: 'Fitness tips for the cold season', excerptFa: 'چطور در زمستان انگیزه تمرین را حفظ کنیم.', excerptEn: 'How to stay motivated to train in winter.' },
-  { slug: 'yoga-for-athletes', sport: 'yoga', titleFa: 'یوگا برای ورزشکاران', titleEn: 'Yoga for athletes', excerptFa: 'یوگا چطور به ریکاوری و انعطاف کمک می‌کند.', excerptEn: 'How yoga helps recovery and flexibility.' },
-  { slug: 'swimming-season', sport: 'swim', titleFa: 'فصل جدید سانس‌های شنا', titleEn: 'New swimming season slots', excerptFa: 'سانس‌های جدید استخرها اضافه شد.', excerptEn: 'New pool slots have been added.' },
-  { slug: 'book-pay-at-club', titleFa: 'رزرو کن، در باشگاه پرداخت کن', titleEn: 'Book now, pay at the club', excerptFa: 'در نسخه فعلی پرداخت به صورت حضوری انجام می‌شود.', excerptEn: 'In the current version, payment is made in person.' },
+  {
+    slug: 'shushzerv-launch',
+    sport: 'tennis',
+    titleFa: 'شوش‌زرو رسماً راه‌اندازی شد',
+    titleEn: 'Shushzerv officially launches',
+    excerptFa: 'پلتفرم رزرو ورزشی شوش‌زرو با ده‌ها باشگاه آغاز به کار کرد.',
+    excerptEn: 'The Shushzerv sports booking platform launches with dozens of clubs.',
+    bodyFa: 'امروز پلتفرم شوش‌زرو با بیش از ۱۵ باشگاه فعال در پنج شهر بزرگ ایران راه‌اندازی شد. کاربران می‌توانند زمین، کلاس گروهی و بازی عمومی را در یک جا رزرو کنند.\n\nاز ویژگی‌های اولیه: جستجوی لحظه‌ای سانس‌ها، پرداخت در باشگاه، بازی عمومی با لینک اشتراک‌گذاری و داشبورد ورزشکار برای پیگیری رزروها.\n\nدر هفته‌های آینده باشگاه‌های بیشتری به شبکه اضافه می‌شوند.',
+    bodyEn: 'Shushzerv goes live today with more than 15 active clubs across five major Iranian cities. Users can book courts, group classes, and open matches in one place.\n\nLaunch features include live slot search, pay-at-club checkout, shareable open-match links, and an athlete dashboard to track bookings.\n\nMore clubs will join the network in the coming weeks.',
+  },
+  {
+    slug: 'padel-rising',
+    sport: 'padel',
+    titleFa: 'پدل؛ ورزش در حال رشد ایران',
+    titleEn: 'Padel: Iran’s fastest growing sport',
+    excerptFa: 'محبوبیت پدل در شهرهای بزرگ به‌سرعت در حال افزایش است.',
+    excerptEn: 'Padel popularity is rising fast in major cities.',
+    bodyFa: 'پدل در دو سال اخیر یکی از پررشدترین ورزش‌های راکتی در تهران و اصفهان شده است. باشگاه‌های جدید هر ماه زمین‌های سرپوشیده و روباز اضافه می‌کنند.\n\nشوش‌زرو برای اولین بار امکان رزرو آنلاین زمین پدل و پیدا کردن همبازی در همان سانس را فراهم کرده است.\n\nاگر تازه‌کار هستید، کلاس‌های مقدماتی باشگاه‌های شریک را در بخش کلاس‌ها ببینید.',
+    bodyEn: 'Padel has become one of the fastest-growing racket sports in Tehran and Isfahan over the past two years. New clubs add indoor and outdoor courts every month.\n\nShushzerv is the first platform to combine online padel court booking with finding partners for the same slot.\n\nNew to the sport? Check intro classes from partner clubs in the Classes section.',
+  },
+  {
+    slug: 'winter-fitness-tips',
+    sport: 'fitness',
+    titleFa: 'نکات تمرین در فصل سرد',
+    titleEn: 'Fitness tips for the cold season',
+    excerptFa: 'چطور در زمستان انگیزه تمرین را حفظ کنیم.',
+    excerptEn: 'How to stay motivated to train in winter.',
+    bodyFa: 'سرمای زمستان اغلب برنامه تمرین را مختل می‌کند. سه عادت ساده کمک می‌کند: زمان ثابت هفتگی، گرم‌کردن طولانی‌تر و هدف کوتاه‌مدت هفتگی.\n\nباشگاه‌های شریک شوش‌زرو سانس‌های صبح زود و عصر را با ظرفیت محدود نگه می‌دارند تا از شلوغی جلوگیری شود.\n\nبا رزرو از قبل، دیگر لازم نیست سر درب باشگاه بپیچید تا ببینید جا دارید یا نه.',
+    bodyEn: 'Cold weather often disrupts training routines. Three simple habits help: a fixed weekly time, a longer warm-up, and a short weekly goal.\n\nPartner gyms on Shushzerv keep morning and evening slots at limited capacity to avoid overcrowding.\n\nBook ahead so you no longer have to show up at the door wondering if space is available.',
+  },
+  {
+    slug: 'yoga-for-athletes',
+    sport: 'yoga',
+    titleFa: 'یوگا برای ورزشکاران',
+    titleEn: 'Yoga for athletes',
+    excerptFa: 'یوگا چطور به ریکاوری و انعطاف کمک می‌کند.',
+    excerptEn: 'How yoga helps recovery and flexibility.',
+    bodyFa: 'ورزشکاران حرفه‌ای و آمateur هر دو از یوگا برای بهبود دامنه حرکتی و کاهش خستگی عضلانی استفاده می‌کنند.\n\nکلاس‌های یوگای صبحگاهی باشگاه‌های شوش‌زرو ترکیبی از حرکات کششی، تنفس و مدیتیشن کوتاه هستند.\n\nحتی یک جلسه در هفته می‌تواند کیفیت خواب و آمادگی برای تمرین بعدی را بهتر کند.',
+    bodyEn: 'Both pro and recreational athletes use yoga to improve range of motion and reduce muscle fatigue.\n\nMorning yoga classes at Shushzerv partner studios combine stretching, breath work, and a short meditation.\n\nEven one session per week can improve sleep quality and readiness for your next workout.',
+  },
+  {
+    slug: 'swimming-season',
+    sport: 'swim',
+    titleFa: 'فصل جدید سانس‌های شنا',
+    titleEn: 'New swimming season slots',
+    excerptFa: 'سانس‌های جدید استخرها اضافه شد.',
+    excerptEn: 'New pool slots have been added.',
+    bodyFa: 'باشگاه‌های آبی شریک سانس‌های جدید صبح و عصر برای شنا آزاد و تمرین تکنیک اضافه کرده‌اند.\n\nظرفیت هر سانس محدود است تا فضای کافی برای هر شناگر فراهم شود. رزرو از طریق شوش‌زرو ظرف چند ثانیه انجام می‌شود.\n\nبرای خانواده‌ها، سانس‌های آخر هفته با تخفیف فصلی در برخی مجموعه‌ها فعال است.',
+    bodyEn: 'Partner aquatics centers have added new morning and evening slots for lap swimming and technique work.\n\nEach session has limited capacity so every swimmer has enough space. Booking through Shushzerv takes seconds.\n\nFamily weekend slots are available with seasonal discounts at select venues.',
+  },
+  {
+    slug: 'book-pay-at-club',
+    titleFa: 'رزرو کن، در باشگاه پرداخت کن',
+    titleEn: 'Book now, pay at the club',
+    excerptFa: 'در نسخه فعلی پرداخت به صورت حضوری انجام می‌شود.',
+    excerptEn: 'In the current version, payment is made in person.',
+    bodyFa: 'در نسخه فعلی شوش‌زرو می‌توانید سانس را آنلاین رزرو کنید و مبلغ را هنگام حضور در باشگاه پرداخت کنید.\n\nاین روش برای باشگاه‌ها و ورزشکاران آشنا است و نیازی به کارت بانکی آنلاین ندارد.\n\nبه‌زودی پرداخت از کیف پول و درگاه بانکی هم به‌صورت اختیاری اضافه می‌شود.',
+    bodyEn: 'In the current Shushzerv release you can reserve a slot online and pay when you arrive at the club.\n\nThis familiar flow works well for clubs and athletes and does not require an online card payment.\n\nWallet and bank gateway payments will be added soon as optional checkout methods.',
+  },
 ]
 
 async function main() {
@@ -133,6 +202,9 @@ async function main() {
   await prisma.review.deleteMany()
   await prisma.planAssignment.deleteMany()
   await prisma.trainingPlan.deleteMany()
+  await prisma.notification.deleteMany()
+  await prisma.tournamentRegistration.deleteMany()
+  await prisma.tournament.deleteMany()
   await prisma.matchParticipant.deleteMany()
   await prisma.openMatch.deleteMany()
   await prisma.classEnrollment.deleteMany()
@@ -157,17 +229,36 @@ async function main() {
 
   console.log('Seeding demo users…')
   const athlete = await prisma.user.create({
-    data: { email: 'athlete@shushzerv.local', name: 'آرش ورزشکار', role: 'ATHLETE', passwordHash: hashSecret('demo1234') },
+    data: {
+      email: 'athlete@shushzerv.local',
+      name: 'آرش ورزشکار',
+      nameEn: 'Arash Athlete',
+      role: 'ATHLETE',
+      passwordHash: hashSecret('demo1234'),
+      onboardedAt: new Date(),
+      favoriteSports: 'tennis',
+    },
   })
   const coachUser = await prisma.user.create({
-    data: { email: 'coach@shushzerv.local', name: 'سارا محمدی', role: 'COACH', passwordHash: hashSecret('demo1234') },
+    data: { email: 'coach@shushzerv.local', name: 'سارا محمدی', nameEn: 'Sara Mohammadi', role: 'COACH', passwordHash: hashSecret('demo1234'), onboardedAt: new Date() },
   })
   const clubAdmin = await prisma.user.create({
-    data: { email: 'club@shushzerv.local', name: 'مدیر باشگاه آزادی', role: 'CLUB_ADMIN', passwordHash: hashSecret('demo1234') },
+    data: { email: 'club@shushzerv.local', name: 'مدیر باشگاه آزادی', nameEn: 'Azadi Club Admin', role: 'CLUB_ADMIN', passwordHash: hashSecret('demo1234'), onboardedAt: new Date() },
   })
   const platformAdmin = await prisma.user.create({
-    data: { email: 'admin@shushzerv.local', name: 'مدیر پلتفرم', role: 'PLATFORM_ADMIN', passwordHash: hashSecret('demo1234') },
+    data: { email: 'admin@shushzerv.local', name: 'مدیر پلتفرم', nameEn: 'Platform Admin', role: 'PLATFORM_ADMIN', passwordHash: hashSecret('demo1234') },
   })
+  const extraPlayers = await Promise.all([
+    prisma.user.create({ data: { email: 'player2@shushzerv.local', name: 'نیما رضایی', nameEn: 'Nima Rezaei', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
+    prisma.user.create({ data: { email: 'player3@shushzerv.local', name: 'پریسا کریمی', nameEn: 'Parisa Karimi', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
+    prisma.user.create({ data: { email: 'player4@shushzerv.local', name: 'امیرحسین نوری', nameEn: 'Amir Hossein Nouri', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
+  ])
+  const demoUsers: Record<string, string> = {
+    athlete: athlete.id,
+    player2: extraPlayers[0].id,
+    player3: extraPlayers[1].id,
+    player4: extraPlayers[2].id,
+  }
 
   console.log('Seeding clubs + courts…')
   const courtIds: Array<{ id: string; sportSlug: string; priceFrom: number }> = []
@@ -188,6 +279,7 @@ async function main() {
         priceFrom: c.priceFrom,
         discount: c.discount ?? null,
         featured: c.featured ?? false,
+        image: demoImage.club(c.slug),
         ownerId: i === 0 ? clubAdmin.id : null,
       },
     })
@@ -211,12 +303,49 @@ async function main() {
   for (const court of courtIds) {
     for (let day = 0; day < 14; day++) {
       const date = isoDate(day)
-      for (const [start, end] of TIME_SLOTS) {
-        slotData.push({ date, startTime: start, endTime: end, price: court.priceFrom, courtId: court.id })
+      for (const slot of SEED_SLOT_TIMES) {
+        slotData.push({ date, startTime: slot.startTime, endTime: slot.endTime, price: court.priceFrom, courtId: court.id })
       }
     }
   }
   await prisma.slot.createMany({ data: slotData })
+
+  console.log('Seeding demo bookings…')
+  const azadiCourt = await prisma.court.findFirst({
+    where: { club: { slug: 'azadi-tennis' } },
+    orderBy: { nameEn: 'asc' },
+  })
+  if (azadiCourt) {
+    const demoSlots = await prisma.slot.findMany({
+      where: { courtId: azadiCourt.id, date: isoDate(1), status: 'AVAILABLE' },
+      orderBy: { startTime: 'asc' },
+      take: 2,
+    })
+    if (demoSlots[0]) {
+      await prisma.slot.update({ where: { id: demoSlots[0].id }, data: { status: 'BOOKED' } })
+      await prisma.booking.create({
+        data: {
+          userId: athlete.id,
+          slotId: demoSlots[0].id,
+          source: 'PLATFORM',
+          paymentStatus: 'PAID',
+          status: 'CONFIRMED',
+        },
+      })
+    }
+    if (demoSlots[1]) {
+      await prisma.slot.update({ where: { id: demoSlots[1].id }, data: { status: 'BOOKED' } })
+      await prisma.booking.create({
+        data: {
+          slotId: demoSlots[1].id,
+          source: 'CLUB',
+          guestName: 'علی محمدی',
+          paymentStatus: 'PAY_AT_CLUB',
+          status: 'CONFIRMED',
+        },
+      })
+    }
+  }
 
   console.log('Seeding coaches…')
   const coachIds: Record<string, string> = {}
@@ -230,6 +359,7 @@ async function main() {
         sessions: c.sessions,
         bioFa: c.bioFa,
         bioEn: c.bioEn,
+        photo: demoImage.coach(i),
         sportId: sports[c.sport],
         userId: i === 0 ? coachUser.id : null,
       },
@@ -237,10 +367,113 @@ async function main() {
     if (i === 0) coachIds.sara = coach.id
     if (c.sport === 'yoga') coachIds.leila = coach.id
     if (c.sport === 'fitness') coachIds.negar = coach.id
+    if (c.sport === 'padel') coachIds.maryam = coach.id
+    if (c.sport === 'football') coachIds.ali = coach.id
+    if (c.sport === 'basketball') coachIds.sina = coach.id
   }
 
   const clubs = await prisma.club.findMany({ select: { id: true, slug: true, city: true } })
   const clubBySlug = Object.fromEntries(clubs.map((c) => [c.slug, c]))
+
+  console.log('Seeding equipment…')
+  const clubEquipmentSeeds: Array<{
+    slug: string
+    items: Array<{
+      nameFa: string
+      nameEn: string
+      price: number
+      mode: 'PROVIDED' | 'RENTAL'
+      stock?: number | null
+      maxPerBooking?: number
+    }>
+  }> = [
+    {
+      slug: 'azadi-tennis',
+      items: [
+        { nameFa: 'راکت تنیس', nameEn: 'Tennis rackets', price: 80_000, mode: 'RENTAL', stock: 12, maxPerBooking: 2 },
+        { nameFa: 'توپ تنیس', nameEn: 'Tennis balls', price: 0, mode: 'PROVIDED', stock: 30, maxPerBooking: 4 },
+      ],
+    },
+    {
+      slug: 'enghelab-tennis',
+      items: [
+        { nameFa: 'راکت تنیس', nameEn: 'Tennis rackets', price: 70_000, mode: 'RENTAL', stock: 8, maxPerBooking: 2 },
+        { nameFa: 'توپ تنیس', nameEn: 'Tennis balls', price: 0, mode: 'PROVIDED', stock: 20, maxPerBooking: 4 },
+      ],
+    },
+    {
+      slug: 'padel-zone-tehran',
+      items: [
+        { nameFa: 'راکت پدل', nameEn: 'Padel rackets', price: 100_000, mode: 'RENTAL', stock: 10, maxPerBooking: 2 },
+        { nameFa: 'توپ پدل', nameEn: 'Padel balls', price: 0, mode: 'PROVIDED', stock: 24, maxPerBooking: 4 },
+      ],
+    },
+    {
+      slug: 'green-turf-arena',
+      items: [
+        { nameFa: 'توپ فوتبال', nameEn: 'Footballs', price: 0, mode: 'PROVIDED', stock: 15, maxPerBooking: 2 },
+        { nameFa: 'ساق‌بند', nameEn: 'Shin guards', price: 30_000, mode: 'RENTAL', stock: 20, maxPerBooking: 4 },
+      ],
+    },
+    {
+      slug: 'hoops-basketball-arena',
+      items: [
+        { nameFa: 'توپ بسکتبال', nameEn: 'Basketballs', price: 0, mode: 'PROVIDED', stock: 10, maxPerBooking: 2 },
+      ],
+    },
+  ]
+  for (const seed of clubEquipmentSeeds) {
+    const club = clubBySlug[seed.slug]
+    if (!club) continue
+    for (const item of seed.items) {
+      await prisma.courtAddon.create({ data: { clubId: club.id, ...item } })
+    }
+  }
+
+  const coachEquipmentSeeds: Array<{
+    coachId: string
+    items: Array<{
+      nameFa: string
+      nameEn: string
+      price: number
+      mode: 'PROVIDED' | 'RENTAL'
+      stock?: number | null
+      maxPerBooking?: number
+    }>
+  }> = [
+    {
+      coachId: coachIds.sara,
+      items: [
+        { nameFa: 'راکت تنیس', nameEn: 'Tennis rackets', price: 0, mode: 'PROVIDED', stock: 6, maxPerBooking: 2 },
+        { nameFa: 'توپ تنیس', nameEn: 'Tennis balls', price: 0, mode: 'PROVIDED', stock: 12, maxPerBooking: 4 },
+      ],
+    },
+    {
+      coachId: coachIds.maryam,
+      items: [
+        { nameFa: 'راکت پدل', nameEn: 'Padel rackets', price: 0, mode: 'PROVIDED' },
+      ],
+    },
+    {
+      coachId: coachIds.ali,
+      items: [
+        { nameFa: 'توپ فوتبال', nameEn: 'Footballs', price: 0, mode: 'PROVIDED' },
+        { nameFa: 'چالیک', nameEn: 'Training cones', price: 0, mode: 'PROVIDED' },
+      ],
+    },
+    {
+      coachId: coachIds.sina,
+      items: [
+        { nameFa: 'توپ بسکتبال', nameEn: 'Basketballs', price: 0, mode: 'PROVIDED' },
+      ],
+    },
+  ]
+  for (const seed of coachEquipmentSeeds) {
+    if (!seed.coachId) continue
+    for (const item of seed.items) {
+      await prisma.coachEquipment.create({ data: { coachId: seed.coachId, ...item } })
+    }
+  }
 
   console.log('Seeding athlete profile…')
   await prisma.athleteProfile.create({
@@ -277,16 +510,23 @@ async function main() {
 
   console.log('Seeding open matches…')
   const matchSeeds = [
-    { sport: 'tennis', city: 'تهران', club: 'azadi-tennis', day: 2, time: '18:00', max: 4, joined: 2, min: 'INTERMEDIATE', maxL: 'ADVANCED', notesFa: 'دو نفر جا داریم', notesEn: 'Looking for 2 more players' },
-    { sport: 'padel', city: 'تهران', club: 'padel-zone-tehran', day: 3, time: '20:00', max: 4, joined: 3, min: 'BEGINNER', maxL: 'INTERMEDIATE', notesFa: 'بازی دوستانه', notesEn: 'Friendly doubles game' },
-    { sport: 'football', city: 'تهران', club: 'green-turf-arena', day: 5, time: '19:00', max: 10, joined: 7, min: 'BEGINNER', maxL: 'PRO', notesFa: 'فوتبال ۵ نفره', notesEn: '5-a-side football' },
+    { sport: 'tennis', city: 'تهران', day: 2, time: '18:00', max: 4, joined: 2, min: 'INTERMEDIATE', maxL: 'ADVANCED', notesFa: 'دو نفر جا داریم', notesEn: 'Looking for 2 more players' },
+    { sport: 'padel', city: 'تهران', day: 3, time: '20:00', max: 4, joined: 3, min: 'BEGINNER', maxL: 'INTERMEDIATE', notesFa: 'بازی دوستانه', notesEn: 'Friendly doubles game' },
+    { sport: 'football', city: 'تهران', day: 5, time: '19:00', max: 10, joined: 7, min: 'BEGINNER', maxL: 'PRO', notesFa: 'فوتبال ۵ نفره', notesEn: '5-a-side football' },
+    { sport: 'fitness', city: 'تهران', day: 1, time: '07:30', max: 8, joined: 4, min: 'BEGINNER', maxL: 'INTERMEDIATE', notesFa: 'تمرین گروهی صبح', notesEn: 'Morning group workout' },
+    { sport: 'yoga', city: 'تهران', day: 4, time: '08:00', max: 12, joined: 6, min: 'BEGINNER', maxL: 'PRO', notesFa: 'کلاس یوگای باز', notesEn: 'Open yoga session' },
+    { sport: 'swim', city: 'تهران', day: 6, time: '10:00', max: 6, joined: 3, min: 'INTERMEDIATE', maxL: 'ADVANCED', notesFa: 'شنا آزاد — ۳ نفر جا داریم', notesEn: 'Lap swim — 3 spots open' },
+    { sport: 'basketball', city: 'تهران', day: 7, time: '17:00', max: 10, joined: 6, min: 'INTERMEDIATE', maxL: 'PRO', notesFa: 'بسکتبال ۳ به ۳', notesEn: '3-on-3 basketball' },
+    { sport: 'boxing', city: 'تهران', day: 8, time: '19:30', max: 4, joined: 2, min: 'BEGINNER', maxL: 'ADVANCED', notesFa: 'اسپarring سبک', notesEn: 'Light sparring session' },
   ]
+  const seededMatchIds: string[] = []
   for (const [mi, ms] of matchSeeds.entries()) {
+    const clubSlug = sportClubMap[ms.sport]
     const match = await prisma.openMatch.create({
       data: {
         sportId: sports[ms.sport],
         city: ms.city,
-        clubId: clubBySlug[ms.club]?.id,
+        clubId: clubBySlug[clubSlug]?.id,
         creatorId: athlete.id,
         date: isoDate(ms.day),
         startTime: ms.time,
@@ -299,6 +539,7 @@ async function main() {
         shareToken: `demo${mi + 1}match`,
       },
     })
+    seededMatchIds.push(match.id)
     await prisma.matchParticipant.create({ data: { matchId: match.id, userId: athlete.id } })
     await prisma.conversation.create({
       data: {
@@ -323,6 +564,110 @@ async function main() {
     },
   })
   await prisma.planAssignment.create({ data: { planId: plan.id, athleteId: athlete.id } })
+
+  console.log('Seeding tournaments…')
+  const tournamentSeeds = [
+    {
+      club: 'azadi-tennis',
+      sport: 'tennis',
+      titleFa: 'تورنمنت تنیس آخر هفته',
+      titleEn: 'Weekend Tennis Tournament',
+      descFa: 'مسابقه دو نفره آزاد — ثبت‌نام آنلاین',
+      descEn: 'Open doubles tournament — register online',
+      day: 8,
+      time: '09:00',
+      price: 350_000,
+      max: 16,
+      registrations: ['athlete', 'player2', 'player3', 'player4'] as const,
+    },
+    {
+      club: 'padel-zone-tehran',
+      sport: 'padel',
+      titleFa: 'جام پدل تهران',
+      titleEn: 'Tehran Padel Cup',
+      descFa: 'مسابقه چهار نفره — سطح متوسط به بالا',
+      descEn: 'Four-player bracket — intermediate and up',
+      day: 10,
+      time: '18:00',
+      price: 420_000,
+      max: 8,
+      registrations: ['athlete', 'player2'] as const,
+    },
+    {
+      club: 'green-turf-arena',
+      sport: 'football',
+      titleFa: 'جام فوتبال ۵ نفره',
+      titleEn: '5-a-side Football Cup',
+      descFa: 'مسابقه یک روزه — تیم‌های ۵ نفره',
+      descEn: 'One-day 5-a-side tournament',
+      day: 12,
+      time: '16:00',
+      price: 280_000,
+      max: 10,
+      registrations: [] as const,
+    },
+    {
+      club: 'aqua-swim-center',
+      sport: 'swim',
+      titleFa: 'مسابقه شنا آزاد تابستان',
+      titleEn: 'Summer Lap Swim Meet',
+      descFa: 'مسابقه ۵۰ و ۱۰۰ متر — همه سطوح',
+      descEn: '50m and 100m events — all levels welcome',
+      day: 14,
+      time: '08:00',
+      price: 180_000,
+      max: 24,
+      registrations: [] as const,
+    },
+    {
+      club: 'zen-yoga-studio',
+      sport: 'yoga',
+      titleFa: 'چالش یوگای ۳۰ روزه',
+      titleEn: '30-Day Yoga Challenge',
+      descFa: 'جلسات گروهی هفتگی — ریکاوری و انعطاف',
+      descEn: 'Weekly group sessions — recovery and flexibility',
+      day: 15,
+      time: '07:00',
+      price: 220_000,
+      max: 20,
+      registrations: [] as const,
+    },
+    {
+      club: 'knockout-boxing-club',
+      sport: 'boxing',
+      titleFa: 'مسابقات بوکس آمateur',
+      titleEn: 'Amateur Boxing Open',
+      descFa: 'رده‌بندی وزنی — ثبت‌نام محدود',
+      descEn: 'Weight-class brackets — limited entries',
+      day: 18,
+      time: '17:00',
+      price: 300_000,
+      max: 12,
+      registrations: [] as const,
+    },
+  ]
+  for (const ts of tournamentSeeds) {
+    const regUserIds = ts.registrations.map((key) => demoUsers[key])
+    await prisma.tournament.create({
+      data: {
+        titleFa: ts.titleFa,
+        titleEn: ts.titleEn,
+        descFa: ts.descFa,
+        descEn: ts.descEn,
+        date: isoDate(ts.day),
+        startTime: ts.time,
+        maxParticipants: ts.max,
+        joinedCount: regUserIds.length,
+        price: ts.price,
+        status: regUserIds.length >= ts.max ? 'FULL' : 'OPEN',
+        sportId: sports[ts.sport],
+        clubId: clubBySlug[ts.club]!.id,
+        registrations: {
+          create: regUserIds.map((userId) => ({ userId })),
+        },
+      },
+    })
+  }
 
   console.log('Seeding club activities…')
   const activitySeeds = [
@@ -352,8 +697,9 @@ async function main() {
         titleEn: n.titleEn,
         excerptFa: n.excerptFa,
         excerptEn: n.excerptEn,
-        bodyFa: `${n.excerptFa}\n\nاین یک متن نمونه برای نسخه دموی شوش‌زرو است. محتوای کامل مقاله در نسخه‌های بعدی اضافه خواهد شد.`,
-        bodyEn: `${n.excerptEn}\n\nThis is placeholder body text for the Shushzerv demo. Full article content will be added in later versions.`,
+        bodyFa: n.bodyFa,
+        bodyEn: n.bodyEn,
+        coverUrl: demoImage.news(n.slug),
         date: isoDate(-newsSeeds.indexOf(n) - 1),
         sportId: n.sport ? sports[n.sport] : null,
       },
@@ -362,12 +708,12 @@ async function main() {
 
   console.log('Seeding reviews…')
   const reviewSeeds = [
-    { club: 'azadi-tennis', rating: 5, fa: 'رزرو فوق‌العاده ساده بود و زمین عالی. حتماً دوباره استفاده می‌کنم.', en: 'Booking was super simple and the court was great. Will definitely use again.' },
-    { club: 'padel-zone-tehran', rating: 5, fa: 'بهترین راه برای پیدا کردن همبازی و رزرو زمین پدل. عاشقش شدم!', en: 'The best way to find partners and book a padel court. Loved it!' },
-    { club: 'green-turf-arena', rating: 5, fa: 'بدون دردسر، بدون تماس تلفنی، فقط چند کلیک تا بازی.', en: 'No hassle, no phone calls, just a few clicks to play.' },
-    { club: 'zen-yoga-studio', rating: 5, fa: 'برنامه لحظه‌ای و پرداخت در محل کار را خیلی راحت کرده.', en: 'Real-time schedule and pay-at-club made everything so easy.' },
-    { club: 'iron-house-gym', rating: 4, fa: 'تجربه روان و سریع. قیمت‌ها هم شفاف هستند.', en: 'Smooth and fast experience. Pricing is transparent too.' },
-    { club: 'hoops-basketball-arena', rating: 5, fa: 'پیدا کردن زمین نزدیک خونه عالیه. پیشنهاد می‌کنم.', en: 'Finding a court near home is great. Highly recommend.' },
+    { club: 'azadi-tennis', userId: athlete.id, rating: 5, fa: 'رزرو فوق‌العاده ساده بود و زمین عالی. حتماً دوباره استفاده می‌کنم.', en: 'Booking was super simple and the court was great. Will definitely use again.' },
+    { club: 'padel-zone-tehran', userId: extraPlayers[0].id, rating: 5, fa: 'بهترین راه برای پیدا کردن همبازی و رزرو زمین پدل. عاشقش شدم!', en: 'The best way to find partners and book a padel court. Loved it!' },
+    { club: 'green-turf-arena', userId: extraPlayers[1].id, rating: 5, fa: 'بدون دردسر، بدون تماس تلفنی، فقط چند کلیک تا بازی.', en: 'No hassle, no phone calls, just a few clicks to play.' },
+    { club: 'zen-yoga-studio', userId: extraPlayers[2].id, rating: 5, fa: 'برنامه لحظه‌ای و پرداخت در محل کار را خیلی راحت کرده.', en: 'Real-time schedule and pay-at-club made everything so easy.' },
+    { club: 'iron-house-gym', userId: athlete.id, rating: 4, fa: 'تجربه روان و سریع. قیمت‌ها هم شفاف هستند.', en: 'Smooth and fast experience. Pricing is transparent too.' },
+    { club: 'hoops-basketball-arena', userId: extraPlayers[0].id, rating: 5, fa: 'پیدا کردن زمین نزدیک خونه عالیه. پیشنهاد می‌کنم.', en: 'Finding a court near home is great. Highly recommend.' },
   ]
   for (const r of reviewSeeds) {
     await prisma.review.create({
@@ -375,11 +721,46 @@ async function main() {
         rating: r.rating,
         bodyFa: r.fa,
         bodyEn: r.en,
-        userId: athlete.id,
+        userId: r.userId,
         clubId: clubBySlug[r.club]?.id ?? null,
       },
     })
   }
+
+  console.log('Seeding notifications…')
+  const padelMatchId = seededMatchIds[1]
+  await prisma.notification.createMany({
+    data: [
+      {
+        userId: athlete.id,
+        type: 'BOOKING',
+        titleFa: 'رزرو شما تأیید شد',
+        titleEn: 'Your booking is confirmed',
+        bodyFa: 'مجموعه تنیس آزادی — فردا ساعت ۰۸:۰۰ تا ۱۰:۰۰',
+        bodyEn: 'Azadi Tennis Complex — tomorrow 08:00–10:00',
+        link: '/clubs/azadi-tennis',
+      },
+      {
+        userId: athlete.id,
+        type: 'MATCH',
+        titleFa: 'به بازی عمومی پیوستید',
+        titleEn: 'You joined an open match',
+        bodyFa: 'بازی پدل در پدل زون تهران — فردا شب ساعت ۲۰:۰۰',
+        bodyEn: 'Padel match at Padel Zone Tehran — tomorrow at 20:00',
+        link: padelMatchId ? `/matches/${padelMatchId}` : '/matches',
+      },
+      {
+        userId: athlete.id,
+        type: 'SYSTEM',
+        titleFa: 'به شوش‌زرو خوش آمدید',
+        titleEn: 'Welcome to Shushzerv',
+        bodyFa: 'پروفایل شما آماده است. اولین رزرو یا بازی عمومی را امتحان کنید.',
+        bodyEn: 'Your profile is ready. Try your first booking or open match.',
+        link: '/dashboard',
+        readAt: new Date(),
+      },
+    ],
+  })
 
   console.log('Seeding wallets…')
   await prisma.wallet.create({ data: { userId: athlete.id, balance: 2_500_000 } })
@@ -440,6 +821,12 @@ async function main() {
     })
   }
 
+  // Re-assert after club/court setup so demo logins reach dashboards (not onboarding)
+  await prisma.user.updateMany({
+    where: { email: { in: ['club@shushzerv.local', 'coach@shushzerv.local'] } },
+    data: { onboardedAt: new Date() },
+  })
+
   const counts = {
     sports: await prisma.sport.count(),
     clubs: await prisma.club.count(),
@@ -450,6 +837,9 @@ async function main() {
     matches: await prisma.openMatch.count(),
     plans: await prisma.trainingPlan.count(),
     news: await prisma.newsArticle.count(),
+    tournaments: await prisma.tournament.count(),
+    tournamentRegs: await prisma.tournamentRegistration.count(),
+    notifications: await prisma.notification.count(),
     users: await prisma.user.count(),
   }
   console.log('Seed complete:', counts)

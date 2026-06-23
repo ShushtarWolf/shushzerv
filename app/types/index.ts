@@ -14,8 +14,11 @@ export interface Court {
   nameFa: string
   nameEn: string
   surface?: string | null
+  indoor?: boolean
+  genderPolicy?: 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED'
   sportId: string
   sport?: Sport
+  addons?: CourtAddon[]
 }
 
 export interface Club {
@@ -34,7 +37,26 @@ export interface Club {
   discount?: number | null
   image?: string | null
   featured: boolean
+  slotDurationMinutes?: number
+  slotOpenTime?: string
+  slotCloseTime?: string
+  cancellationPolicyFa?: string | null
+  cancellationPolicyEn?: string | null
+  cancellationHours?: number
   courts?: Court[]
+  activities?: ClubActivity[]
+  addons?: CourtAddon[]
+}
+
+export type EquipmentMode = 'PROVIDED' | 'RENTAL'
+
+export interface ReservedEquipmentLine {
+  id: string
+  quantity: number
+  nameFa: string
+  nameEn: string
+  price: number
+  mode?: EquipmentMode
 }
 
 export interface Coach {
@@ -44,11 +66,15 @@ export interface Coach {
   city: string
   rating: number
   sessions: number
+  sessionPrice?: number
   bioFa?: string | null
   bioEn?: string | null
+  photo?: string | null
+  featured?: boolean
   sportId: string
   sport?: Sport
   userId?: string | null
+  equipment?: CoachEquipment[]
 }
 
 export interface NewsArticle {
@@ -60,6 +86,7 @@ export interface NewsArticle {
   excerptEn: string
   bodyFa: string
   bodyEn: string
+  coverUrl?: string | null
   date: string
   sport?: Sport | null
 }
@@ -78,13 +105,45 @@ export interface Slot {
 }
 
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED'
+export type BookingSource = 'PLATFORM' | 'CLUB'
 
 export interface Booking {
   id: string
   status: BookingStatus
   paymentStatus: 'PAY_AT_CLUB' | 'PAID'
+  source?: BookingSource
+  guestName?: string | null
+  playerCount?: number
+  equipmentTotal?: number
+  equipment?: ReservedEquipmentLine[]
   createdAt: string
   slot?: Slot
+  user?: { name: string; email?: string }
+}
+
+export type ScheduleEventType = 'booking' | 'class' | 'slot' | 'match' | 'session' | 'tournament'
+
+export interface ScheduleEvent {
+  id: string
+  type: ScheduleEventType
+  date: string
+  startTime: string
+  endTime: string
+  title: string
+  subtitle?: string
+  color: string
+  status?: string
+  paymentStatus?: string
+  slotId?: string
+  bookingId?: string
+  classId?: string
+  matchId?: string
+  coachId?: string
+  sessionId?: string
+  tournamentId?: string
+  price?: number
+  bookingSource?: BookingSource
+  note?: string | null
 }
 
 export type SkillLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO'
@@ -110,11 +169,16 @@ export interface Review {
   rating: number
   bodyFa: string
   bodyEn: string
+  replyFa?: string | null
+  replyEn?: string | null
+  repliedAt?: string | null
   createdAt: string
   userId: string
-  user?: { id: string; name: string }
+  user?: { id: string; name: string; nameEn?: string | null }
   clubId?: string | null
   club?: Club | null
+  coachId?: string | null
+  coach?: Pick<Coach, 'id' | 'nameFa' | 'nameEn'> | null
 }
 
 export interface ChatMessage {
@@ -185,11 +249,20 @@ export interface TrainingPlan {
   titleEn: string
   bodyFa: string
   bodyEn: string
+  planType?: 'TRAINING' | 'DIET'
   coachId: string
   sportId?: string | null
   coach?: Coach
   sport?: Sport | null
-  assignments?: Array<{ id: string; athlete?: { id: string; name: string } }>
+  assignmentId?: string
+  completedAt?: string | null
+  notes?: string | null
+  assignments?: Array<{
+    id: string
+    completedAt?: string | null
+    notes?: string | null
+    athlete?: { id: string; name: string; nameEn?: string | null; email?: string }
+  }>
 }
 
 export interface ClubActivity {
@@ -204,14 +277,105 @@ export interface ClubActivity {
   club?: Club
 }
 
+export interface CourtAddon {
+  id: string
+  nameFa: string
+  nameEn: string
+  price: number
+  mode?: EquipmentMode
+  maxPerBooking?: number
+  stock?: number | null
+  available?: number | null
+  clubId: string
+  courtId?: string | null
+  court?: Court | null
+}
+
+export interface CoachEquipment {
+  id: string
+  nameFa: string
+  nameEn: string
+  price: number
+  mode?: EquipmentMode
+  maxPerBooking?: number
+  stock?: number | null
+  available?: number | null
+  coachId: string
+}
+
+export interface Tournament {
+  id: string
+  titleFa: string
+  titleEn: string
+  descFa: string
+  descEn: string
+  date: string
+  startTime: string
+  maxParticipants: number
+  joinedCount: number
+  price: number
+  status: 'OPEN' | 'FULL' | 'COMPLETED' | 'CANCELLED'
+  sportId: string
+  clubId?: string | null
+  sport?: Sport
+  club?: Club | null
+  _count?: { registrations: number }
+}
+
+export interface Notification {
+  id: string
+  type: 'BOOKING' | 'MATCH' | 'CLASS' | 'PLAN' | 'SYSTEM'
+  titleFa: string
+  titleEn: string
+  bodyFa?: string | null
+  bodyEn?: string | null
+  link?: string | null
+  readAt?: string | null
+  createdAt: string
+}
+
+export interface ClassEnrollment {
+  id: string
+  paymentStatus: 'PAY_AT_CLUB' | 'PAID'
+  createdAt: string
+  classSession?: ClassSession
+}
+
 export type WalletTxType =
   | 'TOP_UP'
   | 'BOOKING'
   | 'CLASS'
+  | 'COACH_SESSION'
   | 'REFUND'
   | 'PAYOUT'
   | 'COACH_EARNING'
   | 'PLATFORM_FEE'
+
+export interface CoachSession {
+  id: string
+  date: string
+  startTime: string
+  endTime: string
+  price: number
+  equipmentTotal?: number
+  equipment?: ReservedEquipmentLine[]
+  status: BookingStatus
+  paymentStatus: 'PAY_AT_CLUB' | 'PAID'
+  createdAt: string
+  coachId: string
+  coach?: Coach
+  athleteId?: string
+  athlete?: { id: string; name: string; nameEn?: string | null; email?: string }
+  clubId?: string | null
+  club?: Club | null
+}
+
+export interface CoachBusySlot {
+  date: string
+  startTime: string
+  endTime: string
+  status: BookingStatus
+}
 
 export interface WalletTransaction {
   id: string

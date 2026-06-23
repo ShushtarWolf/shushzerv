@@ -7,8 +7,8 @@ const localePath = useLocalePath()
 const { cities } = useCities()
 const { localDateISO, formatDate } = useLocaleContent()
 const { loggedIn, user } = useUserSession()
-const { slug: sport, color: sportColor, sync } = useSelectedSportColor()
-const { DEFAULT_SPORT_COLOR } = useSportTheme()
+const { firstName } = useUserDisplayName()
+const { slug: sport, sync } = useSelectedSportColor()
 
 watch(
   () => props.sports,
@@ -26,12 +26,6 @@ const nearMe = ref(false)
 
 const isRtl = computed(() => locale.value === 'fa')
 
-const accent = computed(() => sportColor.value ?? DEFAULT_SPORT_COLOR)
-
-const heroStyle = computed(() => ({
-  backgroundColor: sportColor.value ?? DEFAULT_SPORT_COLOR,
-}))
-
 const dateOptions = computed(() => {
   const opts: { value: string; label: string }[] = []
   for (let i = 0; i < 7; i++) {
@@ -47,6 +41,7 @@ function submit() {
   navigateTo({
     path: localePath('/clubs'),
     query: {
+      book: '1',
       ...(sport.value ? { sport: sport.value } : {}),
       ...(city.value ? { city: city.value } : {}),
       ...(date.value ? { date: date.value } : {}),
@@ -57,13 +52,10 @@ function submit() {
 </script>
 
 <template>
-  <section
-    class="overflow-hidden rounded-ios-xl p-6 text-white shadow-lifted transition-colors duration-300 sm:p-10"
-    :style="heroStyle"
-  >
+  <section class="overflow-hidden rounded-ios-xl bg-brand-primary p-6 text-white shadow-lifted sm:p-10">
     <div class="space-y-5">
       <p v-if="loggedIn" class="text-sm font-semibold text-white/95">
-        {{ t('hero.greeting', { name: user?.name?.split(' ')[0] ?? '' }) }}
+        {{ t('hero.greeting', { name: firstName }) }}
       </p>
       <h1 class="sz-display text-white">
         {{ t('hero.bookNow') }}
@@ -71,7 +63,7 @@ function submit() {
       <p class="max-w-xl text-base text-white/95">{{ t('hero.subtitle') }}</p>
 
       <p class="text-sm font-semibold text-white/80">{{ t('hero.pickSport') }}</p>
-      <SzSportTabs :model-value="sport" :sports="sports" fade @update:model-value="onSportChange" />
+      <SzSportTabs variant="hero" :model-value="sport" :sports="sports" @update:model-value="onSportChange" />
 
       <form
         class="grid gap-3 rounded-2xl bg-white p-4 text-brand-gray-900 shadow-card sm:grid-cols-2 lg:grid-cols-4"
@@ -107,7 +99,7 @@ function submit() {
           </button>
         </div>
         <div class="flex items-end sm:col-span-2 lg:col-span-1">
-          <SzButton type="submit" block variant="sport" :sport-color="accent">
+          <SzButton type="submit" block>
             <SzIcon name="search" size="sm" />
             {{ t('search.action') }}
           </SzButton>

@@ -5,10 +5,10 @@ import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet'
 const props = defineProps<{ clubs: Club[] }>()
 
 const { t, locale } = useI18n()
-const localePath = useLocalePath()
-const { pickName, formatPrice } = useLocaleContent()
+const { pickName, formatNumber, formatRating } = useLocaleContent()
 
 const mapRoot = ref<HTMLElement | null>(null)
+const selectedClub = ref<Club | null>(null)
 let map: LeafletMap | null = null
 let markers: LeafletMarker[] = []
 let leaflet: typeof import('leaflet') | null = null
@@ -23,25 +23,76 @@ const mappableClubs = computed(() =>
   props.clubs.filter((c) => c.lat != null && c.lng != null),
 )
 
-function priceLabel(club: Club) {
-  const price = `${formatPrice(club.priceFrom)} ${t('clubs.currency')}`
-  return t('map.fromPrice', { price })
+const PIN_WIDTH = 132
+const PIN_HEIGHT = 74
+
+function escapeHtml(text: string) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
 }
 
-function markerHtml(club: Club) {
-  const name = pickName(club).replace(/"/g, '&quot;')
-  const price = priceLabel(club)
+function markerLabel(club: Club) {
+  const name = pickName(club)
+  return name.length > 16 ? `${name.slice(0, 14)}…` : name
+}
+
+function markerHtml(club: Club, selected: boolean) {
+  const name = escapeHtml(markerLabel(club))
+  const fullName = escapeHtml(pickName(club))
+  const rating = formatRating(club.rating)
   const dir = isRtl.value ? 'rtl' : 'ltr'
-  return `<button type="button" class="club-map-pin" dir="${dir}" data-slug="${club.slug}" title="${name}" aria-label="${name} — ${price}">
-    <span class="club-map-pin-price">${price}</span>
+  const selectedClass = selected ? ' club-map-pin--selected' : ''
+  return `<div class="club-map-pin${selectedClass}" dir="${dir}" data-slug="${club.slug}" title="${fullName}" role="button" tabindex="0" aria-label="${fullName} — ★ ${rating}">
+    <span class="club-map-pin-bubble">
+      <span class="club-map-pin-name">${name}</span>
+      <span class="club-map-pin-rating">★ ${rating}</span>
+    </span>
+    <span class="club-map-pin-stem"></span>
     <span class="club-map-pin-dot"></span>
-  </button>`
+  </div>`
 }
 
-function bindMarkerClick(el: HTMLElement, slug: string) {
-  el.addEventListener('click', () => {
-    navigateTo(localePath(`/clubs/${slug}`))
+function selectClub(club: Club) {
+  selectedClub.value = club
+  if (map) {
+    map.panTo([club.lat!, club.lng!], { animate: true, duration: 0.4 })
+    map.setZoom(Math.max(map.getZoom(), 13), { animate: true })
+  }
+  syncMarkerStyles()
+}
+
+function closePopup() {
+  selectedClub.value = null
+  syncMarkerStyles()
+}
+
+function bindMarkerClick(marker: LeafletMarker, club: Club) {
+  marker.on('click', (e) => {
+    if (leaflet) leaflet.default.DomEvent.stopPropagation(e)
+    selectClub(club)
   })
+
+  const el = marker.getElement()?.querySelector('.club-map-pin') as HTMLElement | null
+  if (!el) return
+  el.addEventListener('click', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    selectClub(club)
+  })
+}
+
+function syncMarkerStyles() {
+  if (!leaflet) return
+  const slug = selectedClub.value?.slug
+  for (const marker of markers) {
+    const el = marker.getElement()?.querySelector('.club-map-pin') as HTMLElement | null
+    if (!el) continue
+    const pinSlug = el.dataset.slug
+    el.classList.toggle('club-map-pin--selected', !!slug && pinSlug === slug)
+  }
 }
 
 function tehranBounds(): [number, number][] {
@@ -58,10 +109,12 @@ function setInitialView() {
   if (bounds.length === 1) {
     map.setView(bounds[0], 12)
   } else if (bounds.length > 1) {
-    map.fitBounds(L.latLngBounds(bounds), { padding: [20, 20], maxZoom: 12 })
+    map.fitBounds(L.latLngBounds(bounds), { padding: [80, 20, 20, 20], maxZoom: 12 })
   } else {
     map.setView(TEHRAN_CENTER, TEHRAN_ZOOM)
   }
+
+  map.setPadding({ top: 80, bottom: 16, left: 16, right: 16 })
 
   didSetInitialView = true
   nextTick(() => map?.invalidateSize())
@@ -70,6 +123,11 @@ function setInitialView() {
 function syncMarkers() {
   if (!map || !leaflet) return
   const L = leaflet.default
+  const selectedSlug = selectedClub.value?.slug
+
+  if (selectedClub.value && !mappableClubs.value.some((c) => c.slug === selectedSlug)) {
+    selectedClub.value = null
+  }
 
   for (const m of markers) m.remove()
   markers = []
@@ -77,19 +135,19 @@ function syncMarkers() {
   for (const club of mappableClubs.value) {
     const lat = club.lat!
     const lng = club.lng!
+    const selected = club.slug === selectedClub.value?.slug
 
     const icon = L.divIcon({
       className: 'club-map-marker-wrap',
-      html: markerHtml(club),
-      iconSize: [1, 1],
-      iconAnchor: [0, 0],
+      html: markerHtml(club, selected),
+      iconSize: [PIN_WIDTH, PIN_HEIGHT],
+      iconAnchor: [PIN_WIDTH / 2, PIN_HEIGHT],
     })
 
-    const marker = L.marker([lat, lng], { icon }).addTo(map)
+    const marker = L.marker([lat, lng], { icon, zIndexOffset: selected ? 1000 : 0 }).addTo(map)
     markers.push(marker)
 
-    const el = marker.getElement()?.querySelector('.club-map-pin') as HTMLElement | null
-    if (el) bindMarkerClick(el, club.slug)
+    bindMarkerClick(marker, club)
   }
 
   nextTick(() => map?.invalidateSize())
@@ -146,12 +204,22 @@ onUnmounted(() => {
 <template>
   <section class="club-map-section">
     <div class="club-map-header">
-      <h2 class="club-map-title">{{ t('map.title') }}</h2>
+      <div>
+        <h2 class="club-map-title">{{ t('map.title') }}</h2>
+        <p class="mt-0.5 text-xs text-brand-gray-500">{{ t('map.tapPinHint') }}</p>
+      </div>
       <p v-if="mappableClubs.length" class="club-map-count">
-        {{ t('map.clubsCount', { n: mappableClubs.length }) }}
+        {{ t('map.clubsCount', { n: formatNumber(mappableClubs.length) }) }}
       </p>
     </div>
-    <div ref="mapRoot" class="club-map-canvas" role="application" :aria-label="t('map.title')" />
+    <div class="club-map-stage">
+      <div ref="mapRoot" class="club-map-canvas" role="application" :aria-label="t('map.title')" />
+    </div>
+    <ClubMapPopup
+      v-if="selectedClub"
+      :club="selectedClub"
+      @close="closePopup"
+    />
     <p v-if="!mappableClubs.length" class="club-map-empty">{{ t('common.noResults') }}</p>
   </section>
 </template>
@@ -162,7 +230,7 @@ onUnmounted(() => {
 }
 
 .club-map-header {
-  @apply flex items-center justify-between gap-3 border-b border-black/5 px-4 py-2.5 sm:px-5;
+  @apply pointer-events-none flex items-center justify-between gap-3 border-b border-black/5 px-4 py-2.5 sm:px-5;
 }
 
 .club-map-title {
@@ -173,16 +241,20 @@ onUnmounted(() => {
   @apply text-xs text-brand-gray-500;
 }
 
+.club-map-stage {
+  @apply relative z-[1];
+}
+
 .club-map-canvas {
-  @apply relative z-0 w-full;
-  height: 14rem;
-  min-height: 14rem;
+  @apply relative z-[1] w-full;
+  height: 18rem;
+  min-height: 18rem;
 }
 
 @media (min-width: 640px) {
   .club-map-canvas {
-    height: 16rem;
-    min-height: 16rem;
+    height: 22rem;
+    min-height: 22rem;
   }
 }
 
@@ -198,23 +270,65 @@ onUnmounted(() => {
 .club-map-marker-wrap {
   background: transparent !important;
   border: none !important;
+  pointer-events: auto !important;
+}
+
+.club-map-section .leaflet-marker-pane {
+  z-index: 650 !important;
 }
 
 .club-map-pin {
-  @apply relative flex cursor-pointer flex-col items-center border-0 bg-transparent p-0 outline-none;
-  transform: translate(-50%, -100%);
+  @apply relative flex h-full w-full cursor-pointer flex-col items-center justify-end border-0 bg-transparent p-0 outline-none transition-transform duration-200;
+  pointer-events: auto;
 }
 
-.club-map-pin:focus-visible .club-map-pin-price {
+.club-map-pin:hover {
+  @apply scale-105;
+}
+
+.club-map-pin--selected {
+  @apply scale-110;
+  z-index: 1000;
+}
+
+.club-map-pin--selected:hover {
+  @apply scale-110;
+}
+
+.club-map-pin:focus-visible .club-map-pin-bubble {
   @apply ring-2 ring-sz-blue ring-offset-2;
 }
 
-.club-map-pin-price {
-  @apply whitespace-nowrap rounded-full bg-sz-blue px-2 py-0.5 text-[10px] font-bold text-white shadow-md transition hover:bg-blue-600 sm:text-[11px];
+.club-map-pin-bubble {
+  @apply flex max-w-[8.25rem] flex-col items-center rounded-2xl bg-sz-blue px-2.5 py-1.5 text-white shadow-lg transition;
+}
+
+.club-map-pin--selected .club-map-pin-bubble {
+  @apply bg-brand-orange shadow-xl ring-2 ring-white ring-offset-2 ring-offset-brand-orange/30;
+}
+
+.club-map-pin-name {
+  @apply max-w-[7.5rem] truncate text-center text-[11px] font-extrabold leading-tight sm:text-xs;
+}
+
+.club-map-pin-rating {
+  @apply mt-0.5 text-[10px] font-semibold opacity-90 sm:text-[11px];
+}
+
+.club-map-pin-stem {
+  @apply h-3 w-0.5 bg-sz-blue;
+}
+
+.club-map-pin--selected .club-map-pin-stem {
+  @apply bg-brand-orange;
 }
 
 .club-map-pin-dot {
-  @apply mt-0.5 h-2 w-2 rounded-full border-2 border-white bg-sz-blue shadow;
+  @apply -mt-px h-3.5 w-3.5 rounded-full border-[3px] border-white bg-sz-blue shadow-md;
+}
+
+.club-map-pin--selected .club-map-pin-dot {
+  @apply h-4 w-4 border-[3px] bg-brand-orange;
 }
 
 .leaflet-control-zoom a {

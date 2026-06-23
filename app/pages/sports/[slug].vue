@@ -2,6 +2,7 @@
 import type { Club, Coach, Sport } from '~/types'
 
 const { t } = useI18n()
+const { formatNumber } = useLocaleContent()
 const localePath = useLocalePath()
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
@@ -37,10 +38,7 @@ watch(
   <div v-if="sport" class="page-enter mx-auto max-w-6xl px-4 py-8 sm:px-6">
     <BackLink to="/explore" />
 
-    <section
-      class="mb-10 overflow-hidden rounded-ios-xl p-8 text-white shadow-lifted"
-      :style="{ backgroundColor: sport.color }"
-    >
+    <section class="mb-10 overflow-hidden rounded-ios-xl bg-brand-primary p-8 text-white shadow-lifted">
       <span class="inline-flex text-white">
         <SportIcon :slug="sport.slug" size="xl" />
       </span>
@@ -55,10 +53,7 @@ watch(
       <SzSection :title="t('sportLanding.howTitle')" />
       <div class="sz-stagger grid gap-4 md:grid-cols-3">
         <div v-for="(step, i) in steps" :key="step" class="ios-card ios-card-hover p-5">
-          <span
-            class="flex h-10 w-10 items-center justify-center rounded-full text-lg font-black text-white"
-            :style="{ backgroundColor: sport.color }"
-          >{{ i + 1 }}</span>
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange text-lg font-black text-brand-primary">{{ formatNumber(i + 1) }}</span>
           <h3 class="mt-3 font-extrabold">{{ t(`sportLanding.steps.${step}.title`) }}</h3>
           <p class="mt-2 text-sm text-brand-gray-600">{{ t(`sportLanding.steps.${step}.desc`) }}</p>
         </div>
@@ -69,13 +64,24 @@ watch(
     <div class="mb-10 sz-stagger grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <ClubCard v-for="club in clubs" :key="club.id" :club="club" />
     </div>
-    <p v-if="!clubs?.length" class="ios-footnote mb-10">{{ t('common.noResults') }}</p>
+    <SzEmptyState
+      v-if="!clubs?.length"
+      class="mb-10"
+      :message="t('common.noResults')"
+      :action-label="t('common.browseClubs')"
+      :action-to="localePath(`/clubs?sport=${slug}`)"
+    />
 
     <SzSection :title="t('coaches.title')" :to="localePath('/coaches')" :link-text="t('coaches.viewAll')" />
     <div class="sz-stagger grid gap-3 sm:grid-cols-2">
       <CoachCard v-for="coach in coaches" :key="coach.id" :coach="coach" />
     </div>
-    <p v-if="!coaches?.length" class="ios-footnote">{{ t('common.noResults') }}</p>
+    <SzEmptyState
+      v-if="!coaches?.length"
+      :message="t('common.noResults')"
+      :action-label="t('common.browseCoaches')"
+      :action-to="localePath('/coaches')"
+    />
 
     <div class="mt-10">
       <FaqAccordion />

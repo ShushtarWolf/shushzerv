@@ -78,12 +78,12 @@ watch(locale, () => {
       </div>
       <form class="flex gap-2 border-t border-black/5 p-3" @submit.prevent="send()">
         <input v-model="input" type="text" class="ios-input min-w-0 flex-1 py-2 text-sm" :placeholder="t('assistant.placeholder')" />
-        <button type="submit" class="ios-btn-primary shrink-0 px-4 py-2 text-sm" :disabled="pending">{{ t('assistant.send') }}</button>
+        <SzButton type="submit" size="sm" class="shrink-0" :disabled="pending">{{ t('assistant.send') }}</SzButton>
       </form>
     </div>
     <button
       type="button"
-      class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-white shadow-card tap-highlight"
+      class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-brand-primary shadow-card tap-highlight"
       :aria-label="t('assistant.title')"
       @click="open = !open"
     >

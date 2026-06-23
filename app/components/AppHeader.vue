@@ -3,6 +3,7 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const { loggedIn, user, clear } = useUserSession()
 const { dashboardPath } = useDashboardPath()
+const { firstName } = useUserDisplayName()
 
 const showMore = ref(false)
 const showMobileNav = ref(false)
@@ -11,11 +12,12 @@ const primaryLinks = computed(() => [
   { to: localePath('/'), label: t('nav.home') },
   { to: localePath('/explore'), label: t('nav.explore') },
   { to: localePath('/clubs'), label: t('nav.clubs') },
+  { to: localePath('/classes'), label: t('nav.classes') },
   { to: localePath('/matches'), label: t('nav.matches') },
+  { to: localePath('/tournaments'), label: t('tournaments.title') },
 ])
 
 const moreLinks = computed(() => [
-  { to: localePath('/classes'), label: t('nav.classes') },
   { to: localePath('/coaches'), label: t('nav.coaches') },
   { to: localePath('/news'), label: t('nav.news') },
   { to: localePath('/chat'), label: t('nav.chat') },
@@ -86,12 +88,13 @@ function closeMobileNav() {
 
       <div class="flex items-center gap-1.5 sm:gap-2">
         <LocaleSwitcher />
-        <SzButton :to="localePath('/clubs')" variant="secondary" size="sm" class="hidden sm:inline-flex">
+        <NotificationBell />
+        <SzButton :to="localePath('/clubs?book=1')" variant="secondary" size="sm" class="hidden sm:inline-flex">
           {{ t('nav.book') }}
         </SzButton>
         <template v-if="loggedIn">
           <SzButton :to="dashboardPath" variant="ghost" size="sm" class="hidden sm:inline-flex">
-            {{ user?.name?.split(' ')[0] || t('nav.dashboard') }}
+            {{ firstName || t('nav.dashboard') }}
           </SzButton>
           <SzButton variant="ghost" size="sm" @click="logout">{{ t('nav.logout') }}</SzButton>
         </template>

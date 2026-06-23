@@ -4,6 +4,7 @@ import type { Sport } from '~/types'
 defineProps<{ sports: Sport[] }>()
 const { pickName } = useLocaleContent()
 const localePath = useLocalePath()
+const { accent, softBg } = useSportTheme()
 </script>
 
 <template>
@@ -16,7 +17,7 @@ const localePath = useLocalePath()
     >
       <span
         class="inline-flex h-12 w-12 items-center justify-center rounded-2xl"
-        :style="{ backgroundColor: sport.color + '22', color: sport.color }"
+        :style="{ backgroundColor: softBg(accent), color: accent }"
       >
         <SportIcon :slug="sport.slug" size="md" />
       </span>

@@ -5,6 +5,7 @@ export default defineEventHandler(async (event) => {
     where: { userId: user.id },
     include: {
       slot: { include: { court: { include: { club: true, sport: true } } } },
+      equipment: true,
     },
     orderBy: { createdAt: 'desc' },
   })

@@ -6,7 +6,7 @@ const { t } = useI18n()
 const { pickName } = useLocaleContent()
 const localePath = useLocalePath()
 const { cities } = useCities()
-const { slug: sportFilter, color: selectedColor, sync, toggle } = useSelectedSportColor()
+const { slug: sportFilter, sync, toggle } = useSelectedSportColor()
 
 function cityLink(city: string) {
   return localePath({
@@ -25,7 +25,7 @@ function cityLink(city: string) {
     <button
       type="button"
       class="sz-chip"
-      :class="!sportFilter ? 'bg-brand-orange text-white' : 'bg-white text-brand-gray-700 shadow-card'"
+      :class="!sportFilter ? 'bg-brand-orange text-brand-primary' : 'bg-white text-brand-gray-700 shadow-card'"
       @click="sync(props.sports, '')"
     >
       {{ t('clubs.all') }}
@@ -35,8 +35,7 @@ function cityLink(city: string) {
       :key="s.id"
       type="button"
       class="sz-chip"
-      :class="sportFilter === s.slug ? 'text-white' : 'bg-white text-brand-gray-700 shadow-card'"
-      :style="sportFilter === s.slug ? { backgroundColor: s.color } : undefined"
+      :class="sportFilter === s.slug ? 'bg-brand-orange text-brand-primary' : 'bg-white text-brand-gray-700 shadow-card'"
       @click="toggle(props.sports, s.slug)"
     >
       <span class="inline-flex items-center gap-1.5">
@@ -45,13 +44,11 @@ function cityLink(city: string) {
       </span>
     </button>
   </div>
-  <div :key="sportFilter" class="sz-stagger sz-grid-enter grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+  <div class="sz-stagger sz-grid-enter grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
     <SzCard
       v-for="c in cities"
       :key="c.value"
       :to="cityLink(c.value)"
-      :accent="selectedColor ?? undefined"
-      :themed="!!sportFilter"
       class="p-4 text-center font-bold"
     >
       {{ c.label }}

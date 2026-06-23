@@ -1,0 +1,707 @@
+{
+  "finishedAt": "2026-06-18T14:56:24.156Z",
+  "baseUrl": "http://localhost:3000",
+  "stepDelayMs": 150,
+  "phaseFilter": "all",
+  "passed": 86,
+  "failed": 1,
+  "total": 87,
+  "results": [
+    {
+      "step": 1,
+      "phase": "health",
+      "label": "server reachable",
+      "ok": true,
+      "detail": "",
+      "ms": 25849
+    },
+    {
+      "step": 2,
+      "phase": "pages-fa",
+      "label": "GET /",
+      "ok": true,
+      "detail": "",
+      "ms": 846
+    },
+    {
+      "step": 3,
+      "phase": "pages-fa",
+      "label": "GET /explore",
+      "ok": true,
+      "detail": "",
+      "ms": 200
+    },
+    {
+      "step": 4,
+      "phase": "pages-fa",
+      "label": "GET /clubs",
+      "ok": true,
+      "detail": "",
+      "ms": 485
+    },
+    {
+      "step": 5,
+      "phase": "pages-fa",
+      "label": "GET /clubs?book=1",
+      "ok": true,
+      "detail": "",
+      "ms": 221
+    },
+    {
+      "step": 6,
+      "phase": "pages-fa",
+      "label": "GET /clubs/azadi-tennis",
+      "ok": true,
+      "detail": "",
+      "ms": 129
+    },
+    {
+      "step": 7,
+      "phase": "pages-fa",
+      "label": "GET /classes",
+      "ok": true,
+      "detail": "",
+      "ms": 494
+    },
+    {
+      "step": 8,
+      "phase": "pages-fa",
+      "label": "GET /classes/cmqfibc3003dqu9t7o65j9gpc",
+      "ok": true,
+      "detail": "",
+      "ms": 123
+    },
+    {
+      "step": 9,
+      "phase": "pages-fa",
+      "label": "GET /coaches",
+      "ok": true,
+      "detail": "",
+      "ms": 84
+    },
+    {
+      "step": 10,
+      "phase": "pages-fa",
+      "label": "GET /coaches/cmqfibbxv03cwu9t7t3zlh90q",
+      "ok": true,
+      "detail": "",
+      "ms": 335
+    },
+    {
+      "step": 11,
+      "phase": "pages-fa",
+      "label": "GET /matches",
+      "ok": true,
+      "detail": "",
+      "ms": 207
+    },
+    {
+      "step": 12,
+      "phase": "pages-fa",
+      "label": "GET /matches/cmqfibc6403eju9t7qy2fkx96",
+      "ok": true,
+      "detail": "",
+      "ms": 109
+    },
+    {
+      "step": 13,
+      "phase": "pages-fa",
+      "label": "GET /m/demo1match",
+      "ok": true,
+      "detail": "",
+      "ms": 86
+    },
+    {
+      "step": 14,
+      "phase": "pages-fa",
+      "label": "GET /tournaments",
+      "ok": true,
+      "detail": "",
+      "ms": 131
+    },
+    {
+      "step": 15,
+      "phase": "pages-fa",
+      "label": "GET /tournaments/cmqfibcac03fmu9t7hozv9m5a",
+      "ok": true,
+      "detail": "",
+      "ms": 123
+    },
+    {
+      "step": 16,
+      "phase": "pages-fa",
+      "label": "GET /news",
+      "ok": true,
+      "detail": "",
+      "ms": 96
+    },
+    {
+      "step": 17,
+      "phase": "pages-fa",
+      "label": "GET /news/shushzerv-launch",
+      "ok": true,
+      "detail": "",
+      "ms": 161
+    },
+    {
+      "step": 18,
+      "phase": "pages-fa",
+      "label": "GET /sports/tennis",
+      "ok": true,
+      "detail": "",
+      "ms": 149
+    },
+    {
+      "step": 19,
+      "phase": "pages-fa",
+      "label": "GET /about",
+      "ok": true,
+      "detail": "",
+      "ms": 97
+    },
+    {
+      "step": 20,
+      "phase": "pages-fa",
+      "label": "GET /login",
+      "ok": true,
+      "detail": "",
+      "ms": 34
+    },
+    {
+      "step": 21,
+      "phase": "pages-fa",
+      "label": "GET /register",
+      "ok": true,
+      "detail": "",
+      "ms": 45
+    },
+    {
+      "step": 22,
+      "phase": "pages-en",
+      "label": "GET /en",
+      "ok": true,
+      "detail": "",
+      "ms": 712
+    },
+    {
+      "step": 23,
+      "phase": "pages-en",
+      "label": "GET /en/explore",
+      "ok": true,
+      "detail": "",
+      "ms": 291
+    },
+    {
+      "step": 24,
+      "phase": "pages-en",
+      "label": "GET /en/clubs",
+      "ok": true,
+      "detail": "",
+      "ms": 274
+    },
+    {
+      "step": 25,
+      "phase": "pages-en",
+      "label": "GET /en/clubs/azadi-tennis",
+      "ok": true,
+      "detail": "",
+      "ms": 204
+    },
+    {
+      "step": 26,
+      "phase": "pages-en",
+      "label": "GET /en/login",
+      "ok": true,
+      "detail": "",
+      "ms": 129
+    },
+    {
+      "step": 27,
+      "phase": "pages-en",
+      "label": "GET /en/classes/cmqfibc3003dqu9t7o65j9gpc",
+      "ok": true,
+      "detail": "",
+      "ms": 102
+    },
+    {
+      "step": 28,
+      "phase": "api-public",
+      "label": "GET /api/sports",
+      "ok": true,
+      "detail": "",
+      "ms": 15
+    },
+    {
+      "step": 29,
+      "phase": "api-public",
+      "label": "GET /api/clubs",
+      "ok": true,
+      "detail": "",
+      "ms": 22
+    },
+    {
+      "step": 30,
+      "phase": "api-public",
+      "label": "GET /api/clubs?featured=true",
+      "ok": true,
+      "detail": "",
+      "ms": 21
+    },
+    {
+      "step": 31,
+      "phase": "api-public",
+      "label": "GET /api/clubs/azadi-tennis",
+      "ok": true,
+      "detail": "",
+      "ms": 28
+    },
+    {
+      "step": 32,
+      "phase": "api-public",
+      "label": "GET /api/coaches",
+      "ok": true,
+      "detail": "",
+      "ms": 22
+    },
+    {
+      "step": 33,
+      "phase": "api-public",
+      "label": "GET /api/classes",
+      "ok": true,
+      "detail": "",
+      "ms": 20
+    },
+    {
+      "step": 34,
+      "phase": "api-public",
+      "label": "GET /api/matches",
+      "ok": true,
+      "detail": "",
+      "ms": 32
+    },
+    {
+      "step": 35,
+      "phase": "api-public",
+      "label": "GET /api/news",
+      "ok": true,
+      "detail": "",
+      "ms": 17
+    },
+    {
+      "step": 36,
+      "phase": "api-public",
+      "label": "GET /api/news/shushzerv-launch",
+      "ok": true,
+      "detail": "",
+      "ms": 11
+    },
+    {
+      "step": 37,
+      "phase": "api-public",
+      "label": "GET /api/tournaments",
+      "ok": true,
+      "detail": "",
+      "ms": 19
+    },
+    {
+      "step": 38,
+      "phase": "api-public",
+      "label": "GET /api/tournaments/cmqfibcac03fmu9t7hozv9m5a",
+      "ok": true,
+      "detail": "",
+      "ms": 16
+    },
+    {
+      "step": 39,
+      "phase": "api-public",
+      "label": "GET /api/reviews?clubId=cmqfibaos000gu9t762o5zwmi",
+      "ok": true,
+      "detail": "",
+      "ms": 31
+    },
+    {
+      "step": 40,
+      "phase": "auth-guest",
+      "label": "GET /dashboard → login",
+      "ok": true,
+      "detail": "",
+      "ms": 70
+    },
+    {
+      "step": 41,
+      "phase": "auth-guest",
+      "label": "GET /dashboard/coach → login",
+      "ok": true,
+      "detail": "",
+      "ms": 438
+    },
+    {
+      "step": 42,
+      "phase": "auth-guest",
+      "label": "GET /dashboard/club → login",
+      "ok": true,
+      "detail": "",
+      "ms": 734
+    },
+    {
+      "step": 43,
+      "phase": "auth-guest",
+      "label": "GET /dashboard/admin → login",
+      "ok": true,
+      "detail": "",
+      "ms": 316
+    },
+    {
+      "step": 44,
+      "phase": "auth-guest",
+      "label": "GET /chat → login",
+      "ok": true,
+      "detail": "",
+      "ms": 152
+    },
+    {
+      "step": 45,
+      "phase": "auth-guest",
+      "label": "GET /onboarding → login",
+      "ok": true,
+      "detail": "",
+      "ms": 168
+    },
+    {
+      "step": 46,
+      "phase": "auth-guest",
+      "label": "GET /api/bookings → 401",
+      "ok": true,
+      "detail": "HTTP 401",
+      "ms": 400
+    },
+    {
+      "step": 47,
+      "phase": "athlete",
+      "label": "GET /dashboard → 200",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 340
+    },
+    {
+      "step": 48,
+      "phase": "athlete",
+      "label": "GET /api/profile",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 33
+    },
+    {
+      "step": 49,
+      "phase": "athlete",
+      "label": "GET /api/bookings",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 27
+    },
+    {
+      "step": 50,
+      "phase": "athlete",
+      "label": "GET /api/profile/enrollments",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 15
+    },
+    {
+      "step": 51,
+      "phase": "athlete",
+      "label": "GET /api/profile/matches",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 50
+    },
+    {
+      "step": 52,
+      "phase": "athlete",
+      "label": "GET /api/training-plans",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 25
+    },
+    {
+      "step": 53,
+      "phase": "athlete",
+      "label": "GET /api/dashboard/stats",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 28
+    },
+    {
+      "step": 54,
+      "phase": "athlete",
+      "label": "GET /api/dashboard/charts",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 19
+    },
+    {
+      "step": 55,
+      "phase": "athlete",
+      "label": "GET /api/wallet",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 33
+    },
+    {
+      "step": 56,
+      "phase": "athlete",
+      "label": "GET /api/notifications",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 32
+    },
+    {
+      "step": 57,
+      "phase": "athlete",
+      "label": "GET /api/chat",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 37
+    },
+    {
+      "step": 58,
+      "phase": "athlete",
+      "label": "dashboard charts fields",
+      "ok": true,
+      "detail": "",
+      "ms": 48
+    },
+    {
+      "step": 59,
+      "phase": "athlete",
+      "label": "GET /dashboard/admin → redirect away",
+      "ok": true,
+      "detail": "HTTP 302",
+      "ms": 70
+    },
+    {
+      "step": 60,
+      "phase": "coach",
+      "label": "GET /dashboard/coach → 200",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 340
+    },
+    {
+      "step": 61,
+      "phase": "coach",
+      "label": "GET /api/coach/students",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 33
+    },
+    {
+      "step": 62,
+      "phase": "coach",
+      "label": "GET /api/coach/schedule",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 47
+    },
+    {
+      "step": 63,
+      "phase": "coach",
+      "label": "GET /api/dashboard/stats",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 48
+    },
+    {
+      "step": 64,
+      "phase": "coach",
+      "label": "GET /api/dashboard/charts",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 32
+    },
+    {
+      "step": 65,
+      "phase": "coach",
+      "label": "dashboard charts fields",
+      "ok": true,
+      "detail": "",
+      "ms": 47
+    },
+    {
+      "step": 66,
+      "phase": "club",
+      "label": "GET /dashboard/club → 200",
+      "ok": false,
+      "detail": "HTTP 302",
+      "ms": 233
+    },
+    {
+      "step": 67,
+      "phase": "club",
+      "label": "GET /api/club",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 29
+    },
+    {
+      "step": 68,
+      "phase": "club",
+      "label": "GET /api/club/bookings",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 34
+    },
+    {
+      "step": 69,
+      "phase": "club",
+      "label": "GET /api/club/classes?clubId=cmqfibaos000gu9t762o5zwmi",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 33
+    },
+    {
+      "step": 70,
+      "phase": "club",
+      "label": "GET /api/club/activities",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 31
+    },
+    {
+      "step": 71,
+      "phase": "club",
+      "label": "GET /api/dashboard/stats",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 49
+    },
+    {
+      "step": 72,
+      "phase": "club",
+      "label": "GET /api/dashboard/charts",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 32
+    },
+    {
+      "step": 73,
+      "phase": "club",
+      "label": "dashboard charts fields",
+      "ok": true,
+      "detail": "",
+      "ms": 22
+    },
+    {
+      "step": 74,
+      "phase": "admin",
+      "label": "GET /dashboard/admin → 200",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 272
+    },
+    {
+      "step": 75,
+      "phase": "admin",
+      "label": "GET /api/admin/users",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 35
+    },
+    {
+      "step": 76,
+      "phase": "admin",
+      "label": "GET /api/admin/clubs",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 36
+    },
+    {
+      "step": 77,
+      "phase": "admin",
+      "label": "GET /api/admin/bookings",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 50
+    },
+    {
+      "step": 78,
+      "phase": "admin",
+      "label": "GET /api/admin/matches",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 29
+    },
+    {
+      "step": 79,
+      "phase": "admin",
+      "label": "GET /api/admin/classes",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 20
+    },
+    {
+      "step": 80,
+      "phase": "admin",
+      "label": "GET /api/admin/news",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 18
+    },
+    {
+      "step": 81,
+      "phase": "admin",
+      "label": "GET /api/dashboard/stats",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 14
+    },
+    {
+      "step": 82,
+      "phase": "admin",
+      "label": "GET /api/dashboard/charts",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 10
+    },
+    {
+      "step": 83,
+      "phase": "admin",
+      "label": "dashboard charts fields",
+      "ok": true,
+      "detail": "",
+      "ms": 8
+    },
+    {
+      "step": 84,
+      "phase": "flows",
+      "label": "club schedule azadi-tennis",
+      "ok": true,
+      "detail": "18 events",
+      "ms": 17
+    },
+    {
+      "step": 85,
+      "phase": "flows",
+      "label": "match by token demo1match",
+      "ok": true,
+      "detail": "HTTP 200",
+      "ms": 9
+    },
+    {
+      "step": 86,
+      "phase": "flows",
+      "label": "match share page title /m/demo1match",
+      "ok": true,
+      "detail": "localized title",
+      "ms": 82
+    },
+    {
+      "step": 87,
+      "phase": "flows",
+      "label": "demo logins (all roles)",
+      "ok": true,
+      "detail": "",
+      "ms": 0
+    }
+  ]
+}

@@ -3,22 +3,14 @@ import type { Sport } from '~/types'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
-const { localized } = useLocaleContent()
-const { softBg } = useSportTheme()
-
+const { accent, softBg } = useSportTheme()
 useHead({ title: () => t('nav.explore') })
 
 const { data: sports } = await useApiFetch<Sport[]>('/api/sports')
 
-const sportGroups = [
-  { key: 'racket', labelFa: 'راکتی', labelEn: 'Racket' },
-  { key: 'ball', labelFa: 'توپی', labelEn: 'Ball' },
-  { key: 'fitness', labelFa: 'تناسب', labelEn: 'Fitness' },
-  { key: 'water', labelFa: 'آبی', labelEn: 'Water' },
-  { key: 'combat', labelFa: 'رزمی', labelEn: 'Combat' },
-]
+const sportGroupKeys = ['racket', 'ball', 'fitness', 'water', 'combat'] as const
 
-const activeGroup = ref('racket')
+const activeGroup = ref<(typeof sportGroupKeys)[number]>('racket')
 const filteredSports = computed(() =>
   (sports.value ?? []).filter((s) => s.group === activeGroup.value),
 )
@@ -30,14 +22,14 @@ const filteredSports = computed(() =>
 
     <div class="ios-segment mb-8 flex w-full max-w-lg flex-wrap gap-1">
       <button
-        v-for="group in sportGroups"
-        :key="group.key"
+        v-for="group in sportGroupKeys"
+        :key="group"
         type="button"
         class="ios-segment-item tap-highlight flex-1 min-w-[4.5rem] transition-all duration-200"
-        :class="{ 'ios-segment-item-active': activeGroup === group.key }"
-        @click="activeGroup = group.key"
+        :class="{ 'ios-segment-item-active': activeGroup === group }"
+        @click="activeGroup = group"
       >
-        {{ localized(group.labelFa, group.labelEn) }}
+        {{ t(`exploreGroups.${group}`) }}
       </button>
     </div>
 
@@ -50,19 +42,23 @@ const filteredSports = computed(() =>
         v-for="sport in filteredSports"
         :key="sport.id"
         :to="localePath(`/sports/${sport.slug}`)"
-        :accent="sport.color"
         themed
         class="flex flex-col items-center gap-2 p-5 text-center"
       >
         <span
           class="sz-sport-icon flex h-14 w-14 items-center justify-center rounded-2xl"
-          :style="{ backgroundColor: softBg(sport.color), color: sport.color }"
+          :style="{ backgroundColor: softBg(accent), color: accent }"
         >
           <SportIcon :slug="sport.slug" size="lg" />
         </span>
         <span class="font-semibold">{{ t(`sport.${sport.slug}.name`, sport.slug) }}</span>
       </SzCard>
     </div>
-    <SzEmptyState v-else :message="t('common.noResults')" />
+    <SzEmptyState
+      v-else
+      :message="t('common.noResults')"
+      :action-label="t('common.browseClubs')"
+      :action-to="localePath('/clubs')"
+    />
   </div>
 </template>

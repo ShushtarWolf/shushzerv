@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ClassSession, Club, Coach, NewsArticle, OpenMatch, Sport } from '~/types'
+import type { ClassSession, Club, Coach, NewsArticle, Sport } from '~/types'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -7,39 +7,21 @@ useHead({ title: () => `${t('brand.name')} — ${t('brand.tagline')}` })
 
 const { data: sports } = await useApiFetch<Sport[]>('/api/sports')
 const { data: allClubs } = await useApiFetch<Club[]>('/api/clubs')
-const { data: clubs } = await useApiFetch<Club[]>('/api/clubs', { query: { featured: 'true' } })
-const { data: coaches } = await useApiFetch<Coach[]>('/api/coaches')
-const { data: news } = await useApiFetch<NewsArticle[]>('/api/news')
-const { data: classes } = await useApiFetch<ClassSession[]>('/api/classes')
-const { data: matches } = await useApiFetch<OpenMatch[]>('/api/matches')
+const { data: clubs, pending: clubsPending } = await useApiFetch<Club[]>('/api/clubs', { query: { featured: 'true' } })
+const { data: coaches, pending: coachesPending } = await useApiFetch<Coach[]>('/api/coaches')
+const { data: news, pending: newsPending } = await useApiFetch<NewsArticle[]>('/api/news')
+const { data: classes, pending: classesPending } = await useApiFetch<ClassSession[]>('/api/classes')
 
 const featuredClubs = computed(() => (clubs.value ?? []).slice(0, 6))
 const featuredClasses = computed(() => (classes.value ?? []).slice(0, 3))
-const openMatches = computed(() => (matches.value ?? []).slice(0, 3))
 const topCoaches = computed(() => (coaches.value ?? []).slice(0, 4))
 const latestNews = computed(() => (news.value ?? []).slice(0, 4))
-const { slug: selectedSport } = useSelectedSportColor()
 </script>
 
 <template>
   <div class="page-enter">
     <section class="mx-auto max-w-7xl space-y-4 px-4 pt-6 sm:px-6">
       <HeroSearch :sports="sports ?? []" />
-    </section>
-
-    <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <SportShowcase :sports="sports ?? []" />
-    </section>
-
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <SzTrustStrip />
-    </section>
-
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <SzSection :title="t('matches.title')" :to="localePath('/matches')" :link-text="t('matches.viewAll')" />
-      <div :key="selectedSport" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <MatchCard v-for="m in openMatches" :key="m.id" :match="m" />
-      </div>
     </section>
 
     <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
@@ -53,36 +35,44 @@ const { slug: selectedSport } = useSelectedSportColor()
 
     <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <SzSection :title="t('clubs.title')" :to="localePath('/clubs')" :link-text="t('clubs.viewAll')" />
-      <div :key="selectedSport" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <HomeSectionSkeleton v-if="clubsPending" :count="6" />
+      <div v-else-if="featuredClubs.length" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <ClubCard v-for="club in featuredClubs" :key="club.id" :club="club" />
       </div>
+      <SzEmptyState
+        v-else
+        :message="t('common.noResults')"
+        :action-label="t('common.browseClubs')"
+        :action-to="localePath('/clubs')"
+      />
     </section>
 
     <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <SzSection :title="t('classes.title')" :to="localePath('/classes')" :link-text="t('classes.viewAll')" />
-      <div :key="selectedSport" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <HomeSectionSkeleton v-if="classesPending" :count="3" />
+      <div v-else-if="featuredClasses.length" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <ClassCard v-for="c in featuredClasses" :key="c.id" :class-session="c" />
       </div>
+      <SzEmptyState
+        v-else
+        :message="t('common.noResults')"
+        :action-label="t('common.browseClubs')"
+        :action-to="localePath('/clubs?book=1')"
+      />
     </section>
 
     <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <SzSection :title="t('coaches.title')" :to="localePath('/coaches')" :link-text="t('coaches.viewAll')" />
-      <div :key="selectedSport" class="sz-stagger sz-grid-enter grid items-stretch gap-3 sm:grid-cols-2">
+      <HomeSectionSkeleton v-if="coachesPending" variant="coach" :count="4" />
+      <div v-else class="sz-stagger sz-grid-enter grid items-stretch gap-3 sm:grid-cols-2">
         <CoachCard v-for="coach in topCoaches" :key="coach.id" :coach="coach" />
       </div>
     </section>
 
     <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <WhyBookSection />
-    </section>
-
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <TestimonialsCarousel />
-    </section>
-
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <SzSection :title="t('news.title')" :to="localePath('/news')" :link-text="t('news.viewAll')" />
-      <div :key="selectedSport" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2">
+      <HomeSectionSkeleton v-if="newsPending" variant="list" :count="4" />
+      <div v-else class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2">
         <NewsCard v-for="article in latestNews" :key="article.id" :article="article" />
       </div>
     </section>

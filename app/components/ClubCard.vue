@@ -1,22 +1,30 @@
 <script setup lang="ts">
 import type { Club } from '~/types'
 
-const props = defineProps<{ club: Club }>()
+const props = withDefaults(defineProps<{ club: Club; date?: string; book?: boolean }>(), {
+  date: '',
+  book: true,
+})
 const { t, locale } = useI18n()
-const { localized, pickName, formatPrice } = useLocaleContent()
+const { localized, pickName, formatPrice, formatRating, formatNumber } = useLocaleContent()
 const localePath = useLocalePath()
+const { accent } = useSportTheme()
 
-const { resolveAccent } = useSportTheme()
-
-const accent = computed(() => resolveAccent(props.club.courts?.[0]?.sport))
+const clubTo = computed(() => ({
+  path: localePath(`/clubs/${props.club.slug}`),
+  query: {
+    ...(props.book ? { book: '1' } : {}),
+    ...(props.date ? { date: props.date } : {}),
+  },
+}))
 
 const sportChips = computed(() => {
   const seen = new Set<string>()
-  const chips: Array<{ slug: string; name: string; color: string }> = []
+  const chips: Array<{ slug: string; name: string }> = []
   for (const court of props.club.courts ?? []) {
     if (court.sport && !seen.has(court.sport.slug)) {
       seen.add(court.sport.slug)
-      chips.push({ slug: court.sport.slug, name: pickName(court.sport), color: court.sport.color })
+      chips.push({ slug: court.sport.slug, name: pickName(court.sport) })
     }
   }
   return chips.slice(0, 3)
@@ -24,7 +32,7 @@ const sportChips = computed(() => {
 </script>
 
 <template>
-  <SzCard :to="localePath(`/clubs/${club.slug}`)" :accent="accent" themed class="flex h-full flex-col overflow-hidden">
+  <SzCard :to="clubTo" themed class="flex h-full flex-col overflow-hidden">
     <div class="relative h-36 overflow-hidden">
       <div class="h-full transition-transform duration-500 group-hover:scale-105">
         <ClubCover :club="club" />
@@ -33,30 +41,33 @@ const sportChips = computed(() => {
         v-if="club.discount"
         class="absolute top-3 z-10 rounded-full bg-brand-orange px-2.5 py-1 text-xs font-bold text-white ltr:right-3 rtl:left-3"
       >
-        {{ club.discount }}{{ locale === 'fa' ? '٪' : '%' }} {{ t('clubs.discount') }}
+        {{ formatNumber(club.discount) }}{{ locale === 'fa' ? '٪' : '%' }} {{ t('clubs.discount') }}
       </span>
     </div>
     <div class="flex flex-1 flex-col gap-2 p-4">
       <div class="flex items-start justify-between gap-2">
         <h3 class="text-lg font-extrabold leading-tight">{{ pickName(club) }}</h3>
-        <SzBadge tone="yellow">★ {{ club.rating.toFixed(1) }}</SzBadge>
+        <SzBadge tone="yellow">★ {{ formatRating(club.rating) }}</SzBadge>
       </div>
       <p class="text-xs text-brand-gray-500 line-clamp-1">{{ localized(club.addressFa, club.addressEn) }}</p>
       <div v-if="sportChips.length" class="flex flex-wrap gap-1">
-        <SzBadge v-for="s in sportChips" :key="s.slug" tone="sport" :sport-color="s.color" class="!text-xs">
-          <span class="inline-flex items-center gap-1" :style="{ color: s.color }">
+        <SzBadge v-for="s in sportChips" :key="s.slug" tone="blue" class="!text-xs">
+          <span class="inline-flex items-center gap-1">
             <SportIcon :slug="s.slug" size="xs" />
             {{ s.name }}
           </span>
         </SzBadge>
       </div>
+      <SzBadge v-if="club.addons?.length" tone="green" class="!text-xs w-fit">
+        {{ t('equipment.badge') }}
+      </SzBadge>
       <div class="mt-auto flex items-center justify-between gap-2 pt-2">
         <span class="text-sm">
           {{ t('clubs.from') }}
           <span class="text-lg font-black text-brand-orange">{{ formatPrice(club.priceFrom) }}</span>
           {{ t('clubs.currency') }}
         </span>
-        <span class="text-xs font-bold transition-transform duration-200 group-hover:translate-x-0.5" :style="{ color: accent }">
+        <span class="text-xs font-bold text-brand-orange transition-transform duration-200 group-hover:translate-x-0.5">
           {{ t('clubs.reserve') }} →
         </span>
       </div>

@@ -9,6 +9,7 @@ const localePath = useLocalePath()
 const { pickName } = useLocaleContent()
 const { levels, levelLabel } = useSkillLevel()
 const { dashboardPath } = useDashboardPath()
+const { resolvePostAuthRedirect } = useAuthRedirect()
 
 useHead({ title: () => t('onboarding.title') })
 
@@ -33,7 +34,7 @@ async function finish() {
       method: 'POST',
       body: { sports: selectedSports.value, level: level.value },
     })
-    await navigateTo(dashboardPath.value)
+    await navigateTo(resolvePostAuthRedirect(dashboardPath.value))
   } finally {
     pending.value = false
   }
@@ -54,8 +55,7 @@ async function finish() {
           :key="s.id"
           type="button"
           class="sz-chip tap-highlight"
-          :class="selectedSports.includes(s.slug) ? 'text-white shadow-card' : 'bg-white shadow-card'"
-          :style="selectedSports.includes(s.slug) ? { backgroundColor: s.color } : undefined"
+          :class="selectedSports.includes(s.slug) ? 'bg-brand-orange text-brand-primary shadow-card' : 'bg-white shadow-card'"
           @click="toggleSport(s.slug)"
         >
           <span class="inline-flex items-center gap-1.5">

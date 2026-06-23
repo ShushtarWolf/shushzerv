@@ -11,7 +11,7 @@ fi
 
 generate_pdf() {
   local name="$1"
-  local html="$ROOT/${name}.print.html"
+  local html="${2:-$ROOT/${name}.print.html}"
   local pdf="$ROOT/${name}.pdf"
   local public="$ROOT/public/docs/${name}.pdf"
 
@@ -42,12 +42,16 @@ TARGET="${1:-all}"
 case "$TARGET" in
   tutorial) generate_pdf "TUTORIAL-FA" ;;
   shushbot) generate_pdf "SHUSHBOT-FA" ;;
+  guide) generate_pdf "USER-GUIDE-FA" ;;
+  visual) generate_pdf "USER-GUIDE-VISUAL-FA" "$ROOT/public/docs/USER-GUIDE-VISUAL-FA.html" ;;
   all)
     generate_pdf "TUTORIAL-FA"
     generate_pdf "SHUSHBOT-FA"
+    generate_pdf "USER-GUIDE-FA"
+    generate_pdf "USER-GUIDE-VISUAL-FA"
     ;;
   *)
-    echo "Usage: $0 [tutorial|shushbot|all]" >&2
+    echo "Usage: $0 [tutorial|shushbot|guide|visual|all]" >&2
     exit 1
     ;;
 esac

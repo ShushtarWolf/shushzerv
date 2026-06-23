@@ -27,8 +27,7 @@ useHead({
     <p class="ios-footnote mb-2">{{ formatDate(article.date) }}</p>
     <p
       v-if="article.sport"
-      class="mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
-      :style="{ backgroundColor: article.sport.color + '22', color: article.sport.color }"
+      class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-brand-orange/10 px-3 py-1 text-xs font-semibold text-brand-orange"
     >
       <SportIcon :slug="article.sport.slug" size="xs" />
       {{ localized(article.sport.nameFa, article.sport.nameEn) }}

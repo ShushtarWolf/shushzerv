@@ -3,45 +3,54 @@ import type { ClassSession } from '~/types'
 
 const props = defineProps<{ classSession: ClassSession }>()
 const { t } = useI18n()
-const { pickName, localized, formatPrice, formatDate } = useLocaleContent()
+const { pickName, localized, formatPrice, formatDate, formatTimeRange, formatFraction } = useLocaleContent()
 const localePath = useLocalePath()
-const { resolveAccent, softBg } = useSportTheme()
-
-const accent = computed(() => resolveAccent(props.classSession.sport))
+const { accent, softBg } = useSportTheme()
 </script>
 
 <template>
   <SzCard
     :to="localePath(`/classes/${classSession.id}`)"
-    :accent="accent"
     themed
     class="flex h-full flex-col"
   >
-    <div class="flex flex-1 flex-col p-4">
-      <div class="mb-3 flex items-start justify-between gap-2">
+    <div class="flex flex-1 flex-col gap-3 p-5">
+      <div class="flex items-start gap-3">
         <span
           v-if="classSession.sport"
-          class="sz-sport-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+          class="sz-sport-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
           :style="{ backgroundColor: softBg(accent), color: accent }"
         >
-          <SportIcon :slug="classSession.sport.slug" size="md" />
+          <SportIcon :slug="classSession.sport.slug" size="sm" />
         </span>
-        <span
-          class="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
-          :class="classSession.status === 'FULL' ? 'bg-sz-gray-100 text-sz-gray-600' : 'text-white'"
-          :style="classSession.status !== 'FULL' ? { backgroundColor: accent } : undefined"
-        >
-          {{ classSession.bookedSeats }}/{{ classSession.maxSeats }}
-        </span>
+        <div class="min-w-0 flex-1 space-y-1">
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="text-base font-bold leading-snug text-brand-gray-900">
+              {{ localized(classSession.titleFa, classSession.titleEn) }}
+            </h3>
+            <span
+              class="shrink-0 rounded-lg px-2 py-0.5 text-[11px] font-bold tabular-nums"
+              :class="classSession.status === 'FULL' ? 'bg-brand-gray-100 text-brand-gray-600' : 'bg-brand-orange/10 text-brand-orange'"
+            >
+              {{ formatFraction(classSession.bookedSeats, classSession.maxSeats) }}
+            </span>
+          </div>
+          <p v-if="classSession.club" class="truncate text-xs text-brand-gray-500">
+            {{ pickName(classSession.club) }}
+          </p>
+        </div>
       </div>
-      <h3 class="ios-title-3 min-w-0 flex-1">{{ localized(classSession.titleFa, classSession.titleEn) }}</h3>
-      <p v-if="classSession.club" class="ios-footnote mt-1">{{ pickName(classSession.club) }}</p>
-      <p class="ios-footnote mt-1">
-        {{ formatDate(classSession.date) }} · {{ classSession.startTime }}–{{ classSession.endTime }}
+
+      <p class="text-xs text-brand-gray-500">
+        {{ formatDate(classSession.date) }} · {{ formatTimeRange(classSession.startTime, classSession.endTime) }}
       </p>
-      <p class="mt-auto pt-3 text-sm font-semibold" :style="{ color: accent }">
-        {{ formatPrice(classSession.price) }} {{ t('clubs.currency') }}
-      </p>
+
+      <div class="mt-auto pt-3">
+        <p class="text-sm font-bold text-brand-gray-900">
+          {{ formatPrice(classSession.price) }}
+          <span class="text-xs font-semibold text-brand-gray-500">{{ t('clubs.currency') }}</span>
+        </p>
+      </div>
     </div>
   </SzCard>
 </template>

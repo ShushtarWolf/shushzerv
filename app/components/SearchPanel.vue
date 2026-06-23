@@ -46,6 +46,6 @@ function submit() {
       <option value="">{{ t('search.allCities') }}</option>
       <option v-for="c in cities" :key="c.value" :value="c.value">{{ c.label }}</option>
     </select>
-    <button type="submit" class="ios-btn-primary w-full shrink-0 md:w-auto md:px-8">{{ t('search.action') }}</button>
+    <SzButton type="submit" block class="shrink-0 md:w-auto md:px-8">{{ t('search.action') }}</SzButton>
   </form>
 </template>

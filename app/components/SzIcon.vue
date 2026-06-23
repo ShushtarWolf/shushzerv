@@ -12,6 +12,12 @@ type IconName =
   | 'menu'
   | 'close'
   | 'chat'
+  | 'bell'
+  | 'home'
+  | 'explore'
+  | 'profile'
+  | 'calendar'
+  | 'wallet'
 
 const props = withDefaults(
   defineProps<{
@@ -49,10 +55,16 @@ const paths: Record<IconName, string> = {
   menu: 'M4 7h16M4 12h16M4 17h16',
   close: 'M6 6l12 12M18 6 6 18',
   chat: 'M12 3a7 7 0 0 1 7 7c0 2.5-1.2 4.7-3 6.1V19l-3.5-2H9a7 7 0 0 1-3-5.2A7 7 0 0 1 12 3Z',
+  bell: 'M12 3a5 5 0 0 1 5 5v2.1c1.2.8 2 2.1 2 3.6V17l-2 2H7l-2-2v-3.3c0-1.5.8-2.8 2-3.6V8a5 5 0 0 1 5-5Zm-1 17a2 2 0 0 0 4 0',
+  home: 'M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z',
+  explore: 'M10.5 3a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm7.78 13.22a1 1 0 0 1 1.32-.08l3.2 2.8a1 1 0 0 1-1.32 1.52l-3.2-2.8a1 1 0 0 1 .08-1.44Z',
+  profile: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-7 8a7 7 0 0 1 14 0H5Z',
+  calendar: 'M7 3v2M17 3v2M5 8h14M6 5h12a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z',
+  wallet: 'M4 7h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Zm14 4h3v4h-3a1 1 0 0 1 0-2h3',
 }
 
 const isStroke = computed(() =>
-  ['chevron-down', 'chevron-start', 'chevron-end', 'menu', 'close', 'chat'].includes(props.name),
+  ['chevron-down', 'chevron-start', 'chevron-end', 'menu', 'close', 'chat', 'bell', 'home', 'explore', 'profile', 'calendar', 'wallet'].includes(props.name),
 )
 </script>
 

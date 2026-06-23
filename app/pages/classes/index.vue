@@ -2,6 +2,7 @@
 import type { ClassSession } from '~/types'
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 useHead({ title: () => t('classes.title') })
 
 const sportFilter = ref('')
@@ -35,6 +36,11 @@ watch(
     <div v-else-if="classes?.length" :key="sportFilter" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <ClassCard v-for="c in classes" :key="c.id" :class-session="c" />
     </div>
-    <SzEmptyState v-else :message="t('common.noResults')" />
+    <SzEmptyState
+      v-else
+      :message="t('common.noResults')"
+      :action-label="t('common.browseClubs')"
+      :action-to="localePath('/clubs?book=1')"
+    />
   </div>
 </template>

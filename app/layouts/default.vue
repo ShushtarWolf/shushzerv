@@ -7,5 +7,6 @@
     <AppFooter />
     <AppTabBar />
     <AssistantWidget />
+    <SzToast />
   </div>
 </template>

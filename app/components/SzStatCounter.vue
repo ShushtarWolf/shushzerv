@@ -11,8 +11,9 @@ const props = withDefaults(
 )
 
 const { locale } = useI18n()
-const display = ref(0)
+const display = ref(props.value)
 const el = ref<HTMLElement | null>(null)
+const hasAnimated = ref(false)
 
 function format(n: number) {
   const rounded = props.decimals > 0 ? n : Math.round(n)
@@ -23,21 +24,30 @@ function format(n: number) {
 }
 
 function animate() {
+  if (hasAnimated.value) return
+  hasAnimated.value = true
+
   const reduce = import.meta.client && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (reduce) {
     display.value = props.value
     return
   }
+
+  display.value = 0
   const start = performance.now()
-  const from = 0
   function tick(now: number) {
     const t = Math.min((now - start) / props.duration, 1)
     const eased = 1 - Math.pow(1 - t, 3)
-    display.value = from + (props.value - from) * eased
+    display.value = props.value * eased
     if (t < 1) requestAnimationFrame(tick)
+    else display.value = props.value
   }
   requestAnimationFrame(tick)
 }
+
+watch(() => props.value, (v) => {
+  if (!hasAnimated.value) display.value = v
+})
 
 onMounted(() => {
   if (!el.value) return animate()

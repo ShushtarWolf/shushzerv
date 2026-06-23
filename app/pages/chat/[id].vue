@@ -18,10 +18,7 @@ useHead({ title: () => t('chat.thread') })
 const draft = ref('')
 const sending = ref(false)
 
-onMounted(() => {
-  const timer = setInterval(() => refresh(), 4000)
-  onUnmounted(() => clearInterval(timer))
-})
+useVisibilityPoll(refresh, 4000)
 
 async function send() {
   const text = draft.value.trim()
@@ -57,7 +54,7 @@ const title = computed(() => {
       >
         <div
           class="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm"
-          :class="msg.senderId === user?.id ? 'bg-brand-orange text-white rounded-ee-sm' : 'bg-white shadow-card rounded-es-sm'"
+          :class="msg.senderId === user?.id ? 'bg-brand-orange text-brand-primary rounded-ee-sm' : 'bg-white shadow-card rounded-es-sm'"
         >
           <p v-if="msg.senderId !== user?.id" class="mb-0.5 text-xs font-bold opacity-70">{{ msg.sender?.name }}</p>
           {{ msg.body }}

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 const { t } = useI18n()
 const localePath = useLocalePath()
+const route = useRoute()
 const { fetch: refreshSession, user } = useUserSession()
 const { dashboardPath } = useDashboardPath()
+const { resolvePostAuthRedirect, registerPath } = useAuthRedirect()
 
 useHead({ title: () => t('auth.loginTitle') })
 
@@ -10,6 +12,7 @@ const email = ref('')
 const password = ref('')
 const error = ref('')
 const pending = ref(false)
+const toast = useToast()
 
 async function submit() {
   error.value = ''
@@ -17,13 +20,28 @@ async function submit() {
   try {
     await $fetch('/api/auth/login', { method: 'POST', body: { email: email.value, password: password.value } })
     await refreshSession()
+    const redirect = resolvePostAuthRedirect(dashboardPath.value)
     if (user.value?.role === 'ATHLETE' && !user.value.onboarded) {
-      await navigateTo(localePath('/onboarding'))
+      await navigateTo({
+        path: localePath('/onboarding'),
+        query: route.query.redirect ? { redirect: String(route.query.redirect) } : {},
+      })
+    } else if (user.value?.role === 'COACH' && !user.value.onboarded) {
+      await navigateTo({
+        path: localePath('/coach-onboarding'),
+        query: route.query.redirect ? { redirect: String(route.query.redirect) } : {},
+      })
+    } else if (user.value?.role === 'CLUB_ADMIN' && !user.value.onboarded) {
+      await navigateTo({
+        path: localePath('/club-onboarding'),
+        query: route.query.redirect ? { redirect: String(route.query.redirect) } : {},
+      })
     } else {
-      await navigateTo(dashboardPath.value)
+      await navigateTo(redirect)
     }
   } catch {
     error.value = t('auth.invalid')
+    toast.error(t('auth.invalid'))
   } finally {
     pending.value = false
   }
@@ -41,7 +59,7 @@ async function submit() {
     </form>
     <p class="mt-6 text-center text-sm text-brand-gray-600">
       {{ t('auth.noAccount') }}
-      <NuxtLink :to="localePath('/register')" class="font-semibold text-brand-orange">{{ t('auth.goRegister') }}</NuxtLink>
+      <NuxtLink :to="registerPath()" class="font-semibold text-brand-orange">{{ t('auth.goRegister') }}</NuxtLink>
     </p>
   </div>
 </template>

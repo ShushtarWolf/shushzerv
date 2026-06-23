@@ -10,6 +10,9 @@ export default defineEventHandler(async (event) => {
   if (!user || !verifySecret(password, user.passwordHash)) {
     throw createError({ statusCode: 401, statusMessage: 'Invalid credentials' })
   }
+  if (user.suspendedAt) {
+    throw createError({ statusCode: 403, statusMessage: 'Account suspended' })
+  }
 
   await ensureWalletsForUser(user.id)
 
@@ -17,5 +20,5 @@ export default defineEventHandler(async (event) => {
     user: toSessionUser(user),
   })
 
-  return { id: user.id, email: user.email, name: user.name, role: user.role }
+  return { id: user.id, email: user.email, name: user.name, nameEn: user.nameEn, role: user.role }
 })

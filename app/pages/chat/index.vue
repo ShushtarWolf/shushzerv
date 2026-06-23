@@ -11,10 +11,7 @@ useHead({ title: () => t('chat.title') })
 
 const { data: conversations, refresh } = await useApiFetch<Conversation[]>('/api/chat')
 
-onMounted(() => {
-  const timer = setInterval(() => refresh(), 8000)
-  onUnmounted(() => clearInterval(timer))
-})
+useVisibilityPoll(refresh, 8000)
 
 function title(c: Conversation) {
   return localized(c.titleFa || t('chat.direct'), c.titleEn || t('chat.direct'))
@@ -38,6 +35,11 @@ function title(c: Conversation) {
         <SzBadge v-if="c.isGroup" tone="orange">#</SzBadge>
       </SzCard>
     </div>
-    <SzEmptyState v-else :message="t('chat.empty')" />
+    <SzEmptyState
+      v-else
+      :message="t('chat.empty')"
+      :action-label="t('common.createMatch')"
+      :action-to="localePath('/matches')"
+    />
   </div>
 </template>

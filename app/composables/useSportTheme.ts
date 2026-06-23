@@ -1,36 +1,21 @@
-const DEFAULT_SPORT_COLOR = '#ff5a1f'
+import { BRAND_PRIMARY, palette } from '#shared/palette'
 
 export function useSportTheme() {
-  const { color: pageColor } = useSelectedSportColor()
+  const accent = BRAND_PRIMARY
 
-  function sportColor(sport?: { color?: string } | null, fallback = DEFAULT_SPORT_COLOR) {
-    return sport?.color ?? fallback
-  }
-
-  function resolveAccent(sport?: { color?: string } | null, fallback = DEFAULT_SPORT_COLOR) {
-    return pageColor.value ?? sportColor(sport, fallback)
-  }
-
-  function softBg(color: string, alpha = '22') {
+  function softBg(color: string = accent, alpha = '22') {
     return `${color}${alpha}`
   }
 
-  /** Flat tinted surface — no gradients */
-  function surfaceBg(color: string, alpha = '14') {
+  function surfaceBg(color: string = accent, alpha = '14') {
     return `${color}${alpha}`
   }
 
-  /** Solid hero / banner background */
-  function heroBg(color: string) {
-    return color
-  }
-
-  function cardVars(color?: string | null) {
-    const c = color ?? DEFAULT_SPORT_COLOR
+  function cardVars(color: string = accent) {
     return {
-      '--sport-color': c,
-      '--sport-soft': `${c}22`,
-      '--sport-tint': `${c}18`,
+      '--sport-color': color,
+      '--sport-soft': `${color}22`,
+      '--sport-tint': `${color}18`,
     } as Record<string, string>
   }
 
@@ -42,5 +27,14 @@ export function useSportTheme() {
     return `#${[r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join('')}`
   }
 
-  return { sportColor, resolveAccent, softBg, surfaceBg, heroBg, cardVars, darken, DEFAULT_SPORT_COLOR }
+  return {
+    accent,
+    softBg,
+    surfaceBg,
+    cardVars,
+    darken,
+    palette,
+    BRAND_PRIMARY,
+    DEFAULT_SPORT_COLOR: BRAND_PRIMARY,
+  }
 }
