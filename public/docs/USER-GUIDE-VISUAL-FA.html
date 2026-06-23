@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شوش‌زرو — راهنمای تصویری کامل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #ff5a1f;
+      --green: #22c55e;
+      --navy: #2c4a6e;
+      --ink: #1a1a1a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #fff;
+      --sidebar: 17rem;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.7;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      position: fixed;
+      top: 0; right: 0;
+      width: var(--sidebar);
+      height: 100vh;
+      overflow-y: auto;
+      background: var(--card);
+      border-left: 1px solid var(--border);
+      padding: 1.25rem 1rem;
+      z-index: 100;
+    }
+    .sidebar h1 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin: 0 0 .25rem;
+    }
+    .sidebar .sub { font-size: .75rem; color: var(--muted); margin-bottom: 1rem; }
+    .sidebar nav ol { list-style: none; padding: 0; margin: 0; }
+    .sidebar nav a {
+      display: block;
+      padding: .45rem .6rem;
+      border-radius: .5rem;
+      color: var(--ink);
+      text-decoration: none;
+      font-size: .82rem;
+      font-weight: 500;
+    }
+    .sidebar nav a:hover { background: #fff3ed; color: var(--orange); }
+    .sidebar nav span { color: var(--orange); font-weight: 700; margin-left: .35rem; }
+    .main {
+      margin-right: var(--sidebar);
+      flex: 1;
+      padding: 1.5rem 2rem 3rem;
+      max-width: 960px;
+    }
+    .hero {
+      background: linear-gradient(135deg, var(--navy), #1e3a5f);
+      color: #fff;
+      border-radius: 1.25rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .hero h2 { margin: 0 0 .5rem; font-size: 1.75rem; font-weight: 800; }
+    .hero p { margin: 0; opacity: .9; }
+    .badge {
+      display: inline-block;
+      background: var(--orange);
+      padding: .25rem .75rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-top: 1rem;
+    }
+    .guide-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      scroll-margin-top: 1rem;
+    }
+    .section-head { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; }
+    .section-num {
+      background: var(--orange);
+      color: #fff;
+      font-weight: 800;
+      font-size: .85rem;
+      width: 2rem; height: 2rem;
+      border-radius: .5rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .guide-section h2 { margin: 0; font-size: 1.25rem; color: var(--navy); }
+    .intro { color: var(--muted); margin: 0 0 1rem; }
+    ol.steps { padding-right: 1.25rem; margin: 0 0 1rem; }
+    ol.steps li { margin: .35rem 0; }
+    .tip {
+      background: #fff8f5;
+      border-right: 4px solid var(--orange);
+      padding: .75rem 1rem;
+      border-radius: .5rem;
+      margin-bottom: 1rem;
+      font-size: .9rem;
+    }
+    .tip p { margin: .25rem 0; }
+    .shots { margin-top: 1rem; }
+    .shots-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    figure.shot { margin: 0; }
+    figure.shot img {
+      width: 100%;
+      border-radius: .75rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+    figcaption {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: .5rem;
+      text-align: center;
+    }
+    table.demo-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .85rem;
+      margin: 1rem 0;
+    }
+    table.demo-table th, table.demo-table td {
+      border: 1px solid var(--border);
+      padding: .5rem .75rem;
+      text-align: right;
+    }
+    table.demo-table th { background: var(--bg); }
+    code {
+      background: #f1f5f9;
+      padding: .1rem .35rem;
+      border-radius: .25rem;
+      font-size: .8rem;
+      direction: ltr;
+      display: inline-block;
+    }
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: .8rem;
+      padding: 2rem 0;
+    }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-right: 0; padding: 1rem; }
+    }
+    @media print {
+      .sidebar { display: none; }
+      .main { margin: 0; max-width: none; }
+      .guide-section { break-inside: avoid; page-break-inside: avoid; }
+      figure.shot img { max-height: 420px; object-fit: contain; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>شوش‌زرو</h1>
+      <p class="sub">راهنمای تصویری · 17 بخش · 39 تصویر</p>
+      <nav><ol><li><a href="#start"><span>01</span> شروع سریع</a></li><li><a href="#mobile"><span>02</span> نسخهٔ موبایل و نوار پایین</a></li><li><a href="#auth"><span>03</span> ثبت‌نام و ورود</a></li><li><a href="#home"><span>04</span> صفحهٔ اصلی</a></li><li><a href="#explore"><span>05</span> کاوش و صفحات ورزش</a></li><li><a href="#clubs-map"><span>06</span> باشگاه‌ها — نقشه و لیست</a></li><li><a href="#booking"><span>07</span> رزرو زمین — گام‌به‌گام</a></li><li><a href="#classes"><span>08</span> کلاس‌های گروهی</a></li><li><a href="#matches"><span>09</span> همبازی (بازی باز)</a></li><li><a href="#coaches"><span>10</span> مربیان</a></li><li><a href="#tournaments"><span>11</span> مسابقات</a></li><li><a href="#chat-news"><span>12</span> چت، اخبار و درباره</a></li><li><a href="#dash-athlete"><span>13</span> داشبورد ورزشکار</a></li><li><a href="#dash-club"><span>14</span> داشبورد مدیر باشگاه</a></li><li><a href="#dash-coach"><span>15</span> داشبورد مربی</a></li><li><a href="#dash-admin"><span>16</span> داشبورد مدیر پلتفرم</a></li><li><a href="#demo"><span>17</span> حساب‌های آزمایشی</a></li></ol></nav>
+    </aside>
+    <main class="main">
+      <header class="hero">
+        <h2>راهنمای تصویری کامل وب‌سایت</h2>
+        <p>هر صفحه با اسکرین‌شات واقعی و توضیح گام‌به‌گام — رزرو از نقشه، داشبوردها، موبایل و حساب‌های دمو.</p>
+        <span class="badge">به‌روزرسانی: ژوئن ۲۰۲۶</span>
+      </header>
+      
+<section id="start" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>شروع سریع</h2>
+  </div>
+  <p class="intro">شوش‌زرو پلتفرم رزرو ورزشی است. آدرس فارسی: localhost:3000 — انگلیسی: /en</p>
+  <ol class="steps"><li>ثبت‌نام یا ورود با حساب آزمایشی (بخش ۱۹)</li><li>از «شروع رزرو» یا نوار پایین «رزرو» وارد باشگاه‌ها شوید</li><li>زمین و سانس را انتخاب و رزرو را تأیید کنید</li><li>از داشبورد رزروها و برنامه را پیگیری کنید</li></ol>
+  
+  
+  <div class="shots ">
+    <figure class="shot">
+      <img src="guide/01-home.png" alt="صفحهٔ اصلی — جستجو، ورزش‌ها، باشگاه‌ها، نقشه" loading="lazy" />
+      <figcaption>صفحهٔ اصلی — جستجو، ورزش‌ها، باشگاه‌ها، نقشه</figcaption>
+    </figure></div>
+</section>
+<section id="mobile" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>نسخهٔ موبایل و نوار پایین</h2>
+  </div>
+  <p class="intro">در موبایل نوار پایین (Tab Bar) دسترسی سریع به خانه، کاوش، رزرو و داشبورد را می‌دهد.</p>
+  <ol class="steps"><li>خانه — بازگشت به صفحهٔ اصلی</li><li>کاوش — مرور ورزش‌ها و شهرها</li><li>رزرو — میانبر به /clubs?book=1</li><li>داشبورد — پنل شخصی (پس از ورود)</li><li>بیشتر — منوی کامل (مربیان، چت، اخبار)</li></ol>
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/17-mobile-home.png" alt="صفحهٔ اصلی موبایل" loading="lazy" />
+      <figcaption>صفحهٔ اصلی موبایل</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/18-mobile-clubs.png" alt="باشگاه‌ها در موبایل" loading="lazy" />
+      <figcaption>باشگاه‌ها در موبایل</figcaption>
+    </figure></div>
+</section>
+<section id="auth" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>ثبت‌نام و ورود</h2>
+  </div>
+  <p class="intro">برای رزرو، کلاس و همبازی باید وارد حساب شوید. نقش در ثبت‌نام تعیین می‌شود.</p>
+  <ol class="steps"><li>ورود: /login — پس از ورود به داشبورد نقش خود هدایت می‌شوید</li><li>ثبت‌نام: /register — نام، ایمیل، رمز، نقش</li><li>آنبوردینگ (ورزشکار): انتخاب ورزش‌های مورد علاقه و سطح</li></ol>
+  <div class="tip"><p>💡 حساب‌های دمو در بخش ۱۹ — رمز همه: demo1234</p></div>
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/10-login.png" alt="صفحهٔ ورود — ایمیل و رمز" loading="lazy" />
+      <figcaption>صفحهٔ ورود — ایمیل و رمز</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/11-register.png" alt="ثبت‌نام — انتخاب نقش (ورزشکار / مربی / مدیر باشگاه)" loading="lazy" />
+      <figcaption>ثبت‌نام — انتخاب نقش (ورزشکار / مربی / مدیر باشگاه)</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/15-onboarding.png" alt="آنبوردینگ ورزشکار — ورزش و سطح مهارت" loading="lazy" />
+      <figcaption>آنبوردینگ ورزشکار — ورزش و سطح مهارت</figcaption>
+    </figure></div>
+</section>
+<section id="home" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>صفحهٔ اصلی</h2>
+  </div>
+  <p class="intro">نقطهٔ شروع: جستجوی Hero، دسته ورزش‌ها، باشگاه‌های منتخب، کلاس، همبازی، نقشه.</p>
+  <ol class="steps"><li>۱ — Hero: شهر + ورزش + «شروع رزرو»</li><li>۲ — شبکه ورزش‌ها → صفحهٔ /sports/:slug</li><li>۳ — کارت باشگاه → جزئیات باشگاه</li><li>۴ — نقشهٔ کوچک → /clubs</li></ol>
+  
+  
+  <div class="shots ">
+    <figure class="shot">
+      <img src="guide/01-home.png" alt="اسکرول کنید: شهرها، نظرات، اخبار، CTA رزرو" loading="lazy" />
+      <figcaption>اسکرول کنید: شهرها، نظرات، اخبار، CTA رزرو</figcaption>
+    </figure></div>
+</section>
+<section id="explore" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>کاوش و صفحات ورزش</h2>
+  </div>
+  <p class="intro">کاوش محتوا را بر اساس گروه ورزشی فیلتر می‌کند.</p>
+  
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/02-explore.png" alt="صفحهٔ /explore" loading="lazy" />
+      <figcaption>صفحهٔ /explore</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/12-sports-tennis.png" alt="صفحهٔ ورزش — مثال تنیس /sports/tennis" loading="lazy" />
+      <figcaption>صفحهٔ ورزش — مثال تنیس /sports/tennis</figcaption>
+    </figure></div>
+</section>
+<section id="clubs-map" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>باشگاه‌ها — نقشه و لیست</h2>
+  </div>
+  <p class="intro">مهم‌ترین بخش رزرو. دو نما: نقشه (Leaflet) و لیست کارت‌ها.</p>
+  <ol class="steps"><li>۱ — بالای صفحه «نقشه / لیست» را عوض کنید</li><li>۲ — فیلتر: شهر، ورزش، تاریخ، سرپوشیده/باز، مرتب‌سازی</li><li>۳ — نقشه: روی حباب قیمت بزنید → پاپ‌آپ سانس</li><li>۴ — لیست: «رزرو» یا کلیک کارت → صفحهٔ باشگاه</li><li>۵ — بنر راهنما: باشگاه → زمین → سانس → تأیید</li></ol>
+  <div class="tip"><p>💡 روی پین نقشه مستقیم زمین، تاریخ و سانس آزاد را می‌بینید</p><p>💡 «نزدیک من» موقعیت GPS را می‌خواهد</p></div>
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/03b-clubs-list.png" alt="نمای لیست — کارت باشگاه با قیمت، امتیاز، تخفیف" loading="lazy" />
+      <figcaption>نمای لیست — کارت باشگاه با قیمت، امتیاز، تخفیف</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/03-clubs-map-view.png" alt="نمای نقشه — پین‌های قیمت روی نقشه تهران" loading="lazy" />
+      <figcaption>نمای نقشه — پین‌های قیمت روی نقشه تهران</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/03c-clubs-map-popup.png" alt="کلیک روی پین — پاپ‌آپ رزرو سریع از نقشه" loading="lazy" />
+      <figcaption>کلیک روی پین — پاپ‌آپ رزرو سریع از نقشه</figcaption>
+    </figure></div>
+</section>
+<section id="booking" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>رزرو زمین — گام‌به‌گام</h2>
+  </div>
+  <p class="intro">صفحهٔ باشگاه (/clubs/:slug) سه مرحله دارد: زمین → سانس → تأیید.</p>
+  <ol class="steps"><li>۱ — یک زمین (Court) انتخاب کنید — دکمهٔ سبز</li><li>۲ — هفته را با فلش‌ها جابه‌جا کنید؛ «امروز» برای برگشت</li><li>۳ — روی سانس «آزاد» (خاکستری) بزنید</li><li>۴ — خلاصه: باشگاه، زمین، تاریخ، ساعت، قیمت</li><li>۵ — «پرداخت با کیف پول» یا «پرداخت در محل باشگاه»</li><li>۶ — پس از موفقیت: مشاهده رزروها یا ساخت همبازی</li></ol>
+  <div class="tip"><p>💡 بدون ورود، دکمهٔ تأیید به صفحهٔ login می‌برد</p><p>💡 لغو از داشبورد → تب رزروها</p></div>
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/13-club-detail.png" alt="صفحهٔ باشگاه — انتخاب زمین (مرحله ۱)" loading="lazy" />
+      <figcaption>صفحهٔ باشگاه — انتخاب زمین (مرحله ۱)</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/14b-club-slot-picked-auth.png" alt="انتخاب سانس آزاد (مرحله ۲)" loading="lazy" />
+      <figcaption>انتخاب سانس آزاد (مرحله ۲)</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/14c-booking-success.png" alt="تأیید رزرو موفق (مرحله ۳)" loading="lazy" />
+      <figcaption>تأیید رزرو موفق (مرحله ۳)</figcaption>
+    </figure></div>
+</section>
+<section id="classes" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>کلاس‌های گروهی</h2>
+  </div>
+  <p class="intro">ثبت‌نام در کلاس با مربی — از /classes یا صفحهٔ باشگاه.</p>
+  <ol class="steps"><li>«ثبت‌نام» → پرداخت کیف پول یا در محل</li><li>مدیریت: داشبورد → ثبت‌نام کلاس‌ها</li></ol>
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/04-classes.png" alt="لیست کلاس‌ها" loading="lazy" />
+      <figcaption>لیست کلاس‌ها</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/04b-class-detail-full.png" alt="جزئیات کلاس — ثبت‌نام، ظرفیت، قیمت" loading="lazy" />
+      <figcaption>جزئیات کلاس — ثبت‌نام، ظرفیت، قیمت</figcaption>
+    </figure></div>
+</section>
+<section id="matches" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">09</span>
+    <h2>همبازی (بازی باز)</h2>
+  </div>
+  <p class="intro">بازی باز بسازید یا به بازی دیگران بپیوندید. لینک اشتراک: /m/:token</p>
+  <ol class="steps"><li>«ایجاد بازی» — ورزش، شهر، تاریخ، سطح</li><li>«پیوستن» — اگر جا باشد</li><li>لینک را برای دوستان بفرستید</li></ol>
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/05-matches.png" alt="لیست بازی‌های باز" loading="lazy" />
+      <figcaption>لیست بازی‌های باز</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/05b-match-detail.png" alt="جزئیات بازی — پیوستن، سطح، بازیکنان" loading="lazy" />
+      <figcaption>جزئیات بازی — پیوستن، سطح، بازیکنان</figcaption>
+    </figure></div>
+</section>
+<section id="coaches" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">10</span>
+    <h2>مربیان</h2>
+  </div>
+  <p class="intro">پروفایل مربی، رزرو جلسه، برنامه تمرینی از داشبورد مربی.</p>
+  
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/06-coaches.png" alt="لیست مربیان" loading="lazy" />
+      <figcaption>لیست مربیان</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/06b-coach-detail.png" alt="پروفایل مربی — رزرو جلسه" loading="lazy" />
+      <figcaption>پروفایل مربی — رزرو جلسه</figcaption>
+    </figure></div>
+</section>
+<section id="tournaments" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">11</span>
+    <h2>مسابقات</h2>
+  </div>
+  <p class="intro">تورنمنت‌های باشگاه — ثبت‌نام از /tournaments</p>
+  
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/07-tournaments.png" alt="لیست مسابقات" loading="lazy" />
+      <figcaption>لیست مسابقات</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/07b-tournament-detail.png" alt="جزئیات و ثبت‌نام" loading="lazy" />
+      <figcaption>جزئیات و ثبت‌نام</figcaption>
+    </figure></div>
+</section>
+<section id="chat-news" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">12</span>
+    <h2>چت، اخبار و درباره</h2>
+  </div>
+  <p class="intro">پیام‌ها پس از همبازی؛ اخبار ورزشی؛ صفحهٔ درباره.</p>
+  
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/16-chat.png" alt="پیام‌ها /chat" loading="lazy" />
+      <figcaption>پیام‌ها /chat</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/08-news.png" alt="اخبار /news" loading="lazy" />
+      <figcaption>اخبار /news</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/09-about.png" alt="درباره /about" loading="lazy" />
+      <figcaption>درباره /about</figcaption>
+    </figure></div>
+</section>
+<section id="dash-athlete" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">13</span>
+    <h2>داشبورد ورزشکار</h2>
+  </div>
+  <p class="intro">مسیر: /dashboard — ۷ تب در منوی کناری.</p>
+  <ol class="steps"><li>خلاصه: اقدامات سریع — رزرو، کیف پول، برنامه، همبازی</li><li>برنامه: کلیک رویداد → جزئیات کلاس/مسابقه/رزرو</li><li>رزروها: لغو رزرو؛ ثبت نظر برای باشگاه</li><li>برنامه‌ها: تمرین/غذایی مربی — تیک انجام شد</li></ol>
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/20-dash-athlete-overview.png" alt="خلاصه — آمار، نمودار، XP، نشان" loading="lazy" />
+      <figcaption>خلاصه — آمار، نمودار، XP، نشان</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/21-dash-athlete-schedule.png" alt="برنامه — تقویم یکپارچه" loading="lazy" />
+      <figcaption>برنامه — تقویم یکپارچه</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/22-dash-athlete-bookings.png" alt="رزروها — پیش‌رو، گذشته، نظر" loading="lazy" />
+      <figcaption>رزروها — پیش‌رو، گذشته، نظر</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/23-dash-athlete-wallet.png" alt="کیف پول — شارژ و تراکنش" loading="lazy" />
+      <figcaption>کیف پول — شارژ و تراکنش</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/24-dash-athlete-profile.png" alt="پروفایل — زبان، ورزش، push، سطح" loading="lazy" />
+      <figcaption>پروفایل — زبان، ورزش، push، سطح</figcaption>
+    </figure></div>
+</section>
+<section id="dash-club" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">14</span>
+    <h2>داشبورد مدیر باشگاه</h2>
+  </div>
+  <p class="intro">مسیر: /dashboard/club — باشگاه را از منوی بالا انتخاب کنید.</p>
+  <ol class="steps"><li>مدیریت: افزودن زمین → تنظیم سانس → ایجاد سانس روزانه</li><li>برنامه: کلیک سانس آزاد → نام مشتری یا ایمیل</li><li>رزروها: تأیید «پرداخت در محل»</li><li>مالی: خروجی CSV</li></ol>
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/30-dash-club-overview.png" alt="خلاصه درآمد و نمودار" loading="lazy" />
+      <figcaption>خلاصه درآمد و نمودار</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/31-dash-club-schedule.png" alt="برنامه — ثبت مشتری حضوری روی سانس" loading="lazy" />
+      <figcaption>برنامه — ثبت مشتری حضوری روی سانس</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/32-dash-club-manage.png" alt="مدیریت — زمین، سانس، کلاس، رویداد" loading="lazy" />
+      <figcaption>مدیریت — زمین، سانس، کلاس، رویداد</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/33-dash-club-bookings.png" alt="رزروهای دریافتی — تأیید پرداخت" loading="lazy" />
+      <figcaption>رزروهای دریافتی — تأیید پرداخت</figcaption>
+    </figure></div>
+</section>
+<section id="dash-coach" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">15</span>
+    <h2>داشبورد مربی</h2>
+  </div>
+  <p class="intro">مسیر: /dashboard/coach</p>
+  
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/40-dash-coach-overview.png" alt="خلاصه درآمد و شاگردان" loading="lazy" />
+      <figcaption>خلاصه درآمد و شاگردان</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/41-dash-coach-plans.png" alt="برنامه‌ها — ایجاد و اختصاص به ورزشکار" loading="lazy" />
+      <figcaption>برنامه‌ها — ایجاد و اختصاص به ورزشکار</figcaption>
+    </figure></div>
+</section>
+<section id="dash-admin" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">16</span>
+    <h2>داشبورد مدیر پلتفرم</h2>
+  </div>
+  <p class="intro">مسیر: /dashboard/admin — مدیریت کل سیستم.</p>
+  
+  
+  
+  <div class="shots shots-grid">
+    <figure class="shot">
+      <img src="guide/50-dash-admin-overview.png" alt="KPI پلتفرم و نمودار ۶ ماهه" loading="lazy" />
+      <figcaption>KPI پلتفرم و نمودار ۶ ماهه</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="guide/51-dash-admin-users.png" alt="کاربران — نقش، تعلیق، جستجو" loading="lazy" />
+      <figcaption>کاربران — نقش، تعلیق، جستجو</figcaption>
+    </figure></div>
+</section>
+<section id="demo" class="guide-section">
+  <div class="section-head">
+    <span class="section-num">17</span>
+    <h2>حساب‌های آزمایشی</h2>
+  </div>
+  <p class="intro">رمز همه: demo1234 — پس از npm run db:seed</p>
+  
+  
+  
+<table class="demo-table">
+  <tr><th>نقش</th><th>ایمیل</th><th>داشبورد</th></tr>
+  <tr><td>ورزشکار</td><td><code>athlete@shushzerv.local</code></td><td><code>/dashboard</code></td></tr>
+  <tr><td>مربی</td><td><code>coach@shushzerv.local</code></td><td><code>/dashboard/coach</code></td></tr>
+  <tr><td>مدیر باشگاه</td><td><code>club@shushzerv.local</code></td><td><code>/dashboard/club</code></td></tr>
+  <tr><td>مدیر پلتفرم</td><td><code>admin@shushzerv.local</code></td><td><code>/dashboard/admin</code></td></tr>
+</table>
+  <div class="shots "></div>
+</section>
+      <p class="footer">شوش‌زرو · برای تازه‌سازی تصاویر: <code>npm run guide:screenshots</code></p>
+    </main>
+  </div>
+</body>
+</html>
