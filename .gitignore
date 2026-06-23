@@ -17,6 +17,7 @@ prisma/dev.db-journal
 .env
 .env.*
 !.env.example
+railway-setup.local.txt
 
 # logs
 *.log
