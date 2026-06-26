@@ -103,7 +103,7 @@ async function main() {
     const loginRes = await fetch(`${BASE}/api/auth/login`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email: 'athlete@shushzerv.local', password: 'demo1234' }),
+      body: JSON.stringify({ email: 'athlete@inboxs.local', password: 'demo1234' }),
     })
     const cookie = loginRes.headers.getSetCookie?.()?.join('; ') || loginRes.headers.get('set-cookie') || ''
     if (!loginRes.ok) {
@@ -124,7 +124,7 @@ async function main() {
     const loginRes = await fetch(`${BASE}/api/auth/login`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email: 'athlete@shushzerv.local', password: 'demo1234' }),
+      body: JSON.stringify({ email: 'athlete@inboxs.local', password: 'demo1234' }),
     })
     const cookie = loginRes.headers.getSetCookie?.()?.join('; ') || loginRes.headers.get('set-cookie') || ''
     const { res, text } = await fetchText('/dashboard')

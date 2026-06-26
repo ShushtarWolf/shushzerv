@@ -76,7 +76,7 @@ let html = readFileSync(HTML_SRC, 'utf8')
 html = html.replace("const I='guide/'", "const I='screenshots/'")
 writeFileSync(path.join(OUT_DIR, 'site-tour.html'), html, 'utf8')
 
-const readme = `# Shushzerv Site Tour — Export Package
+const readme = `# IN BOX S Site Tour — Export Package
 
 Partner-ready assets to rebuild the click-through demo in any format.
 

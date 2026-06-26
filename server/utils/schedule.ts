@@ -13,7 +13,7 @@ export function scheduleLocale(event: H3Event) {
   const fromQuery = getQuery(event).locale
   if (fromQuery === 'en' || fromQuery === 'fa') return fromQuery
 
-  const fromCookie = getCookie(event, 'shushzerv_locale')
+  const fromCookie = getCookie(event, 'inboxs_locale')
   if (fromCookie === 'en' || fromCookie === 'fa') return fromCookie
 
   return getRequestHeader(event, 'accept-language')?.includes('en') ? 'en' : 'fa'

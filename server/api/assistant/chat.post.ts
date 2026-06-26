@@ -11,8 +11,8 @@ export default defineEventHandler(async (event) => {
   if (!text) {
     return {
       reply: isFa
-        ? 'سلام! من راهنمای هوشمند شوش‌زرو هستم — نسخه آزمایشی با پاسخ‌های از پیش تعریف‌شده.'
-        : 'Hi! I\'m the Shushzerv smart guide — a beta with rule-based answers.',
+        ? 'سلام! من راهنمای هوشمند این باکس هستم — نسخه آزمایشی با پاسخ‌های از پیش تعریف‌شده.'
+        : 'Hi! I\'m the IN BOX S smart guide — a beta with rule-based answers.',
       suggestions: topSuggestions,
     }
   }
@@ -56,8 +56,8 @@ export default defineEventHandler(async (event) => {
   if (/contact|support|email|تماس|پشتیبانی|ایمیل/.test(text)) {
     return {
       reply: isFa
-        ? 'برای تماس با ما به صفحه درباره ما برو یا ایمیل hello@shushzerv.app بزن.'
-        : 'Visit the About page or email hello@shushzerv.app to reach us.',
+        ? 'برای تماس با ما به صفحه درباره ما برو یا ایمیل hello@inboxs.app بزن.'
+        : 'Visit the About page or email hello@inboxs.app to reach us.',
       link: '/about',
     }
   }

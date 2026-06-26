@@ -1,4 +1,4 @@
-# Shushzerv — Complete QA Review Report
+# IN BOX S — Complete QA Review Report
 
 **Last updated:** 2026-06-17  
 **Environment:** `http://localhost:3000` (local dev + seeded DB)

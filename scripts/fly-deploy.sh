@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Deploy Shushzerv demo to Fly.io (run from repo root after `fly auth login` + billing set up).
+# Deploy IN BOX S demo to Fly.io (run from repo root after `fly auth login` + billing set up).
 set -euo pipefail
 
-APP=shushzerv-demo
+APP=in-box-s-demo
 REGION=fra
 export PATH="${FLYCTL_INSTALL:-$HOME/.fly}/bin:$PATH"
 
@@ -33,4 +33,4 @@ flyctl deploy -a "$APP"
 
 echo ""
 echo "Demo URL: https://${APP}.fly.dev"
-echo "Demo login: athlete@shushzerv.local / demo1234"
+echo "Demo login: athlete@inboxs.local / demo1234"

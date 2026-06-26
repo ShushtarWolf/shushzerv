@@ -1,4 +1,4 @@
-const PUSH_OPT_IN_KEY = 'shushzerv_push_opt_in'
+const PUSH_OPT_IN_KEY = 'inboxs_push_opt_in'
 
 export function usePushNotifications() {
   const enabled = ref(false)

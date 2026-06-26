@@ -1,4 +1,4 @@
-const PUSH_OPT_IN_KEY = 'shushzerv_push_opt_in'
+const PUSH_OPT_IN_KEY = 'inboxs_push_opt_in'
 
 export default defineNuxtPlugin(() => {
   if (!import.meta.client || !('serviceWorker' in navigator)) return

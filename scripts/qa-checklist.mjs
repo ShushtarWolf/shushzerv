@@ -27,10 +27,10 @@ const CLUB_SLUG = process.env.SMOKE_CLUB_SLUG ?? 'azadi-tennis'
 const MATCH_TOKEN = process.env.QA_MATCH_TOKEN ?? 'demo1match'
 
 const DEMO = {
-  ATHLETE: { email: 'athlete@shushzerv.local', password: 'demo1234' },
-  COACH: { email: 'coach@shushzerv.local', password: 'demo1234' },
-  CLUB_ADMIN: { email: 'club@shushzerv.local', password: 'demo1234' },
-  PLATFORM_ADMIN: { email: 'admin@shushzerv.local', password: 'demo1234' },
+  ATHLETE: { email: 'athlete@inboxs.local', password: 'demo1234' },
+  COACH: { email: 'coach@inboxs.local', password: 'demo1234' },
+  CLUB_ADMIN: { email: 'club@inboxs.local', password: 'demo1234' },
+  PLATFORM_ADMIN: { email: 'admin@inboxs.local', password: 'demo1234' },
 }
 
 const CHART_FIELDS = {
@@ -193,7 +193,7 @@ async function phasePagesFa(ctx) {
     '/tournaments',
     ctx.tournamentPath,
     '/news',
-    '/news/shushzerv-launch',
+    '/news/in-box-s-launch',
     '/sports/tennis',
     '/about',
     '/login',
@@ -204,7 +204,7 @@ async function phasePagesFa(ctx) {
     await step('pages-fa', `GET ${path}`, async () => {
       const res = await fetchReq(path, { accept: 'text/html' })
       if (res.status !== 200) return { ok: false, detail: `HTTP ${res.status}`, ms: res.ms }
-      if (!res.text.includes('__NUXT') && !res.text.toLowerCase().includes('shushzerv')) {
+      if (!res.text.includes('__NUXT') && !res.text.toLowerCase().includes('in-box-s')) {
         return { ok: false, detail: 'unexpected HTML body', ms: res.ms }
       }
       return { ok: true, ms: res.ms }
@@ -243,7 +243,7 @@ async function phaseApiPublic(ctx) {
     '/api/classes',
     '/api/matches',
     '/api/news',
-    '/api/news/shushzerv-launch',
+    '/api/news/in-box-s-launch',
     '/api/tournaments',
     ctx.tournamentApi,
     '/api/reviews?clubId=' + (ctx.clubId ?? ''),
@@ -466,7 +466,7 @@ async function phaseFlows(ctx) {
 
   await step('flows', `match share page title /m/${MATCH_TOKEN}`, async () => {
     const res = await fetchReq(`/m/${MATCH_TOKEN}`, { accept: 'text/html' })
-    const ok = res.status === 200 && !res.text.includes('<title>Shushzerv</title>')
+    const ok = res.status === 200 && !res.text.includes('<title>IN BOX S</title>')
     return { ok, detail: ok ? 'localized title' : 'generic title', ms: res.ms }
   })
 
@@ -506,7 +506,7 @@ async function discover(ctx) {
 }
 
 async function main() {
-  console.log(`Shushzerv QA checklist → ${BASE_URL}`)
+  console.log(`IN BOX S QA checklist → ${BASE_URL}`)
   console.log(`Step delay: ${STEP_MS}ms | Phase filter: ${PHASE_FILTER}`)
 
   const ctx = {}

@@ -65,7 +65,7 @@ Prioritized backlog for making `/dashboard/club` a full product for real club op
 
 | Role | Email | Password |
 |------|-------|----------|
-| Club admin | `club@shushzerv.local` | `demo1234` |
+| Club admin | `club@inboxs.local` | `demo1234` |
 
 Dashboard: `/dashboard/club` — **Manage** (profile, courts, add-ons), **Reviews**, **Tournaments**.
 

@@ -120,7 +120,7 @@ watch(() => route.path, closeSidebar)
           </svg>
         </NuxtLink>
         <div class="min-w-0 flex-1">
-          <p class="truncate text-lg font-black text-fd-navy">Shushzerv</p>
+          <p class="truncate text-lg font-black text-fd-navy">IN BOX S</p>
           <p class="truncate text-xs font-semibold text-fd-muted">{{ t('dashboard.title') }}</p>
         </div>
         <button

@@ -1,4 +1,4 @@
-# Shushzerv App Phase (PWA-first)
+# IN BOX S App Phase (PWA-first)
 
 The web redesign is the foundation. The app phase extends the same Nuxt codebase.
 
@@ -24,7 +24,7 @@ Wrap the production Nuxt build for iOS/Android store listing:
 
 ```bash
 npm run build
-npx cap init Shushzerv com.shushzerv.app --web-dir .output/public
+npx cap init IN BOX S com.inboxs.app --web-dir .output/public
 npx cap add ios && npx cap add android
 ```
 

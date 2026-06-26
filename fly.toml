@@ -1,6 +1,6 @@
 # Fly.io demo deployment — https://fly.io/docs/reference/configuration/
 
-app = 'shushzerv-demo'
+app = 'in-box-s-demo'
 primary_region = 'fra'
 
 [build]

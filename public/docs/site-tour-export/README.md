@@ -1,4 +1,4 @@
-# Shushzerv Site Tour — Export Package
+# IN BOX S Site Tour — Export Package
 
 Partner-ready assets to rebuild the click-through demo in any format.
 

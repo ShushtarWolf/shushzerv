@@ -50,7 +50,7 @@ function closeMobileNav() {
         >
           <SzIcon :name="showMobileNav ? 'close' : 'menu'" />
         </button>
-        <ShushLogo />
+        <InBoxLogo />
       </div>
 
       <nav class="hidden shrink-0 items-center gap-0.5 lg:flex">

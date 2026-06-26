@@ -217,7 +217,7 @@ function buildBookingIcs(snapshot: NonNullable<typeof lastBooking.value>) {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Shushzerv//Booking//EN',
+    'PRODID:-//IN BOX S//Booking//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'BEGIN:VEVENT',
@@ -283,7 +283,7 @@ async function confirmBooking() {
         endTime: event.endTime,
         title: `${event.title} — ${pickName(club.value)}`,
         location: localized(club.value.addressFa, club.value.addressEn),
-        uid: `booking-${slotId}@shushzerv`,
+        uid: `booking-${slotId}@inboxs`,
       }
     } else {
       lastBooking.value = null

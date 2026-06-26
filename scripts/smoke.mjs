@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Shushzerv smoke checks — run against a live server (dev or production preview).
+ * IN BOX S smoke checks — run against a live server (dev or production preview).
  *
  * Usage:
  *   npm run dev          # terminal 1
@@ -14,10 +14,10 @@ const SCHEDULE_SLUG = process.env.SMOKE_CLUB_SLUG ?? 'azadi-tennis'
 const SCHEDULE_BUDGET_MS = Number(process.env.SMOKE_SCHEDULE_MS ?? 2000)
 
 const DEMO_ACCOUNTS = [
-  { role: 'ATHLETE', email: 'athlete@shushzerv.local', password: 'demo1234' },
-  { role: 'COACH', email: 'coach@shushzerv.local', password: 'demo1234' },
-  { role: 'CLUB_ADMIN', email: 'club@shushzerv.local', password: 'demo1234' },
-  { role: 'PLATFORM_ADMIN', email: 'admin@shushzerv.local', password: 'demo1234' },
+  { role: 'ATHLETE', email: 'athlete@inboxs.local', password: 'demo1234' },
+  { role: 'COACH', email: 'coach@inboxs.local', password: 'demo1234' },
+  { role: 'CLUB_ADMIN', email: 'club@inboxs.local', password: 'demo1234' },
+  { role: 'PLATFORM_ADMIN', email: 'admin@inboxs.local', password: 'demo1234' },
 ]
 
 const ROLE_EXPECTED = {
@@ -259,7 +259,7 @@ async function phase4Features() {
 }
 
 async function main() {
-  console.log(`Shushzerv smoke → ${BASE_URL}`)
+  console.log(`IN BOX S smoke → ${BASE_URL}`)
 
   const health = await request('/', { label: 'server health' })
   if (health.status === 0) {

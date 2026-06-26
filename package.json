@@ -1,5 +1,5 @@
 {
-  "name": "shushzerv",
+  "name": "in-box-s",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
     "db:reset": "prisma db push --force-reset && prisma db seed",
     "db:studio": "prisma studio",
     "tutorial:pdf": "bash scripts/generate-tutorial-pdf.sh tutorial",
-    "shushbot:pdf": "bash scripts/generate-tutorial-pdf.sh shushbot",
+    "inbox-assistant:pdf": "bash scripts/generate-tutorial-pdf.sh inbox-assistant",
     "guide:pdf": "bash scripts/generate-tutorial-pdf.sh guide",
     "guide:screenshots": "node scripts/capture-guide-screenshots.mjs && node scripts/capture-guide-extra.mjs",
     "guide:visual-pdf": "node scripts/build-visual-guide-html.mjs && bash scripts/generate-tutorial-pdf.sh visual",

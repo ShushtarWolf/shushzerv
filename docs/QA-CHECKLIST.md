@@ -1,4 +1,4 @@
-# Shushzerv — Page-by-Page QA Checklist
+# IN BOX S — Page-by-Page QA Checklist
 
 Use this checklist for manual reviews before releases. It maps to routes under `app/pages/` and the shared layouts in `app/layouts/`.
 
@@ -13,10 +13,10 @@ Seeded in `prisma/seed.ts`; also referenced in `scripts/smoke.mjs`.
 
 | Role           | Email                     | Password   |
 | -------------- | ------------------------- | ---------- |
-| Athlete        | `athlete@shushzerv.local` | `demo1234` |
-| Coach          | `coach@shushzerv.local`   | `demo1234` |
-| Club admin     | `club@shushzerv.local`    | `demo1234` |
-| Platform admin | `admin@shushzerv.local`   | `demo1234` |
+| Athlete        | `athlete@inboxs.local` | `demo1234` |
+| Coach          | `coach@inboxs.local`   | `demo1234` |
+| Club admin     | `club@inboxs.local`    | `demo1234` |
+| Platform admin | `admin@inboxs.local`   | `demo1234` |
 
 
 ### Automated baseline (low CPU — no browser)

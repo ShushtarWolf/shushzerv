@@ -16,7 +16,7 @@ const sections = [
   {
     id: 'start',
     title: 'شروع سریع',
-    intro: 'شوش‌زرو پلتفرم رزرو ورزشی است. آدرس فارسی: localhost:3000 — انگلیسی: /en',
+    intro: 'این باکس پلتفرم رزرو ورزشی است. آدرس فارسی: localhost:3000 — انگلیسی: /en',
     shots: [{ file: '01-home.png', caption: 'صفحهٔ اصلی — جستجو، ورزش‌ها، باشگاه‌ها، نقشه' }],
     steps: [
       'ثبت‌نام یا ورود با حساب آزمایشی (بخش ۱۹)',
@@ -228,10 +228,10 @@ const sections = [
 const demoTable = `
 <table class="demo-table">
   <tr><th>نقش</th><th>ایمیل</th><th>داشبورد</th></tr>
-  <tr><td>ورزشکار</td><td><code>athlete@shushzerv.local</code></td><td><code>/dashboard</code></td></tr>
-  <tr><td>مربی</td><td><code>coach@shushzerv.local</code></td><td><code>/dashboard/coach</code></td></tr>
-  <tr><td>مدیر باشگاه</td><td><code>club@shushzerv.local</code></td><td><code>/dashboard/club</code></td></tr>
-  <tr><td>مدیر پلتفرم</td><td><code>admin@shushzerv.local</code></td><td><code>/dashboard/admin</code></td></tr>
+  <tr><td>ورزشکار</td><td><code>athlete@inboxs.local</code></td><td><code>/dashboard</code></td></tr>
+  <tr><td>مربی</td><td><code>coach@inboxs.local</code></td><td><code>/dashboard/coach</code></td></tr>
+  <tr><td>مدیر باشگاه</td><td><code>club@inboxs.local</code></td><td><code>/dashboard/club</code></td></tr>
+  <tr><td>مدیر پلتفرم</td><td><code>admin@inboxs.local</code></td><td><code>/dashboard/admin</code></td></tr>
 </table>`
 
 function renderSection(s, i) {
@@ -278,7 +278,7 @@ const html = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>شوش‌زرو — راهنمای تصویری کامل</title>
+  <title>این باکس — راهنمای تصویری کامل</title>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -446,7 +446,7 @@ const html = `<!DOCTYPE html>
 <body>
   <div class="layout">
     <aside class="sidebar">
-      <h1>شوش‌زرو</h1>
+      <h1>این باکس</h1>
       <p class="sub">راهنمای تصویری · ${sections.length} بخش · ${sections.reduce((n, s) => n + s.shots.length, 0)} تصویر</p>
       <nav><ol>${toc}</ol></nav>
     </aside>
@@ -457,7 +457,7 @@ const html = `<!DOCTYPE html>
         <span class="badge">به‌روزرسانی: ژوئن ۲۰۲۶</span>
       </header>
       ${sections.map(renderSection).join('')}
-      <p class="footer">شوش‌زرو · برای تازه‌سازی تصاویر: <code>npm run guide:screenshots</code></p>
+      <p class="footer">این باکس · برای تازه‌سازی تصاویر: <code>npm run guide:screenshots</code></p>
     </main>
   </div>
 </body>

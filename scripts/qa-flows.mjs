@@ -69,11 +69,11 @@ function weekRange() {
 }
 
 async function main() {
-  console.log(`Shushzerv flow QA → ${BASE}\n`)
+  console.log(`IN BOX S flow QA → ${BASE}\n`)
 
   // --- Athlete onboarding ---
   console.log('▶ athlete onboarding')
-  let athleteCookie = await login('athlete@shushzerv.local', 'demo1234')
+  let athleteCookie = await login('athlete@inboxs.local', 'demo1234')
   const profileBefore = await req('/api/profile', { cookie: athleteCookie })
   if (!profileBefore.json?.user?.onboarded && profileBefore.json?.profile === null) {
     const onboard = await req('/api/profile/onboard', {
@@ -83,7 +83,7 @@ async function main() {
     })
     if (onboard.status === 200) pass('athlete', 'complete onboarding')
     else fail('athlete', 'complete onboarding', `HTTP ${onboard.status}`)
-    athleteCookie = await login('athlete@shushzerv.local', 'demo1234')
+    athleteCookie = await login('athlete@inboxs.local', 'demo1234')
   } else {
     pass('athlete', 'onboarding already done or profile exists')
   }
@@ -171,7 +171,7 @@ async function main() {
   console.log('\n▶ coach session')
   const coaches = await req('/api/coaches')
   const coachList = Array.isArray(coaches.json) ? coaches.json : coaches.json?.items ?? []
-  const coachCookie = await login('coach@shushzerv.local', 'demo1234')
+  const coachCookie = await login('coach@inboxs.local', 'demo1234')
   const ownedCoach = coachList.find((c) => c.userId)
   const coachId = ownedCoach?.id ?? coachList[0]?.id
   if (coachId) {
@@ -274,7 +274,7 @@ async function main() {
     const create = await req('/api/chat', {
       method: 'POST',
       cookie: athleteCookie,
-      body: { participantEmail: 'player2@shushzerv.local' },
+      body: { participantEmail: 'player2@inboxs.local' },
     })
     if (create.status === 200 || create.status === 201) pass('chat', 'create conversation')
     else pass('chat', 'chat skipped', 'no existing conversation')
@@ -290,7 +290,7 @@ async function main() {
       titleEn: 'QA Plan',
       bodyFa: 'Test body',
       bodyEn: 'Test body',
-      athleteEmail: 'athlete@shushzerv.local',
+      athleteEmail: 'athlete@inboxs.local',
       planType: 'TRAINING',
     },
   })
@@ -307,7 +307,7 @@ async function main() {
 
   // --- Club admin ---
   console.log('\n▶ club admin')
-  const clubCookie = await login('club@shushzerv.local', 'demo1234')
+  const clubCookie = await login('club@inboxs.local', 'demo1234')
   const myClubs = await req('/api/club', { cookie: clubCookie })
   const myClubId = myClubs.json?.[0]?.id
   if (myClubId) {
@@ -330,7 +330,7 @@ async function main() {
 
   // --- Platform admin news ---
   console.log('\n▶ platform admin')
-  const adminCookie = await login('admin@shushzerv.local', 'demo1234')
+  const adminCookie = await login('admin@inboxs.local', 'demo1234')
   const slug = `qa-${Date.now()}`
   const article = await req('/api/admin/news', {
     method: 'POST',

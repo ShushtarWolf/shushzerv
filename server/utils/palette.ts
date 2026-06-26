@@ -1,5 +1,5 @@
 /**
- * Shushzerv design tokens — Navy + Lime (palette F).
+ * IN BOX S design tokens — Navy + Lime (palette F).
  * Navy for brand surfaces; lime for CTAs, links, and highlights.
  */
 export const palette = {

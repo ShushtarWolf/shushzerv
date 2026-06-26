@@ -228,7 +228,7 @@ const palettes = [
   <div class="min-h-dvh bg-brand-gray-100 px-4 py-10 sm:px-8">
     <div class="mx-auto max-w-6xl space-y-8">
       <header class="text-center">
-        <p class="text-sm font-bold uppercase tracking-widest text-brand-gray-500">Shushzerv</p>
+        <p class="text-sm font-bold uppercase tracking-widest text-brand-gray-500">IN BOX S</p>
         <h1 class="mt-2 text-3xl font-extrabold text-brand-gray-900">Choose a palette</h1>
         <p class="mt-2 text-brand-gray-600">Pick A–X · newest row is iMac colors (S–X)</p>
       </header>

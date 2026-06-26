@@ -64,7 +64,7 @@ const html = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>شوش‌رزرو — تور کلیک</title>
+<title>این باکس — تور کلیک</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#0b1220;overflow:hidden;font-family:system-ui,sans-serif;display:flex;flex-direction:column}

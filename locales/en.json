@@ -1,6 +1,6 @@
 {
   "brand": {
-    "name": "Shushzerv",
+    "name": "IN BOX S",
     "tagline": "Book courts, classes and coaches"
   },
   "nav": {
@@ -172,14 +172,14 @@
   },
   "assistant": {
     "title": "Smart Guide (beta)",
-    "greeting": "Hi! I'm the Shushzerv smart guide (beta) — rule-based answers only, not AI. Ask about booking, matches, tournaments, coaches, wallet, or your dashboard.",
+    "greeting": "Hi! I'm the IN BOX S smart guide (beta) — rule-based answers only, not AI. Ask about booking, matches, tournaments, coaches, wallet, or your dashboard.",
     "placeholder": "Type your question…",
     "send": "Send",
     "go": "Go to page",
     "error": "Something went wrong. Try again."
   },
   "why": {
-    "title": "Why Shushzerv?",
+    "title": "Why IN BOX S?",
     "user": {
       "title": "For athletes",
       "items": [
@@ -268,7 +268,7 @@
       { "q": "Do I have to pay online?", "a": "No, in this version you pay at the club." },
       { "q": "How do I create an account?", "a": "Sign up on the register page with your email and password." },
       { "q": "What are the user roles?", "a": "Athlete, coach and club admin — each has its own dashboard." },
-      { "q": "Is the app installable?", "a": "Yes, Shushzerv is a PWA and can be installed on mobile." },
+      { "q": "Is the app installable?", "a": "Yes, IN BOX S is a PWA and can be installed on mobile." },
       { "q": "Do clubs lend rackets or balls?", "a": "Many clubs and coaches list gear they provide free or rent — look for the gear badge on listings or the Equipment section on their profile." }
     ]
   },
@@ -287,7 +287,7 @@
     "button": "Get started"
   },
   "aboutPage": {
-    "p1": "Shushzerv is a sports booking web app — find courts, classes, and coaches in one place. This is a local demo; payment is made at the club.",
+    "p1": "IN BOX S is a sports booking web app — find courts, classes, and coaches in one place. This is a local demo; payment is made at the club.",
     "p2": "Share code via GitHub; for a live demo use a tunnel (ngrok) or the same Wi‑Fi network."
   },
   "exploreGroups": {
@@ -669,7 +669,7 @@
     "subtitle": "Find courts near you across Iran"
   },
   "whyBook": {
-    "title": "Why book on Shushzerv?",
+    "title": "Why book on IN BOX S?",
     "eyebrow": "Simple & fair",
     "freedom": { "title": "Total freedom", "desc": "No annual memberships. Pay only when you play." },
     "pricing": { "title": "Transparent pricing", "desc": "Same prices as the club — no hidden fees." },
@@ -716,7 +716,7 @@
   "clubOnboarding": {
     "eyebrow": "Club setup",
     "title": "Set up your club",
-    "subtitle": "A few steps to get your courts bookable on Shushzerv.",
+    "subtitle": "A few steps to get your courts bookable on IN BOX S.",
     "stepClub": "Club details",
     "stepCourt": "Courts",
     "stepSchedule": "Schedule",

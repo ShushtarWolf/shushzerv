@@ -1,8 +1,8 @@
-# Shushzerv
+# IN BOX S
 
 Bilingual (FA default RTL / EN at `/en`) sports court and class booking demo — Nuxt 4, Prisma, SQLite, local auth, PWA.
 
-Inspired by [alotennis.ir](https://alotennis.ir/) (Alo Play). **Not** a copy: own Shushzerv branding and improved iOS-style UI.
+Inspired by [alotennis.ir](https://alotennis.ir/) (Alo Play). **Not** a copy: own IN BOX S branding and improved iOS-style UI.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ Inspired by [alotennis.ir](https://alotennis.ir/) (Alo Play). **Not** a copy: ow
 ## Setup
 
 ```bash
-cd ~/Projects/shushzerv
+cd ~/Projects/in-box-s
 nvm use
 npm install
 npm run db:push
@@ -38,10 +38,10 @@ PORT=3000 npm run start   # loads .env (DATABASE_URL, session secret)
 
 | Role | Email | Password |
 |------|-------|----------|
-| Athlete | `athlete@shushzerv.local` | `demo1234` |
-| Coach | `coach@shushzerv.local` | `demo1234` |
-| Club admin | `club@shushzerv.local` | `demo1234` |
-| Platform admin | `admin@shushzerv.local` | `demo1234` |
+| Athlete | `athlete@inboxs.local` | `demo1234` |
+| Coach | `coach@inboxs.local` | `demo1234` |
+| Club admin | `club@inboxs.local` | `demo1234` |
+| Platform admin | `admin@inboxs.local` | `demo1234` |
 
 Book with **wallet (کیف پول)** or pay at the club. Demo wallets are pre-loaded after seed.
 
@@ -83,28 +83,28 @@ Run **`npm run build`** after each phase (script prints reminders). Fix failures
 
 One-page walkthrough for showing the app to someone new. All passwords: `demo1234`.
 
-### Athlete — `athlete@shushzerv.local`
+### Athlete — `athlete@inboxs.local`
 
 1. **Home** → search or tap **Explore** → pick a sport.
 2. **Clubs** → open **Azadi Tennis** → select a green slot on the calendar → **Confirm booking** (wallet checkbox if balance allows).
 3. **Dashboard** (`/dashboard`) → **Overview** charts load · **Bookings** tab shows the new reservation · **Matches** / **Classes** if enrolled.
 4. Optional: **Tournaments** → register for Weekend Tennis Tournament.
 
-### Coach — `coach@shushzerv.local`
+### Coach — `coach@inboxs.local`
 
 1. **Dashboard** (`/dashboard/coach`) → overview stats and earnings chart.
 2. **Students** tab → see assigned athlete on the 4-week tennis plan.
 3. **Plans** tab → view/edit training plan content.
 4. **Schedule** tab → upcoming sessions for the week.
 
-### Club admin — `club@shushzerv.local`
+### Club admin — `club@inboxs.local`
 
 1. **Dashboard** (`/dashboard/club`) → revenue chart for **Azadi Tennis Complex**.
 2. **Schedule** → add or review slots · confirm booked vs available courts.
 3. **Bookings** → platform + pay-at-club entries (including guest booking from seed).
 4. **Classes** / **Activities** → manage group sessions and club events.
 
-### Platform admin — `admin@shushzerv.local`
+### Platform admin — `admin@inboxs.local`
 
 1. **Dashboard** (`/dashboard/admin`) → platform growth charts (users, clubs, fees).
 2. **Users** → search/suspend demo accounts.
@@ -138,7 +138,7 @@ One-page walkthrough for showing the app to someone new. All passwords: `demo123
 
 ## v1 scope
 
-Included: public browse, court booking, group classes, open matches (player matching), training plans, skill levels, club events, ShushBot assistant, 4 roles + full dashboards (wallet/کیف پول, finance stats), PWA shell, bilingual UI.
+Included: public browse, court booking, group classes, open matches (player matching), training plans, skill levels, club events, IN BOX Assistant assistant, 4 roles + full dashboards (wallet/کیف پول, finance stats), PWA shell, bilingual UI.
 
 Not included: real payment gateway, SMS/OTP, production deploy, global/multi-country network.
 

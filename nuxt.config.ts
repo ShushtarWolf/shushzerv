@@ -19,7 +19,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'Shushzerv',
+      title: 'IN BOX S',
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'apple-touch-icon', href: '/icons/apple-touch-icon.svg' },
@@ -27,10 +27,10 @@ export default defineNuxtConfig({
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'theme-color', content: '#1E3A5F' },
-        { name: 'description', content: 'Shushzerv — book sports courts, classes, and coaches' },
+        { name: 'description', content: 'IN BOX S — book sports courts, classes, and coaches' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
-        { name: 'apple-mobile-web-app-title', content: 'Shushzerv' },
+        { name: 'apple-mobile-web-app-title', content: 'IN BOX S' },
       ],
     },
   },
@@ -48,7 +48,7 @@ export default defineNuxtConfig({
     langDir: 'locales',
     detectBrowserLanguage: {
       useCookie: true,
-      cookieKey: 'shushzerv_locale',
+      cookieKey: 'inboxs_locale',
       redirectOn: 'root',
     },
   },
@@ -57,8 +57,8 @@ export default defineNuxtConfig({
     minify: false,
     registerType: 'autoUpdate',
     manifest: {
-      name: 'Shushzerv — Sports Booking',
-      short_name: 'Shushzerv',
+      name: 'IN BOX S — Sports Booking',
+      short_name: 'IN BOX S',
       description: 'Book sports courts, classes, and coaches',
       lang: 'fa',
       dir: 'rtl',

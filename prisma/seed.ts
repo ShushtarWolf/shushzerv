@@ -130,14 +130,14 @@ const sportClubMap: Record<string, string> = {
 
 const newsSeeds = [
   {
-    slug: 'shushzerv-launch',
+    slug: 'in-box-s-launch',
     sport: 'tennis',
-    titleFa: 'شوش‌زرو رسماً راه‌اندازی شد',
-    titleEn: 'Shushzerv officially launches',
-    excerptFa: 'پلتفرم رزرو ورزشی شوش‌زرو با ده‌ها باشگاه آغاز به کار کرد.',
-    excerptEn: 'The Shushzerv sports booking platform launches with dozens of clubs.',
-    bodyFa: 'امروز پلتفرم شوش‌زرو با بیش از ۱۵ باشگاه فعال در پنج شهر بزرگ ایران راه‌اندازی شد. کاربران می‌توانند زمین، کلاس گروهی و بازی عمومی را در یک جا رزرو کنند.\n\nاز ویژگی‌های اولیه: جستجوی لحظه‌ای سانس‌ها، پرداخت در باشگاه، بازی عمومی با لینک اشتراک‌گذاری و داشبورد ورزشکار برای پیگیری رزروها.\n\nدر هفته‌های آینده باشگاه‌های بیشتری به شبکه اضافه می‌شوند.',
-    bodyEn: 'Shushzerv goes live today with more than 15 active clubs across five major Iranian cities. Users can book courts, group classes, and open matches in one place.\n\nLaunch features include live slot search, pay-at-club checkout, shareable open-match links, and an athlete dashboard to track bookings.\n\nMore clubs will join the network in the coming weeks.',
+    titleFa: 'این باکس رسماً راه‌اندازی شد',
+    titleEn: 'IN BOX S officially launches',
+    excerptFa: 'پلتفرم رزرو ورزشی این باکس با ده‌ها باشگاه آغاز به کار کرد.',
+    excerptEn: 'The IN BOX S sports booking platform launches with dozens of clubs.',
+    bodyFa: 'امروز پلتفرم این باکس با بیش از ۱۵ باشگاه فعال در پنج شهر بزرگ ایران راه‌اندازی شد. کاربران می‌توانند زمین، کلاس گروهی و بازی عمومی را در یک جا رزرو کنند.\n\nاز ویژگی‌های اولیه: جستجوی لحظه‌ای سانس‌ها، پرداخت در باشگاه، بازی عمومی با لینک اشتراک‌گذاری و داشبورد ورزشکار برای پیگیری رزروها.\n\nدر هفته‌های آینده باشگاه‌های بیشتری به شبکه اضافه می‌شوند.',
+    bodyEn: 'IN BOX S goes live today with more than 15 active clubs across five major Iranian cities. Users can book courts, group classes, and open matches in one place.\n\nLaunch features include live slot search, pay-at-club checkout, shareable open-match links, and an athlete dashboard to track bookings.\n\nMore clubs will join the network in the coming weeks.',
   },
   {
     slug: 'padel-rising',
@@ -146,8 +146,8 @@ const newsSeeds = [
     titleEn: 'Padel: Iran’s fastest growing sport',
     excerptFa: 'محبوبیت پدل در شهرهای بزرگ به‌سرعت در حال افزایش است.',
     excerptEn: 'Padel popularity is rising fast in major cities.',
-    bodyFa: 'پدل در دو سال اخیر یکی از پررشدترین ورزش‌های راکتی در تهران و اصفهان شده است. باشگاه‌های جدید هر ماه زمین‌های سرپوشیده و روباز اضافه می‌کنند.\n\nشوش‌زرو برای اولین بار امکان رزرو آنلاین زمین پدل و پیدا کردن همبازی در همان سانس را فراهم کرده است.\n\nاگر تازه‌کار هستید، کلاس‌های مقدماتی باشگاه‌های شریک را در بخش کلاس‌ها ببینید.',
-    bodyEn: 'Padel has become one of the fastest-growing racket sports in Tehran and Isfahan over the past two years. New clubs add indoor and outdoor courts every month.\n\nShushzerv is the first platform to combine online padel court booking with finding partners for the same slot.\n\nNew to the sport? Check intro classes from partner clubs in the Classes section.',
+    bodyFa: 'پدل در دو سال اخیر یکی از پررشدترین ورزش‌های راکتی در تهران و اصفهان شده است. باشگاه‌های جدید هر ماه زمین‌های سرپوشیده و روباز اضافه می‌کنند.\n\nاین باکس برای اولین بار امکان رزرو آنلاین زمین پدل و پیدا کردن همبازی در همان سانس را فراهم کرده است.\n\nاگر تازه‌کار هستید، کلاس‌های مقدماتی باشگاه‌های شریک را در بخش کلاس‌ها ببینید.',
+    bodyEn: 'Padel has become one of the fastest-growing racket sports in Tehran and Isfahan over the past two years. New clubs add indoor and outdoor courts every month.\n\nIN BOX S is the first platform to combine online padel court booking with finding partners for the same slot.\n\nNew to the sport? Check intro classes from partner clubs in the Classes section.',
   },
   {
     slug: 'winter-fitness-tips',
@@ -156,8 +156,8 @@ const newsSeeds = [
     titleEn: 'Fitness tips for the cold season',
     excerptFa: 'چطور در زمستان انگیزه تمرین را حفظ کنیم.',
     excerptEn: 'How to stay motivated to train in winter.',
-    bodyFa: 'سرمای زمستان اغلب برنامه تمرین را مختل می‌کند. سه عادت ساده کمک می‌کند: زمان ثابت هفتگی، گرم‌کردن طولانی‌تر و هدف کوتاه‌مدت هفتگی.\n\nباشگاه‌های شریک شوش‌زرو سانس‌های صبح زود و عصر را با ظرفیت محدود نگه می‌دارند تا از شلوغی جلوگیری شود.\n\nبا رزرو از قبل، دیگر لازم نیست سر درب باشگاه بپیچید تا ببینید جا دارید یا نه.',
-    bodyEn: 'Cold weather often disrupts training routines. Three simple habits help: a fixed weekly time, a longer warm-up, and a short weekly goal.\n\nPartner gyms on Shushzerv keep morning and evening slots at limited capacity to avoid overcrowding.\n\nBook ahead so you no longer have to show up at the door wondering if space is available.',
+    bodyFa: 'سرمای زمستان اغلب برنامه تمرین را مختل می‌کند. سه عادت ساده کمک می‌کند: زمان ثابت هفتگی، گرم‌کردن طولانی‌تر و هدف کوتاه‌مدت هفتگی.\n\nباشگاه‌های شریک این باکس سانس‌های صبح زود و عصر را با ظرفیت محدود نگه می‌دارند تا از شلوغی جلوگیری شود.\n\nبا رزرو از قبل، دیگر لازم نیست سر درب باشگاه بپیچید تا ببینید جا دارید یا نه.',
+    bodyEn: 'Cold weather often disrupts training routines. Three simple habits help: a fixed weekly time, a longer warm-up, and a short weekly goal.\n\nPartner gyms on IN BOX S keep morning and evening slots at limited capacity to avoid overcrowding.\n\nBook ahead so you no longer have to show up at the door wondering if space is available.',
   },
   {
     slug: 'yoga-for-athletes',
@@ -166,8 +166,8 @@ const newsSeeds = [
     titleEn: 'Yoga for athletes',
     excerptFa: 'یوگا چطور به ریکاوری و انعطاف کمک می‌کند.',
     excerptEn: 'How yoga helps recovery and flexibility.',
-    bodyFa: 'ورزشکاران حرفه‌ای و آمateur هر دو از یوگا برای بهبود دامنه حرکتی و کاهش خستگی عضلانی استفاده می‌کنند.\n\nکلاس‌های یوگای صبحگاهی باشگاه‌های شوش‌زرو ترکیبی از حرکات کششی، تنفس و مدیتیشن کوتاه هستند.\n\nحتی یک جلسه در هفته می‌تواند کیفیت خواب و آمادگی برای تمرین بعدی را بهتر کند.',
-    bodyEn: 'Both pro and recreational athletes use yoga to improve range of motion and reduce muscle fatigue.\n\nMorning yoga classes at Shushzerv partner studios combine stretching, breath work, and a short meditation.\n\nEven one session per week can improve sleep quality and readiness for your next workout.',
+    bodyFa: 'ورزشکاران حرفه‌ای و آمateur هر دو از یوگا برای بهبود دامنه حرکتی و کاهش خستگی عضلانی استفاده می‌کنند.\n\nکلاس‌های یوگای صبحگاهی باشگاه‌های این باکس ترکیبی از حرکات کششی، تنفس و مدیتیشن کوتاه هستند.\n\nحتی یک جلسه در هفته می‌تواند کیفیت خواب و آمادگی برای تمرین بعدی را بهتر کند.',
+    bodyEn: 'Both pro and recreational athletes use yoga to improve range of motion and reduce muscle fatigue.\n\nMorning yoga classes at IN BOX S partner studios combine stretching, breath work, and a short meditation.\n\nEven one session per week can improve sleep quality and readiness for your next workout.',
   },
   {
     slug: 'swimming-season',
@@ -176,8 +176,8 @@ const newsSeeds = [
     titleEn: 'New swimming season slots',
     excerptFa: 'سانس‌های جدید استخرها اضافه شد.',
     excerptEn: 'New pool slots have been added.',
-    bodyFa: 'باشگاه‌های آبی شریک سانس‌های جدید صبح و عصر برای شنا آزاد و تمرین تکنیک اضافه کرده‌اند.\n\nظرفیت هر سانس محدود است تا فضای کافی برای هر شناگر فراهم شود. رزرو از طریق شوش‌زرو ظرف چند ثانیه انجام می‌شود.\n\nبرای خانواده‌ها، سانس‌های آخر هفته با تخفیف فصلی در برخی مجموعه‌ها فعال است.',
-    bodyEn: 'Partner aquatics centers have added new morning and evening slots for lap swimming and technique work.\n\nEach session has limited capacity so every swimmer has enough space. Booking through Shushzerv takes seconds.\n\nFamily weekend slots are available with seasonal discounts at select venues.',
+    bodyFa: 'باشگاه‌های آبی شریک سانس‌های جدید صبح و عصر برای شنا آزاد و تمرین تکنیک اضافه کرده‌اند.\n\nظرفیت هر سانس محدود است تا فضای کافی برای هر شناگر فراهم شود. رزرو از طریق این باکس ظرف چند ثانیه انجام می‌شود.\n\nبرای خانواده‌ها، سانس‌های آخر هفته با تخفیف فصلی در برخی مجموعه‌ها فعال است.',
+    bodyEn: 'Partner aquatics centers have added new morning and evening slots for lap swimming and technique work.\n\nEach session has limited capacity so every swimmer has enough space. Booking through IN BOX S takes seconds.\n\nFamily weekend slots are available with seasonal discounts at select venues.',
   },
   {
     slug: 'book-pay-at-club',
@@ -185,8 +185,8 @@ const newsSeeds = [
     titleEn: 'Book now, pay at the club',
     excerptFa: 'در نسخه فعلی پرداخت به صورت حضوری انجام می‌شود.',
     excerptEn: 'In the current version, payment is made in person.',
-    bodyFa: 'در نسخه فعلی شوش‌زرو می‌توانید سانس را آنلاین رزرو کنید و مبلغ را هنگام حضور در باشگاه پرداخت کنید.\n\nاین روش برای باشگاه‌ها و ورزشکاران آشنا است و نیازی به کارت بانکی آنلاین ندارد.\n\nبه‌زودی پرداخت از کیف پول و درگاه بانکی هم به‌صورت اختیاری اضافه می‌شود.',
-    bodyEn: 'In the current Shushzerv release you can reserve a slot online and pay when you arrive at the club.\n\nThis familiar flow works well for clubs and athletes and does not require an online card payment.\n\nWallet and bank gateway payments will be added soon as optional checkout methods.',
+    bodyFa: 'در نسخه فعلی این باکس می‌توانید سانس را آنلاین رزرو کنید و مبلغ را هنگام حضور در باشگاه پرداخت کنید.\n\nاین روش برای باشگاه‌ها و ورزشکاران آشنا است و نیازی به کارت بانکی آنلاین ندارد.\n\nبه‌زودی پرداخت از کیف پول و درگاه بانکی هم به‌صورت اختیاری اضافه می‌شود.',
+    bodyEn: 'In the current IN BOX S release you can reserve a slot online and pay when you arrive at the club.\n\nThis familiar flow works well for clubs and athletes and does not require an online card payment.\n\nWallet and bank gateway payments will be added soon as optional checkout methods.',
   },
 ]
 
@@ -230,7 +230,7 @@ async function main() {
   console.log('Seeding demo users…')
   const athlete = await prisma.user.create({
     data: {
-      email: 'athlete@shushzerv.local',
+      email: 'athlete@inboxs.local',
       name: 'آرش ورزشکار',
       nameEn: 'Arash Athlete',
       role: 'ATHLETE',
@@ -240,18 +240,18 @@ async function main() {
     },
   })
   const coachUser = await prisma.user.create({
-    data: { email: 'coach@shushzerv.local', name: 'سارا محمدی', nameEn: 'Sara Mohammadi', role: 'COACH', passwordHash: hashSecret('demo1234'), onboardedAt: new Date() },
+    data: { email: 'coach@inboxs.local', name: 'سارا محمدی', nameEn: 'Sara Mohammadi', role: 'COACH', passwordHash: hashSecret('demo1234'), onboardedAt: new Date() },
   })
   const clubAdmin = await prisma.user.create({
-    data: { email: 'club@shushzerv.local', name: 'مدیر باشگاه آزادی', nameEn: 'Azadi Club Admin', role: 'CLUB_ADMIN', passwordHash: hashSecret('demo1234'), onboardedAt: new Date() },
+    data: { email: 'club@inboxs.local', name: 'مدیر باشگاه آزادی', nameEn: 'Azadi Club Admin', role: 'CLUB_ADMIN', passwordHash: hashSecret('demo1234'), onboardedAt: new Date() },
   })
   const platformAdmin = await prisma.user.create({
-    data: { email: 'admin@shushzerv.local', name: 'مدیر پلتفرم', nameEn: 'Platform Admin', role: 'PLATFORM_ADMIN', passwordHash: hashSecret('demo1234') },
+    data: { email: 'admin@inboxs.local', name: 'مدیر پلتفرم', nameEn: 'Platform Admin', role: 'PLATFORM_ADMIN', passwordHash: hashSecret('demo1234') },
   })
   const extraPlayers = await Promise.all([
-    prisma.user.create({ data: { email: 'player2@shushzerv.local', name: 'نیما رضایی', nameEn: 'Nima Rezaei', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
-    prisma.user.create({ data: { email: 'player3@shushzerv.local', name: 'پریسا کریمی', nameEn: 'Parisa Karimi', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
-    prisma.user.create({ data: { email: 'player4@shushzerv.local', name: 'امیرحسین نوری', nameEn: 'Amir Hossein Nouri', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
+    prisma.user.create({ data: { email: 'player2@inboxs.local', name: 'نیما رضایی', nameEn: 'Nima Rezaei', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
+    prisma.user.create({ data: { email: 'player3@inboxs.local', name: 'پریسا کریمی', nameEn: 'Parisa Karimi', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
+    prisma.user.create({ data: { email: 'player4@inboxs.local', name: 'امیرحسین نوری', nameEn: 'Amir Hossein Nouri', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
   ])
   const demoUsers: Record<string, string> = {
     athlete: athlete.id,
@@ -752,8 +752,8 @@ async function main() {
       {
         userId: athlete.id,
         type: 'SYSTEM',
-        titleFa: 'به شوش‌زرو خوش آمدید',
-        titleEn: 'Welcome to Shushzerv',
+        titleFa: 'به این باکس خوش آمدید',
+        titleEn: 'Welcome to IN BOX S',
         bodyFa: 'پروفایل شما آماده است. اولین رزرو یا بازی عمومی را امتحان کنید.',
         bodyEn: 'Your profile is ready. Try your first booking or open match.',
         link: '/dashboard',
@@ -823,7 +823,7 @@ async function main() {
 
   // Re-assert after club/court setup so demo logins reach dashboards (not onboarding)
   await prisma.user.updateMany({
-    where: { email: { in: ['club@shushzerv.local', 'coach@shushzerv.local'] } },
+    where: { email: { in: ['club@inboxs.local', 'coach@inboxs.local'] } },
     data: { onboardedAt: new Date() },
   })
 

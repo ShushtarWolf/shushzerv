@@ -56,8 +56,8 @@ function unsplash(photoId, w, h) {
 
 /** 3:1 landscape covers — each photo matches its seeded news title/topic */
 const newsImages = {
-  // «شوش‌زرو رسماً راه‌اندازی شد» — players on court / platform launch
-  'shushzerv-launch': unsplash('photo-1646649852033-7e0f3d679f8b', 1200, 400),
+  // «این باکس رسماً راه‌اندازی شد» — players on court / platform launch
+  'in-box-s-launch': unsplash('photo-1646649852033-7e0f3d679f8b', 1200, 400),
   // «پدل؛ ورزش در حال رشد ایران» — blue padel court with racket
   'padel-rising': unsplash('photo-1646649853703-7645147474ba', 1200, 400),
   // «نکات تمرین در فصل سرد» — gym / strength training

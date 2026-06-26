@@ -29,5 +29,5 @@ fi
 echo "Applying database schema..."
 npx prisma db push --skip-generate
 
-echo "Starting Shushzerv..."
+echo "Starting IN BOX S..."
 exec node .output/server/index.mjs

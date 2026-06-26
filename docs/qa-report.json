@@ -138,7 +138,7 @@
     {
       "step": 17,
       "phase": "pages-fa",
-      "label": "GET /news/shushzerv-launch",
+      "label": "GET /news/in-box-s-launch",
       "ok": true,
       "detail": "",
       "ms": 161
@@ -290,7 +290,7 @@
     {
       "step": 36,
       "phase": "api-public",
-      "label": "GET /api/news/shushzerv-launch",
+      "label": "GET /api/news/in-box-s-launch",
       "ok": true,
       "detail": "",
       "ms": 11

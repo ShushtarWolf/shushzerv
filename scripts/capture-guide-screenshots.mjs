@@ -91,7 +91,7 @@ async function main() {
   }
   await shot(page, '14-club-slot-selected')
 
-  await login(page, 'athlete@shushzerv.local')
+  await login(page, 'athlete@inboxs.local')
   console.log('Athlete dashboard…')
   await dashTab(page, undefined, '20-dash-athlete-overview')
   await dashTab(page, 'schedule', '21-dash-athlete-schedule')
@@ -125,7 +125,7 @@ async function main() {
   const b2 = await chromium.launch({ headless: true })
   const cClub = await b2.newContext({ locale: 'fa-IR', viewport: { width: 1280, height: 800 } })
   const pClub = await cClub.newPage()
-  await login(pClub, 'club@shushzerv.local')
+  await login(pClub, 'club@inboxs.local')
   await pClub.goto(`${BASE}/dashboard/club`, { waitUntil: 'networkidle' })
   await pClub.waitForTimeout(1500)
   await shot(pClub, '30-dash-club-overview')
@@ -141,7 +141,7 @@ async function main() {
 
   const cCoach = await b2.newContext({ locale: 'fa-IR', viewport: { width: 1280, height: 800 } })
   const pCoach = await cCoach.newPage()
-  await login(pCoach, 'coach@shushzerv.local')
+  await login(pCoach, 'coach@inboxs.local')
   await pCoach.goto(`${BASE}/dashboard/coach`, { waitUntil: 'networkidle' })
   await pCoach.waitForTimeout(1200)
   await shot(pCoach, '40-dash-coach-overview')
@@ -151,7 +151,7 @@ async function main() {
 
   const cAdmin = await b2.newContext({ locale: 'fa-IR', viewport: { width: 1280, height: 800 } })
   const pAdmin = await cAdmin.newPage()
-  await login(pAdmin, 'admin@shushzerv.local')
+  await login(pAdmin, 'admin@inboxs.local')
   await pAdmin.goto(`${BASE}/dashboard/admin`, { waitUntil: 'networkidle' })
   await pAdmin.waitForTimeout(1200)
   await shot(pAdmin, '50-dash-admin-overview')
