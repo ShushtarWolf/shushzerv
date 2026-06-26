@@ -30,6 +30,7 @@ RUN npm ci --omit=dev --ignore-scripts && npx prisma generate
 
 COPY --from=build /app/.output ./.output
 COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/server ./server
 COPY scripts/docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh
 

@@ -3,12 +3,14 @@ import { join } from 'node:path'
 import { PrismaClient } from '@prisma/client'
 
 function resolveDatabaseUrl(): string {
+  if (process.env.DATABASE_URL) return process.env.DATABASE_URL
+
   const roots = [process.cwd(), join(process.cwd(), '..'), join(process.cwd(), '../..')]
   for (const root of roots) {
     const dbPath = join(root, 'prisma', 'dev.db')
     if (existsSync(dbPath)) return `file:${dbPath}`
   }
-  return process.env.DATABASE_URL || 'file:./prisma/dev.db'
+  return 'file:./prisma/dev.db'
 }
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
