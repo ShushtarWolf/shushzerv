@@ -10,6 +10,7 @@ dist
 # database (seed is source of truth)
 *.db
 *.db-journal
+!prisma/demo-seed.db
 prisma/dev.db
 prisma/dev.db-journal
 

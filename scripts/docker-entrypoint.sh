@@ -5,12 +5,15 @@ export DATABASE_URL="${DATABASE_URL:-file:///data/dev.db}"
 
 mkdir -p /data
 
-if [ ! -f /data/dev.db ]; then
-  echo "Initializing database from demo seed..."
+restore_demo_db() {
+  echo "Restoring demo database..."
   cp /app/prisma/demo.db /data/dev.db
-fi
+}
 
-club_count="$(node -e "
+if [ ! -f /data/dev.db ]; then
+  restore_demo_db
+else
+  club_count="$(node -e "
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL })
 prisma.club.count()
@@ -18,10 +21,9 @@ prisma.club.count()
   .catch(() => process.stdout.write('0'))
   .finally(() => prisma.\$disconnect())
 ")"
-
-if [ "$club_count" = "0" ]; then
-  echo "Database empty — restoring demo seed..."
-  cp /app/prisma/demo.db /data/dev.db
+  if [ "$club_count" = "0" ]; then
+    restore_demo_db
+  fi
 fi
 
 echo "Applying database schema..."
