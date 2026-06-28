@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Club, ClubActivity, Court, CourtAddon, Review, ScheduleEvent, Sport, Tournament } from '~/types'
+import type { Club, ClubActivity, Court, CourtAddon, ClassPackage, Review, ScheduleEvent, Sport, Tournament } from '~/types'
+import { weekdayCodeFromDate } from '#shared/scheduleWeekday'
 import { DEFAULT_CITY } from '~/composables/useCities'
 
 definePageMeta({ layout: 'dashboard', middleware: ['auth', 'role-club', 'onboarding-gate'] })
@@ -9,6 +10,9 @@ const localePath = useLocalePath()
 const { requireLogin } = useAuthRedirect()
 const { pickName, localized, formatPrice, formatRating, formatNumber, formatDate, formatTime, formatTimeRange, localDateISO, parseLocalDate } = useLocaleContent()
 const { cities } = useCities()
+const { levels, levelLabel } = useSkillLevel()
+const { classTypeLabel, classGroupLabel } = useClassSession()
+const { weekdayOptions, toggleDay, daySelected } = useClassPackage()
 const { SLOT_DURATION_OPTIONS, buildSlotTimes, durationLabel, eventDurationLabel } = useSlotSchedule()
 const { user, fetch: refreshSession } = useUserSession()
 const { displayName } = useUserDisplayName()
@@ -67,6 +71,11 @@ const { data: classSessions, refresh: refreshClasses } = await useApiFetch('/api
   watch: [selectedClubId],
 })
 
+const { data: clubPackages, refresh: refreshPackages } = await useApiFetch<ClassPackage[]>('/api/club/packages', {
+  query: computed(() => ({ clubId: selectedClubId.value || undefined })),
+  watch: [selectedClubId],
+})
+
 const { data: coaches } = await useApiFetch('/api/coaches')
 
 const { data: addons, refresh: refreshAddons } = await useApiFetch<CourtAddon[]>('/api/club/addons', {
@@ -99,6 +108,10 @@ const editClass = ref({
   price: 0,
   maxSeats: 12,
   coachId: '',
+  classType: 'GROUP' as 'GROUP' | 'SEMI_PRIVATE',
+  genderPolicy: 'MIXED' as 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED',
+  minLevel: 'BEGINNER' as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+  maxLevel: 'PRO' as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
 })
 const editTournament = ref({
   id: '',
@@ -164,8 +177,71 @@ const scheduleCourts = computed(() =>
   selectedClub.value?.courts?.map((c) => ({ id: c.id, name: pickName(c) })) ?? [],
 )
 
+const scheduleGridSettings = computed(() => {
+  const club = selectedClub.value
+  if (!club) return undefined
+  return {
+    durationMinutes: club.slotDurationMinutes ?? 120,
+    openTime: club.slotOpenTime ?? '08:00',
+    closeTime: club.slotCloseTime ?? '22:00',
+  }
+})
+
+type GridCellSelection = { courtId: string; courtName: string; date: string; startTime: string; endTime: string }
+
+const clubBookSlotIds = ref<string[]>([])
+const selectedGridCells = ref<GridCellSelection[]>([])
+const showBulkReservePanel = ref(false)
+const showRecurringClassPanel = ref(false)
+const clubBookGuestName = ref('')
+const clubBookAthleteEmail = ref('')
+const clubBookError = ref('')
+const clubBookPending = ref(false)
+const recurringClassPending = ref(false)
+const recurringClassError = ref('')
+
+function defaultRecurringClassForm() {
+  const end = parseLocalDate(localDateISO())
+  end.setDate(end.getDate() + 28)
+  return {
+    titleFa: '',
+    titleEn: '',
+    sportId: '',
+    coachId: '',
+    fromDate: localDateISO(),
+    toDate: localDateISO(end),
+    daysOfWeek: 'SAT',
+    startTime: '14:00',
+    endTime: '15:30',
+    price: 200000,
+    maxSeats: 12,
+    classType: 'GROUP' as 'GROUP' | 'SEMI_PRIVATE',
+    genderPolicy: 'MIXED' as 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED',
+    minLevel: 'BEGINNER' as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+    maxLevel: 'PRO' as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+  }
+}
+
+const recurringClassForm = ref(defaultRecurringClassForm())
+
+const totalScheduleSelection = computed(() => clubBookSlotIds.value.length + selectedGridCells.value.length)
+
 const newActivity = ref({ titleFa: '', titleEn: '', descFa: '', date: localDateISO(), startTime: '18:00' })
-const newClass = ref({ titleFa: '', titleEn: '', sportId: '', coachId: '', date: localDateISO(), startTime: '10:00', endTime: '11:30', price: 200000, maxSeats: 12 })
+const newClass = ref({
+  titleFa: '',
+  titleEn: '',
+  sportId: '',
+  coachId: '',
+  date: localDateISO(),
+  startTime: '10:00',
+  endTime: '11:30',
+  price: 200000,
+  maxSeats: 12,
+  classType: 'GROUP' as 'GROUP' | 'SEMI_PRIVATE',
+  genderPolicy: 'MIXED' as 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED',
+  minLevel: 'BEGINNER' as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+  maxLevel: 'PRO' as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+})
 const newTournament = ref({ titleFa: '', titleEn: '', sportId: '', date: localDateISO(), startTime: '10:00', maxParticipants: 32, price: 0 })
 const cancellationPolicyFa = ref('')
 const cancellationPolicyEn = ref('')
@@ -187,14 +263,9 @@ const slotSettingsPending = ref(false)
 const message = ref('')
 const scheduleFrom = ref('')
 const scheduleTo = ref('')
-const clubBookSlotId = ref('')
 const focusedScheduleEvent = ref<ScheduleEvent | null>(null)
 const scheduleNoteDraft = ref('')
 const scheduleNotePending = ref(false)
-const clubBookGuestName = ref('')
-const clubBookAthleteEmail = ref('')
-const clubBookError = ref('')
-const clubBookPending = ref(false)
 
 const { data: scheduleData, pending: schedulePending, refresh: refreshSchedule } = await useApiFetch<{ events: ScheduleEvent[] }>(
   '/api/club/schedule',
@@ -358,6 +429,25 @@ function openEditActivity(a: ClubActivity) {
   editModal.value = 'activity'
 }
 
+function applyClassTierPreset(
+  target: typeof newClass.value,
+  genderPolicy: 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED',
+  tier: 'beginner' | 'advanced',
+) {
+  target.genderPolicy = genderPolicy
+  if (tier === 'beginner') {
+    target.minLevel = 'BEGINNER'
+    target.maxLevel = 'INTERMEDIATE'
+  } else {
+    target.minLevel = 'ADVANCED'
+    target.maxLevel = 'PRO'
+  }
+}
+
+function onClassTypeChange(target: typeof newClass.value) {
+  target.maxSeats = target.classType === 'SEMI_PRIVATE' ? 3 : 12
+}
+
 function openEditClass(cls: {
   id: string
   titleFa: string
@@ -368,6 +458,10 @@ function openEditClass(cls: {
   price: number
   maxSeats: number
   coachId?: string | null
+  classType?: 'GROUP' | 'SEMI_PRIVATE'
+  genderPolicy?: 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED'
+  minLevel?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO'
+  maxLevel?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO'
 }) {
   editClass.value = {
     id: cls.id,
@@ -379,6 +473,10 @@ function openEditClass(cls: {
     price: cls.price,
     maxSeats: cls.maxSeats,
     coachId: cls.coachId ?? '',
+    classType: cls.classType ?? 'GROUP',
+    genderPolicy: cls.genderPolicy ?? 'MIXED',
+    minLevel: cls.minLevel ?? 'BEGINNER',
+    maxLevel: cls.maxLevel ?? 'PRO',
   }
   editModal.value = 'class'
 }
@@ -611,7 +709,21 @@ async function addActivity() {
 async function addClass() {
   if (!selectedClubId.value || !newClass.value.titleFa || !newClass.value.sportId) return
   await $fetch('/api/club/classes', { method: 'POST', body: { clubId: selectedClubId.value, ...newClass.value } })
-  newClass.value = { titleFa: '', titleEn: '', sportId: '', coachId: '', date: localDateISO(), startTime: '10:00', endTime: '11:30', price: 200000, maxSeats: 12 }
+  newClass.value = {
+    titleFa: '',
+    titleEn: '',
+    sportId: '',
+    coachId: '',
+    date: localDateISO(),
+    startTime: '10:00',
+    endTime: '11:30',
+    price: 200000,
+    maxSeats: 12,
+    classType: 'GROUP',
+    genderPolicy: 'MIXED',
+    minLevel: 'BEGINNER',
+    maxLevel: 'PRO',
+  }
   message.value = t('classes.created')
   await refreshClasses()
 }
@@ -692,18 +804,70 @@ async function generateBulkSlots() {
 function onClubScheduleManage(event: ScheduleEvent) {
   focusedScheduleEvent.value = event
   scheduleNoteDraft.value = event.note ?? ''
-  clubBookSlotId.value = event.slotId ?? ''
+  clubBookError.value = ''
+}
+
+function clearScheduleSelection() {
+  clubBookSlotIds.value = []
+  selectedGridCells.value = []
+  showBulkReservePanel.value = false
+  showRecurringClassPanel.value = false
   clubBookGuestName.value = ''
   clubBookAthleteEmail.value = ''
   clubBookError.value = ''
 }
 
+function onToggleScheduleSlot(event: ScheduleEvent) {
+  if (!event.slotId) return
+  const idx = clubBookSlotIds.value.indexOf(event.slotId)
+  if (idx >= 0) clubBookSlotIds.value.splice(idx, 1)
+  else clubBookSlotIds.value.push(event.slotId)
+}
+
+function onToggleGridCell(cell: GridCellSelection) {
+  const idx = selectedGridCells.value.findIndex(
+    (c) => c.courtId === cell.courtId && c.date === cell.date && c.startTime === cell.startTime,
+  )
+  if (idx >= 0) selectedGridCells.value.splice(idx, 1)
+  else selectedGridCells.value.push(cell)
+
+  recurringClassForm.value.daysOfWeek = weekdayCodeFromDate(cell.date)
+  recurringClassForm.value.startTime = cell.startTime
+  recurringClassForm.value.endTime = cell.endTime
+}
+
+function openBulkReservePanel() {
+  showBulkReservePanel.value = true
+  showRecurringClassPanel.value = false
+  clubBookError.value = ''
+}
+
+function openRecurringClassPanel() {
+  showRecurringClassPanel.value = true
+  showBulkReservePanel.value = false
+  recurringClassError.value = ''
+
+  if (selectedGridCells.value.length || clubBookSlotIds.value.length) {
+    const firstCell = selectedGridCells.value[0]
+    const firstSlot = clubBookSlotIds.value[0]
+      ? scheduleEvents.value.find((e) => e.slotId === clubBookSlotIds.value[0])
+      : null
+
+    if (firstCell) {
+      recurringClassForm.value.daysOfWeek = weekdayCodeFromDate(firstCell.date)
+      recurringClassForm.value.startTime = firstCell.startTime
+      recurringClassForm.value.endTime = firstCell.endTime
+    } else if (firstSlot) {
+      recurringClassForm.value.daysOfWeek = weekdayCodeFromDate(firstSlot.date)
+      recurringClassForm.value.startTime = firstSlot.startTime
+      recurringClassForm.value.endTime = firstSlot.endTime
+    }
+  }
+}
+
 function closeScheduleFocus() {
   focusedScheduleEvent.value = null
   scheduleNoteDraft.value = ''
-  clubBookSlotId.value = ''
-  clubBookGuestName.value = ''
-  clubBookAthleteEmail.value = ''
   clubBookError.value = ''
 }
 
@@ -730,20 +894,23 @@ async function saveScheduleNote() {
 }
 
 async function unblockFocusedSlot() {
-  if (!clubBookSlotId.value) return
-  await toggleSlotBlock(clubBookSlotId.value, 'BLOCKED')
+  const slotId = focusedScheduleEvent.value?.slotId
+  if (!slotId) return
+  await toggleSlotBlock(slotId, 'BLOCKED')
   closeScheduleFocus()
 }
 
 async function blockSelectedSlot() {
-  if (!clubBookSlotId.value) return
-  await toggleSlotBlock(clubBookSlotId.value, 'AVAILABLE')
+  const slotId = focusedScheduleEvent.value?.slotId
+  if (!slotId) return
+  await toggleSlotBlock(slotId, 'AVAILABLE')
   closeScheduleFocus()
 }
 
 async function confirmClubBooking() {
   clubBookError.value = ''
-  if (!clubBookSlotId.value) return
+  const slotId = focusedScheduleEvent.value?.slotId
+  if (!slotId) return
   if (!clubBookGuestName.value.trim() && !clubBookAthleteEmail.value.trim()) {
     clubBookError.value = t('dashboard.clubBookNameRequired')
     return
@@ -753,7 +920,7 @@ async function confirmClubBooking() {
     await $fetch('/api/club/bookings', {
       method: 'POST',
       body: {
-        slotId: clubBookSlotId.value,
+        slotId,
         guestName: clubBookGuestName.value.trim() || undefined,
         athleteEmail: clubBookAthleteEmail.value.trim() || undefined,
       },
@@ -766,6 +933,70 @@ async function confirmClubBooking() {
     clubBookError.value = err?.data?.message || err?.statusMessage || 'Error'
   } finally {
     clubBookPending.value = false
+  }
+}
+
+async function confirmBulkClubBooking() {
+  clubBookError.value = ''
+  if (!totalScheduleSelection.value) return
+  if (!clubBookGuestName.value.trim() && !clubBookAthleteEmail.value.trim()) {
+    clubBookError.value = t('dashboard.clubBookNameRequired')
+    return
+  }
+  clubBookPending.value = true
+  try {
+    const res = await $fetch<{ count: number }>('/api/club/bookings/bulk', {
+      method: 'POST',
+      body: {
+        slotIds: clubBookSlotIds.value,
+        reservations: selectedGridCells.value.map((c) => ({
+          courtId: c.courtId,
+          date: c.date,
+          startTime: c.startTime,
+          endTime: c.endTime,
+        })),
+        guestName: clubBookGuestName.value.trim() || undefined,
+        athleteEmail: clubBookAthleteEmail.value.trim() || undefined,
+      },
+    })
+    clearScheduleSelection()
+    message.value = t('dashboard.bulkBookSuccess', { count: formatNumber(res.count) })
+    await Promise.all([refreshBookings(), refreshSchedule(), refreshStats()])
+  } catch (e: unknown) {
+    const err = e as { data?: { message?: string }; statusMessage?: string }
+    clubBookError.value = err?.data?.message || err?.statusMessage || 'Error'
+  } finally {
+    clubBookPending.value = false
+  }
+}
+
+async function confirmRecurringClasses() {
+  recurringClassError.value = ''
+  if (!selectedClubId.value) return
+  const form = recurringClassForm.value
+  if (!form.titleFa || !form.sportId) {
+    recurringClassError.value = t('dashboard.recurringClassRequired')
+    return
+  }
+  recurringClassPending.value = true
+  try {
+    const res = await $fetch<{ created: number; skipped: number }>('/api/club/classes/bulk', {
+      method: 'POST',
+      body: { clubId: selectedClubId.value, ...form },
+    })
+    clearScheduleSelection()
+    showRecurringClassPanel.value = false
+    recurringClassForm.value = defaultRecurringClassForm()
+    message.value = t('dashboard.recurringClassSuccess', {
+      created: formatNumber(res.created),
+      skipped: formatNumber(res.skipped),
+    })
+    await Promise.all([refreshClasses(), refreshSchedule(), refreshStats()])
+  } catch (e: unknown) {
+    const err = e as { data?: { message?: string }; statusMessage?: string }
+    recurringClassError.value = err?.data?.message || err?.statusMessage || 'Error'
+  } finally {
+    recurringClassPending.value = false
   }
 }
 </script>
@@ -880,17 +1111,114 @@ async function confirmClubBooking() {
     </template>
 
     <template v-else-if="tab === 'schedule'">
+      <div class="mb-4 flex flex-wrap items-center justify-end gap-2">
+        <button type="button" class="fd-btn-secondary text-xs" @click="openRecurringClassPanel">
+          {{ t('dashboard.scheduleRecurringClass') }}
+        </button>
+      </div>
+
       <ScheduleCalendar
         variant="dashboard"
         manage-notes
+        multi-select
         show-empty-grid
         :events="scheduleEvents"
         :courts="scheduleCourts"
+        :grid-settings="scheduleGridSettings"
         :loading="schedulePending"
-        :selected-slot-id="clubBookSlotId"
+        :selected-slot-ids="clubBookSlotIds"
+        :selected-grid-cells="selectedGridCells"
         @range-change="onScheduleRange"
         @manage-event="onClubScheduleManage"
+        @toggle-slot="onToggleScheduleSlot"
+        @toggle-grid-cell="onToggleGridCell"
       />
+
+      <div
+        v-if="totalScheduleSelection || showRecurringClassPanel"
+        class="fd-panel sticky bottom-4 z-20 mt-4 border border-fd-primary/15 p-4 shadow-fd"
+      >
+        <div v-if="totalScheduleSelection" class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-sm font-bold text-fd-navy">
+            {{ t('schedule.selectedCount', { count: formatNumber(totalScheduleSelection) }) }}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="fd-btn-ghost text-xs" @click="clearScheduleSelection">
+              {{ t('schedule.clearSelection') }}
+            </button>
+            <button type="button" class="fd-btn-secondary text-xs" @click="openBulkReservePanel">
+              {{ t('dashboard.reserveSelected') }}
+            </button>
+            <button type="button" class="fd-btn-primary text-xs" @click="openRecurringClassPanel">
+              {{ t('dashboard.scheduleRecurringClass') }}
+            </button>
+          </div>
+        </div>
+
+        <div v-if="showBulkReservePanel" class="mt-4 border-t border-fd-primary/10 pt-4">
+          <h3 class="mb-3 text-sm font-bold text-fd-navy">{{ t('dashboard.reserveSelected') }}</h3>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <input v-model="clubBookGuestName" class="fd-input" :placeholder="t('dashboard.clubBookGuestName')" />
+            <input v-model="clubBookAthleteEmail" type="email" class="fd-input" :placeholder="t('dashboard.clubBookEmail')" />
+          </div>
+          <p class="mt-2 text-sm text-fd-muted">{{ t('dashboard.clubBookHint') }}</p>
+          <p v-if="clubBookError" class="mt-2 text-sm text-fd-danger">{{ clubBookError }}</p>
+          <button
+            type="button"
+            class="fd-btn-primary mt-4"
+            :disabled="clubBookPending"
+            @click="confirmBulkClubBooking"
+          >
+            {{ t('dashboard.clubBookConfirm') }}
+          </button>
+        </div>
+
+        <div v-if="showRecurringClassPanel" class="mt-4" :class="totalScheduleSelection ? 'border-t border-fd-primary/10 pt-4' : ''">
+          <h3 class="mb-1 text-sm font-bold text-fd-navy">{{ t('dashboard.scheduleRecurringClass') }}</h3>
+          <p class="mb-3 text-xs text-fd-muted">{{ t('dashboard.recurringClassHint') }}</p>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <input v-model="recurringClassForm.titleFa" class="fd-input sm:col-span-2" :placeholder="t('classes.titleField')" />
+            <select v-model="recurringClassForm.sportId" class="fd-input">
+              <option value="">{{ t('search.sport') }}</option>
+              <option v-for="s in sports" :key="s.id" :value="s.id">{{ pickName(s) }}</option>
+            </select>
+            <select v-model="recurringClassForm.coachId" class="fd-input">
+              <option value="">{{ t('coaches.title') }}</option>
+              <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
+            </select>
+            <input v-model="recurringClassForm.fromDate" type="date" class="fd-input" />
+            <input v-model="recurringClassForm.toDate" type="date" class="fd-input" />
+            <input v-model="recurringClassForm.startTime" type="time" class="fd-input" />
+            <input v-model="recurringClassForm.endTime" type="time" class="fd-input" />
+            <input v-model.number="recurringClassForm.price" type="number" class="fd-input" :placeholder="t('dashboard.price')" />
+            <input v-model.number="recurringClassForm.maxSeats" type="number" class="fd-input" :placeholder="t('classes.seats')" />
+          </div>
+          <div class="mt-3">
+            <p class="mb-2 text-xs font-semibold text-fd-muted">{{ t('packages.daysOfWeek') }}</p>
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="opt in weekdayOptions"
+                :key="opt.value"
+                type="button"
+                class="sz-chip tap-highlight"
+                :class="daySelected(recurringClassForm.daysOfWeek, opt.value) ? 'bg-fd-primary text-white shadow-fd-soft' : 'bg-[#F5F5F4] text-fd-navy shadow-fd-soft'"
+                @click="recurringClassForm.daysOfWeek = toggleDay(recurringClassForm.daysOfWeek, opt.value)"
+              >
+                {{ opt.label }}
+              </button>
+            </div>
+          </div>
+          <p v-if="recurringClassError" class="mt-2 text-sm text-fd-danger">{{ recurringClassError }}</p>
+          <button
+            type="button"
+            class="fd-btn-primary mt-4"
+            :disabled="recurringClassPending"
+            @click="confirmRecurringClasses"
+          >
+            {{ t('dashboard.createRecurringClasses') }}
+          </button>
+        </div>
+      </div>
 
       <ScheduleEventNoteDialog
         v-if="focusedScheduleEvent"
@@ -1260,6 +1588,9 @@ async function confirmClubBooking() {
               </div>
             </div>
             <p class="text-sm text-fd-muted">{{ formatDate(cls.date) }} · {{ formatTimeRange(cls.startTime, cls.endTime) }}</p>
+            <p class="text-sm text-fd-muted">
+              {{ classTypeLabel(cls.classType ?? 'GROUP') }} · {{ classGroupLabel(cls) }}
+            </p>
             <p class="text-sm text-fd-muted">{{ formatNumber(cls.enrollments?.length ?? 0) }} / {{ formatNumber(cls.maxSeats) }} {{ t('classes.enrolled') }}</p>
             <div v-if="cls.enrollments?.length" class="mt-2 space-y-1">
               <p v-for="e in cls.enrollments" :key="e.id" class="text-xs text-fd-navy">{{ e.user?.name ?? e.user?.email }}</p>
@@ -1290,7 +1621,33 @@ async function confirmClubBooking() {
           <input v-model="newClass.startTime" type="time" class="fd-input" />
           <input v-model="newClass.endTime" type="time" class="fd-input" />
           <input v-model.number="newClass.price" type="number" class="fd-input" :placeholder="t('dashboard.price')" />
-          <input v-model.number="newClass.maxSeats" type="number" class="fd-input" min="1" :placeholder="t('classes.seats')" />
+          <select v-model="newClass.classType" class="fd-input" @change="onClassTypeChange(newClass)">
+            <option value="GROUP">{{ t('classes.group') }}</option>
+            <option value="SEMI_PRIVATE">{{ t('classes.semiPrivate') }}</option>
+          </select>
+          <input
+            v-model.number="newClass.maxSeats"
+            type="number"
+            class="fd-input"
+            :min="newClass.classType === 'SEMI_PRIVATE' ? 2 : 5"
+            :max="newClass.classType === 'SEMI_PRIVATE' ? 4 : 50"
+            :placeholder="t('classes.seats')"
+          />
+          <select v-model="newClass.genderPolicy" class="fd-input">
+            <option v-for="opt in genderPolicyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+          </select>
+          <select v-model="newClass.minLevel" class="fd-input">
+            <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+          </select>
+          <select v-model="newClass.maxLevel" class="fd-input">
+            <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+          </select>
+          <div class="sm:col-span-2 flex flex-wrap gap-2">
+            <button type="button" class="fd-btn-ghost text-xs" @click="applyClassTierPreset(newClass, 'MEN', 'beginner')">{{ t('dashboard.genderMen') }} · {{ t('classes.tierBeginner') }}</button>
+            <button type="button" class="fd-btn-ghost text-xs" @click="applyClassTierPreset(newClass, 'MEN', 'advanced')">{{ t('dashboard.genderMen') }} · {{ t('classes.tierAdvanced') }}</button>
+            <button type="button" class="fd-btn-ghost text-xs" @click="applyClassTierPreset(newClass, 'WOMEN', 'beginner')">{{ t('dashboard.genderWomen') }} · {{ t('classes.tierBeginner') }}</button>
+            <button type="button" class="fd-btn-ghost text-xs" @click="applyClassTierPreset(newClass, 'WOMEN', 'advanced')">{{ t('dashboard.genderWomen') }} · {{ t('classes.tierAdvanced') }}</button>
+          </div>
           <select v-model="newClass.coachId" class="fd-input sm:col-span-2">
             <option value="">{{ t('coaches.title') }}</option>
             <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
@@ -1298,6 +1655,15 @@ async function confirmClubBooking() {
           <button type="button" class="fd-btn-primary sm:col-span-2" @click="addClass">{{ t('classes.create') }}</button>
         </div>
       </section>
+
+      <PackageManagerPanel
+        mode="club"
+        :club-id="selectedClubId"
+        :packages="clubPackages"
+        :sports="sports"
+        :coaches="coaches"
+        @refresh="refreshPackages"
+      />
     </template>
 
     <template v-else-if="tab === 'reviews' && selectedClub">
@@ -1475,7 +1841,27 @@ async function confirmClubBooking() {
             <input v-model="editClass.startTime" type="time" class="fd-input" />
             <input v-model="editClass.endTime" type="time" class="fd-input" />
             <input v-model.number="editClass.price" type="number" class="fd-input" :placeholder="t('dashboard.price')" />
-            <input v-model.number="editClass.maxSeats" type="number" class="fd-input" min="1" :placeholder="t('classes.seats')" />
+            <select v-model="editClass.classType" class="fd-input" @change="onClassTypeChange(editClass)">
+              <option value="GROUP">{{ t('classes.group') }}</option>
+              <option value="SEMI_PRIVATE">{{ t('classes.semiPrivate') }}</option>
+            </select>
+            <input
+              v-model.number="editClass.maxSeats"
+              type="number"
+              class="fd-input"
+              :min="editClass.classType === 'SEMI_PRIVATE' ? 2 : 5"
+              :max="editClass.classType === 'SEMI_PRIVATE' ? 4 : 50"
+              :placeholder="t('classes.seats')"
+            />
+            <select v-model="editClass.genderPolicy" class="fd-input">
+              <option v-for="opt in genderPolicyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+            </select>
+            <select v-model="editClass.minLevel" class="fd-input">
+              <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+            </select>
+            <select v-model="editClass.maxLevel" class="fd-input">
+              <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+            </select>
             <select v-model="editClass.coachId" class="fd-input sm:col-span-2">
               <option value="">{{ t('coaches.title') }}</option>
               <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>

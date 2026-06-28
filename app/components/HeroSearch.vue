@@ -52,8 +52,9 @@ function submit() {
 </script>
 
 <template>
-  <section class="overflow-hidden rounded-ios-xl bg-brand-primary p-6 text-white shadow-lifted sm:p-10">
-    <div class="space-y-5">
+  <section class="relative overflow-hidden rounded-ios-xl bg-brand-primary p-6 text-white shadow-lifted sm:p-10">
+    <ShapeGridBackground class="absolute inset-0 h-full w-full" />
+    <div class="relative z-10 space-y-5">
       <p v-if="loggedIn" class="text-sm font-semibold text-white/95">
         {{ t('hero.greeting', { name: firstName }) }}
       </p>

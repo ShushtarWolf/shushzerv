@@ -208,7 +208,9 @@ async function main() {
   await prisma.matchParticipant.deleteMany()
   await prisma.openMatch.deleteMany()
   await prisma.classEnrollment.deleteMany()
+  await prisma.packageEnrollment.deleteMany()
   await prisma.classSession.deleteMany()
+  await prisma.classPackage.deleteMany()
   await prisma.clubActivity.deleteMany()
   await prisma.athleteProfile.deleteMany()
   await prisma.booking.deleteMany()
@@ -234,6 +236,7 @@ async function main() {
       name: 'آرش ورزشکار',
       nameEn: 'Arash Athlete',
       role: 'ATHLETE',
+      gender: 'MALE',
       passwordHash: hashSecret('demo1234'),
       onboardedAt: new Date(),
       favoriteSports: 'tennis',
@@ -249,9 +252,9 @@ async function main() {
     data: { email: 'admin@inboxs.local', name: 'مدیر پلتفرم', nameEn: 'Platform Admin', role: 'PLATFORM_ADMIN', passwordHash: hashSecret('demo1234') },
   })
   const extraPlayers = await Promise.all([
-    prisma.user.create({ data: { email: 'player2@inboxs.local', name: 'نیما رضایی', nameEn: 'Nima Rezaei', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
-    prisma.user.create({ data: { email: 'player3@inboxs.local', name: 'پریسا کریمی', nameEn: 'Parisa Karimi', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
-    prisma.user.create({ data: { email: 'player4@inboxs.local', name: 'امیرحسین نوری', nameEn: 'Amir Hossein Nouri', role: 'ATHLETE', passwordHash: hashSecret('demo1234') } }),
+    prisma.user.create({ data: { email: 'player2@inboxs.local', name: 'نیما رضایی', nameEn: 'Nima Rezaei', role: 'ATHLETE', gender: 'MALE', passwordHash: hashSecret('demo1234') } }),
+    prisma.user.create({ data: { email: 'player3@inboxs.local', name: 'پریسا کریمی', nameEn: 'Parisa Karimi', role: 'ATHLETE', gender: 'FEMALE', passwordHash: hashSecret('demo1234') } }),
+    prisma.user.create({ data: { email: 'player4@inboxs.local', name: 'امیرحسین نوری', nameEn: 'Amir Hossein Nouri', role: 'ATHLETE', gender: 'MALE', passwordHash: hashSecret('demo1234') } }),
   ])
   const demoUsers: Record<string, string> = {
     athlete: athlete.id,
@@ -475,23 +478,87 @@ async function main() {
     }
   }
 
-  console.log('Seeding athlete profile…')
+  console.log('Seeding athlete profiles…')
   await prisma.athleteProfile.create({
     data: { userId: athlete.id, sportId: sports.tennis, level: 'INTERMEDIATE', matchesPlayed: 24, wins: 14, xp: 260 },
+  })
+  await prisma.athleteProfile.create({
+    data: { userId: extraPlayers[0].id, sportId: sports.tennis, level: 'BEGINNER', matchesPlayed: 6, wins: 2, xp: 40 },
+  })
+  await prisma.athleteProfile.create({
+    data: { userId: extraPlayers[1].id, sportId: sports.yoga, level: 'INTERMEDIATE', matchesPlayed: 10, wins: 5, xp: 90 },
+  })
+  await prisma.athleteProfile.create({
+    data: { userId: extraPlayers[2].id, sportId: sports.fitness, level: 'ADVANCED', matchesPlayed: 30, wins: 18, xp: 420 },
   })
   for (const code of ['first_booking', 'regular', 'social_player', 'rising_star']) {
     await prisma.userBadge.create({ data: { userId: athlete.id, code } })
   }
 
   console.log('Seeding group classes…')
-  const classSeeds = [
-    { club: 'zen-yoga-studio', coach: coachIds.leila, sport: 'yoga', titleFa: 'یوگای صبحگاهی', titleEn: 'Morning Yoga', day: 1, time: '08:00', end: '09:30', price: 180000, seats: 15, booked: 8 },
-    { club: 'azadi-tennis', coach: coachIds.sara, sport: 'tennis', titleFa: 'کلاس تنیس مبتدی', titleEn: 'Beginner Tennis Class', day: 2, time: '10:00', end: '11:30', price: 220000, seats: 8, booked: 5 },
-    { club: 'iron-house-gym', coach: coachIds.negar, sport: 'fitness', titleFa: 'فیتنس گروهی', titleEn: 'Group Fitness', day: 3, time: '18:00', end: '19:30', price: 150000, seats: 20, booked: 12 },
-    { club: 'padel-zone-tehran', sport: 'padel', titleFa: 'آموزش پدل', titleEn: 'Padel Intro Class', day: 4, time: '16:00', end: '17:30', price: 280000, seats: 4, booked: 2 },
+  type ClassSeed = {
+    club: string
+    coach?: string
+    sport: string
+    titleFa: string
+    titleEn: string
+    day: number
+    time: string
+    end: string
+    price: number
+    seats: number
+    classType: 'GROUP' | 'SEMI_PRIVATE'
+    genderPolicy: 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED'
+    minLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO'
+    maxLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO'
+    enrollments: Array<'athlete' | 'player2' | 'player3' | 'player4'>
+  }
+  const classSeeds: ClassSeed[] = [
+    {
+      club: 'zen-yoga-studio', coach: coachIds.leila, sport: 'yoga',
+      titleFa: 'یوگای صبحگاهی — زنان مبتدی', titleEn: 'Morning Yoga — Women Beginner',
+      day: 1, time: '08:00', end: '09:30', price: 180000, seats: 15, classType: 'GROUP',
+      genderPolicy: 'WOMEN', minLevel: 'BEGINNER', maxLevel: 'INTERMEDIATE',
+      enrollments: ['player3'],
+    },
+    {
+      club: 'azadi-tennis', coach: coachIds.sara, sport: 'tennis',
+      titleFa: 'کلاس تنیس — مردان مبتدی', titleEn: 'Tennis — Men Beginner',
+      day: 2, time: '10:00', end: '11:30', price: 220000, seats: 8, classType: 'GROUP',
+      genderPolicy: 'MEN', minLevel: 'BEGINNER', maxLevel: 'INTERMEDIATE',
+      enrollments: ['athlete', 'player2'],
+    },
+    {
+      club: 'azadi-tennis', coach: coachIds.sara, sport: 'tennis',
+      titleFa: 'کلاس تنیس — مردان پیشرفته', titleEn: 'Tennis — Men Advanced',
+      day: 2, time: '12:00', end: '13:30', price: 280000, seats: 6, classType: 'SEMI_PRIVATE',
+      genderPolicy: 'MEN', minLevel: 'ADVANCED', maxLevel: 'PRO',
+      enrollments: ['player4'],
+    },
+    {
+      club: 'iron-house-gym', coach: coachIds.negar, sport: 'fitness',
+      titleFa: 'فیتنس گروهی — مختلط', titleEn: 'Group Fitness — Mixed',
+      day: 3, time: '18:00', end: '19:30', price: 150000, seats: 20, classType: 'GROUP',
+      genderPolicy: 'MIXED', minLevel: 'BEGINNER', maxLevel: 'PRO',
+      enrollments: ['athlete', 'player2', 'player3', 'player4'],
+    },
+    {
+      club: 'padel-zone-tehran', sport: 'padel',
+      titleFa: 'پدل نیمه‌خصوصی — زنان پیشرفته', titleEn: 'Padel Semi-Private — Women Advanced',
+      day: 4, time: '16:00', end: '17:30', price: 320000, seats: 4, classType: 'SEMI_PRIVATE',
+      genderPolicy: 'WOMEN', minLevel: 'ADVANCED', maxLevel: 'PRO',
+      enrollments: ['player3'],
+    },
+    {
+      club: 'zen-yoga-studio', coach: coachIds.leila, sport: 'yoga',
+      titleFa: 'یوگای خانوادگی', titleEn: 'Family Yoga',
+      day: 5, time: '09:00', end: '10:00', price: 160000, seats: 12, classType: 'GROUP',
+      genderPolicy: 'FAMILY', minLevel: 'BEGINNER', maxLevel: 'INTERMEDIATE',
+      enrollments: [],
+    },
   ]
   for (const cs of classSeeds) {
-    await prisma.classSession.create({
+    const classSession = await prisma.classSession.create({
       data: {
         titleFa: cs.titleFa,
         titleEn: cs.titleEn,
@@ -500,12 +567,100 @@ async function main() {
         endTime: cs.end,
         price: cs.price,
         maxSeats: cs.seats,
-        bookedSeats: cs.booked,
+        bookedSeats: cs.enrollments.length,
+        classType: cs.classType,
+        genderPolicy: cs.genderPolicy,
+        minLevel: cs.minLevel,
+        maxLevel: cs.maxLevel,
+        status: cs.enrollments.length >= cs.seats ? 'FULL' : 'OPEN',
         clubId: clubBySlug[cs.club]!.id,
         sportId: sports[cs.sport],
         coachId: cs.coach ?? null,
       },
     })
+    for (const key of cs.enrollments) {
+      await prisma.classEnrollment.create({
+        data: { userId: demoUsers[key], classSessionId: classSession.id },
+      })
+    }
+  }
+
+  console.log('Seeding class packages…')
+  const packageSeeds = [
+    {
+      club: 'azadi-tennis', coach: coachIds.sara, sport: 'tennis',
+      titleFa: 'پکیج هفتگی تنیس گروهی', titleEn: 'Weekly Group Tennis Package',
+      descFa: '۴ جلسه در هفته · ۸ هفته · مربی حرفه‌ای · مناسب مبتدی تا متوسط',
+      descEn: '4 sessions/week · 8 weeks · Pro coach · Beginner to intermediate',
+      price: 3_200_000, sessionsPerWeek: 2, durationWeeks: 8, classType: 'GROUP', groupMode: 'OPEN',
+      daysOfWeek: 'SAT,TUE', startTime: '10:00', endTime: '11:30', maxSeats: 12, bookedSeats: 0,
+      genderPolicy: 'MIXED', minLevel: 'BEGINNER', maxLevel: 'INTERMEDIATE', featured: true,
+    },
+    {
+      club: 'padel-zone-tehran', coach: coachIds.maryam, sport: 'padel',
+      titleFa: 'پکیج خصوصی پدل', titleEn: 'Weekly Private Padel Package',
+      descFa: '۱ جلسه خصوصی در هفته · ۴ هفته · تمرین تکنیک و بازی',
+      descEn: '1 private session/week · 4 weeks · Technique and match play',
+      price: 2_400_000, sessionsPerWeek: 1, durationWeeks: 4, classType: 'SEMI_PRIVATE',
+      daysOfWeek: 'WED', startTime: '18:00', endTime: '19:30', maxSeats: 4,
+      genderPolicy: 'MIXED', minLevel: 'INTERMEDIATE', maxLevel: 'ADVANCED', featured: true,
+    },
+    {
+      club: 'iron-house-gym', sport: 'fitness',
+      titleFa: 'پکیج بدنسازی گروهی', titleEn: 'Weekly Group Fitness Package',
+      descFa: '۳ جلسه در هفته · ۱۲ هفته · برنامه قدرتی گروهی',
+      descEn: '3 sessions/week · 12 weeks · Group strength program',
+      price: 4_500_000, sessionsPerWeek: 3, durationWeeks: 12, classType: 'GROUP', groupMode: 'WITH_STUDENTS',
+      daysOfWeek: 'MON,WED,FRI', startTime: '07:30', endTime: '08:30', maxSeats: 16,
+      enrollments: ['player2', 'player3', 'player4'],
+      genderPolicy: 'MIXED', minLevel: 'BEGINNER', maxLevel: 'PRO', featured: true,
+    },
+    {
+      coach: coachIds.sara, sport: 'tennis',
+      titleFa: 'کلاس خصوصی هفتگی با سارا', titleEn: 'Weekly Private Lessons with Sara',
+      descFa: '۱ جلسه خصوصی · ۶ هفته · تمرین سرویس و فورهند',
+      descEn: '1 private session · 6 weeks · Serve and forehand focus',
+      price: 3_600_000, sessionsPerWeek: 1, durationWeeks: 6, classType: 'SEMI_PRIVATE',
+      daysOfWeek: 'SUN', startTime: '16:00', endTime: '17:00', maxSeats: 2,
+      genderPolicy: 'WOMEN', minLevel: 'BEGINNER', maxLevel: 'ADVANCED', featured: true,
+    },
+  ]
+  for (const ps of packageSeeds) {
+    const enrollmentKeys = 'enrollments' in ps ? ps.enrollments as string[] : []
+    const groupMode = ('groupMode' in ps ? ps.groupMode : 'OPEN') as 'OPEN' | 'WITH_STUDENTS'
+    const bookedSeats = enrollmentKeys.length || ('bookedSeats' in ps ? Number(ps.bookedSeats) : 0)
+
+    const pkg = await prisma.classPackage.create({
+      data: {
+        titleFa: ps.titleFa,
+        titleEn: ps.titleEn,
+        descFa: ps.descFa,
+        descEn: ps.descEn,
+        price: ps.price,
+        sessionsPerWeek: ps.sessionsPerWeek,
+        durationWeeks: ps.durationWeeks,
+        classType: ps.classType as 'GROUP' | 'SEMI_PRIVATE',
+        groupMode: ps.classType === 'GROUP' ? groupMode : 'OPEN',
+        daysOfWeek: ps.daysOfWeek,
+        startTime: ps.startTime,
+        endTime: ps.endTime,
+        maxSeats: ps.maxSeats,
+        bookedSeats,
+        genderPolicy: ps.genderPolicy as 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED',
+        minLevel: ps.minLevel as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+        maxLevel: ps.maxLevel as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'PRO',
+        featured: ps.featured ?? false,
+        clubId: ps.club ? clubBySlug[ps.club]!.id : null,
+        coachId: ps.coach ?? null,
+        sportId: sports[ps.sport],
+      },
+    })
+
+    for (const key of enrollmentKeys) {
+      await prisma.packageEnrollment.create({
+        data: { userId: demoUsers[key], packageId: pkg.id },
+      })
+    }
   }
 
   console.log('Seeding open matches…')
@@ -834,6 +989,7 @@ async function main() {
     slots: await prisma.slot.count(),
     coaches: await prisma.coach.count(),
     classes: await prisma.classSession.count(),
+    packages: await prisma.classPackage.count(),
     matches: await prisma.openMatch.count(),
     plans: await prisma.trainingPlan.count(),
     news: await prisma.newsArticle.count(),

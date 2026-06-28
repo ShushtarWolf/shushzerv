@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Club, ScheduleEvent } from '~/types'
 import type { EquipmentPickerItem } from '~/composables/useEquipmentBooking'
-import { equipmentRentalSubtotal, equipmentSelectionsPayload } from '~/composables/useEquipmentBooking'
+import { equipmentRentalSubtotal, equipmentSelectionsPayload, equipmentRequiresSelection, equipmentHasSelection } from '~/composables/useEquipmentBooking'
 
 const props = defineProps<{ club: Club }>()
 const emit = defineEmits<{ close: [] }>()
@@ -28,6 +28,13 @@ const equipmentRental = computed(() =>
 )
 
 const bookingGrandTotal = computed(() => selectedSlotPrice.value + equipmentRental.value)
+const bookingPending = ref(false)
+const equipmentSelectionMissing = computed(
+  () => equipmentRequiresSelection(availableEquipment.value) && !equipmentHasSelection(selectedEquipment.value),
+)
+const canConfirmBooking = computed(
+  () => !bookingPending.value && !equipmentSelectionMissing.value,
+)
 const selectedSlotLabel = ref('')
 const bookingError = ref('')
 const scheduleFrom = ref('')
@@ -145,6 +152,10 @@ async function confirmBooking() {
     return requireLogin(localePath(`/clubs/${props.club.slug}?book=1`))
   }
   if (!selectedSlotId.value) return
+  if (equipmentSelectionMissing.value) {
+    bookingError.value = t('equipment.selectGearRequired')
+    return
+  }
   bookingPending.value = true
   try {
     await $fetch('/api/bookings', {
@@ -258,7 +269,7 @@ onUnmounted(() => {
             <EquipmentPicker v-model="selectedEquipment" :items="availableEquipment" />
             <p v-if="bookingError" class="text-sm text-brand-pink">{{ bookingError }}</p>
             <div class="mt-3 flex flex-col gap-2 sm:flex-row">
-              <SzButton block :disabled="bookingPending" @click="confirmBooking">
+              <SzButton block :disabled="!canConfirmBooking" @click="confirmBooking">
                 {{ loggedIn ? t('booking.confirm') : t('booking.loginRequired') }}
               </SzButton>
               <SzButton :to="localePath(`/clubs/${club.slug}`)" variant="ghost" block>{{ t('map.viewClub') }}</SzButton>

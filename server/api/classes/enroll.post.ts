@@ -1,3 +1,6 @@
+import { assertCanEnrollInClass } from '../../utils/classSession'
+import { payClassFromWallet } from '../../utils/wallet'
+
 export default defineEventHandler(async (event) => {
   const user = await requireRole(event, 'ATHLETE')
   const { classSessionId, payWithWallet } = await readBody<{ classSessionId?: string; payWithWallet?: boolean }>(event)
@@ -9,12 +12,11 @@ export default defineEventHandler(async (event) => {
     where: { id: classSessionId },
     include: { coach: { select: { userId: true } } },
   })
-  if (!classSession || classSession.status === 'CANCELLED') {
+  if (!classSession) {
     throw createError({ statusCode: 404, statusMessage: 'Class not found' })
   }
-  if (classSession.bookedSeats >= classSession.maxSeats) {
-    throw createError({ statusCode: 409, statusMessage: 'Class is full' })
-  }
+
+  await assertCanEnrollInClass(user.id, classSession)
 
   const existing = await prisma.classEnrollment.findUnique({
     where: { userId_classSessionId: { userId: user.id, classSessionId } },

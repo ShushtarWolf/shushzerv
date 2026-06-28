@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Coach, CoachBusySlot } from '~/types'
 import type { EquipmentPickerItem } from '~/composables/useEquipmentBooking'
-import { equipmentRentalSubtotal, equipmentSelectionsPayload } from '~/composables/useEquipmentBooking'
+import { equipmentRentalSubtotal, equipmentSelectionsPayload, equipmentRequiresSelection, equipmentHasSelection } from '~/composables/useEquipmentBooking'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -74,6 +74,10 @@ const equipmentRental = computed(() =>
 )
 const sessionGrandTotal = computed(() => sessionPrice.value + equipmentRental.value)
 const canPayWithWallet = computed(() => loggedIn.value && walletBalance.value >= sessionGrandTotal.value)
+const equipmentSelectionMissing = computed(
+  () => equipmentRequiresSelection(availableEquipment.value) && !equipmentHasSelection(selectedEquipment.value),
+)
+const canBookSession = computed(() => !bookingPending.value && !equipmentSelectionMissing.value)
 
 watch(() => sessionForm.value.date, async (date) => {
   selectedEquipment.value = {}
@@ -93,6 +97,10 @@ watch(() => sessionForm.value.date, async (date) => {
 
 async function bookSession() {
   if (!loggedIn.value) return requireLogin()
+  if (equipmentSelectionMissing.value) {
+    toast.error(t('equipment.selectGearRequired'))
+    return
+  }
   bookingPending.value = true
   try {
     await $fetch('/api/coach/sessions', {
@@ -195,7 +203,7 @@ async function bookSession() {
         <p v-if="loggedIn && payWithWallet && sessionGrandTotal > 0 && !canPayWithWallet" class="mt-1 text-sm text-brand-pink">
           {{ t('wallet.insufficientBalance') }}
         </p>
-        <SzButton class="mt-3" :disabled="bookingPending" @click="bookSession">
+        <SzButton class="mt-3" :disabled="!canBookSession" @click="bookSession">
           {{ t('coaches.bookSession') }}
         </SzButton>
         <SzButton v-if="canMessageCoach" variant="ghost" class="mt-2" @click="messageCoach">

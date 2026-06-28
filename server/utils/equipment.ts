@@ -55,6 +55,49 @@ async function reservedCoachEquipmentQty(tx: Tx, equipmentId: string, date: stri
   return agg._sum.quantity ?? 0
 }
 
+async function clubBookableAddonIds(tx: Tx, clubId: string, courtId: string, slotDate: string) {
+  const addons = await tx.courtAddon.findMany({
+    where: {
+      clubId,
+      OR: [{ courtId: null }, { courtId }],
+    },
+  })
+  const ids: string[] = []
+  for (const addon of addons) {
+    if (addon.stock != null) {
+      const reserved = await reservedClubAddonQty(tx, addon.id, slotDate)
+      if (reserved >= addon.stock) continue
+    }
+    ids.push(addon.id)
+  }
+  return ids
+}
+
+async function coachBookableEquipmentIds(tx: Tx, coachId: string, sessionDate: string) {
+  const items = await tx.coachEquipment.findMany({ where: { coachId } })
+  const ids: string[] = []
+  for (const item of items) {
+    if (item.stock != null) {
+      const reserved = await reservedCoachEquipmentQty(tx, item.id, sessionDate)
+      if (reserved >= item.stock) continue
+    }
+    ids.push(item.id)
+  }
+  return ids
+}
+
+function assertEquipmentSelected(
+  bookableIds: string[],
+  selections: EquipmentSelection[] | undefined,
+) {
+  if (!bookableIds.length) return
+  const selected = normalizeSelections(selections)
+  const hasSelection = selected.some((sel) => sel.quantity > 0 && bookableIds.includes(sel.id))
+  if (!hasSelection) {
+    throw createError({ statusCode: 400, statusMessage: 'Equipment selection is required' })
+  }
+}
+
 export async function resolveClubAddonSelections(
   tx: Tx,
   clubId: string,
@@ -62,6 +105,9 @@ export async function resolveClubAddonSelections(
   slotDate: string,
   selections: EquipmentSelection[] | undefined,
 ): Promise<ResolvedEquipmentLine[]> {
+  const bookableIds = await clubBookableAddonIds(tx, clubId, courtId, slotDate)
+  assertEquipmentSelected(bookableIds, selections)
+
   const lines: ResolvedEquipmentLine[] = []
 
   for (const sel of normalizeSelections(selections)) {
@@ -108,6 +154,9 @@ export async function resolveCoachEquipmentSelections(
   sessionDate: string,
   selections: EquipmentSelection[] | undefined,
 ): Promise<ResolvedEquipmentLine[]> {
+  const bookableIds = await coachBookableEquipmentIds(tx, coachId, sessionDate)
+  assertEquipmentSelected(bookableIds, selections)
+
   const lines: ResolvedEquipmentLine[] = []
 
   for (const sel of normalizeSelections(selections)) {

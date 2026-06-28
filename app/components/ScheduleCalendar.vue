@@ -8,7 +8,11 @@ const props = withDefaults(
     bookable?: boolean
     allowSlotSelect?: boolean
     selectedSlotId?: string
+    selectedSlotIds?: string[]
+    selectedGridCells?: Array<{ courtId: string; startTime: string }>
+    multiSelect?: boolean
     showEmptyGrid?: boolean
+    gridSettings?: { durationMinutes: number; openTime: string; closeTime: string }
     variant?: 'default' | 'dashboard'
     compact?: boolean
     courts?: Array<{ id: string; name: string }>
@@ -16,7 +20,7 @@ const props = withDefaults(
     initialDate?: string
     manageNotes?: boolean
   }>(),
-  { variant: 'default', compact: false, hideCourtFilter: false, manageNotes: false },
+  { variant: 'default', compact: false, hideCourtFilter: false, manageNotes: false, multiSelect: false },
 )
 
 const emit = defineEmits<{
@@ -24,12 +28,15 @@ const emit = defineEmits<{
   'select-slot': [ScheduleEvent]
   'select-event': [ScheduleEvent]
   'manage-event': [ScheduleEvent]
+  'toggle-slot': [ScheduleEvent]
+  'select-grid-cell': [{ courtId: string; courtName: string; date: string; startTime: string; endTime: string }]
+  'toggle-grid-cell': [{ courtId: string; courtName: string; date: string; startTime: string; endTime: string }]
 }>()
 
 const { t, locale } = useI18n()
 const isRtl = computed(() => locale.value === 'fa')
 const { formatDate, formatPrice, formatTime, formatTimeRange } = useLocaleContent()
-const { eventDurationLabel } = useSlotSchedule()
+const { eventDurationLabel, buildSlotTimes } = useSlotSchedule()
 const { dismissed: scheduleHintDismissed, dismiss: dismissScheduleHint } = useScheduleHint()
 const {
   anchor: selectedDate,
@@ -108,8 +115,18 @@ function typeLabel(event: ScheduleEvent) {
   return t('schedule.platformBooking')
 }
 
+function isSlotSelected(event: ScheduleEvent) {
+  if (!event.slotId) return false
+  if (props.selectedSlotIds?.length) return props.selectedSlotIds.includes(event.slotId)
+  return props.selectedSlotId === event.slotId
+}
+
 function isInteractiveSlot(event: ScheduleEvent) {
   return (props.bookable || props.allowSlotSelect) && event.type === 'slot' && !!event.slotId
+}
+
+function isToggleableSlot(event: ScheduleEvent) {
+  return props.multiSelect && event.type === 'slot' && event.status === 'AVAILABLE' && !!event.slotId
 }
 
 function isNavigableEvent(event: ScheduleEvent) {
@@ -117,11 +134,16 @@ function isNavigableEvent(event: ScheduleEvent) {
 }
 
 function isClickable(event: ScheduleEvent) {
+  if (isToggleableSlot(event)) return true
   if (props.manageNotes) return true
   return isInteractiveSlot(event) || isNavigableEvent(event)
 }
 
 function onEventClick(event: ScheduleEvent) {
+  if (isToggleableSlot(event)) {
+    emit('toggle-slot', event)
+    return
+  }
   if (props.manageNotes) {
     emit('manage-event', event)
     return
@@ -197,7 +219,7 @@ function eventCardClass(event: ScheduleEvent) {
   const interactive = isClickable(event)
     ? 'cursor-pointer tap-highlight hover:-translate-y-0.5'
     : ''
-  const selected = props.selectedSlotId && event.slotId === props.selectedSlotId
+  const selected = isSlotSelected(event)
     ? props.variant === 'dashboard'
       ? 'ring-[3px] ring-fd-navy ring-offset-2 shadow-fd scale-[1.02] z-10'
       : '!ring-[3px] !ring-brand-orange !ring-offset-2 scale-[1.02] shadow-lifted z-10'
@@ -278,6 +300,108 @@ function courtChipClass(active: boolean) {
   return active
     ? 'bg-brand-orange text-brand-primary shadow-card'
     : 'bg-white text-brand-gray-700 shadow-card hover:bg-brand-gray-50'
+}
+
+type ScheduleGridCell = {
+  courtId: string
+  courtName: string
+  date: string
+  startTime: string
+  endTime: string
+}
+
+const gridTimes = computed(() => {
+  if (!props.showEmptyGrid || !props.gridSettings) return []
+  return buildSlotTimes(
+    props.gridSettings.durationMinutes,
+    props.gridSettings.openTime,
+    props.gridSettings.closeTime,
+  )
+})
+
+const gridCourts = computed(() => {
+  if (!props.courts?.length) return []
+  if (selectedCourtId.value) {
+    return props.courts.filter((c) => c.id === selectedCourtId.value)
+  }
+  return props.courts
+})
+
+const dayClassEvents = computed(() =>
+  dayEvents.value.filter((e) => e.type === 'class'),
+)
+
+function gridCellEvent(courtId: string, startTime: string, endTime: string): ScheduleEvent | null {
+  return dayEvents.value.find((e) =>
+    e.courtId === courtId
+    && e.startTime === startTime
+    && e.endTime === endTime
+    && (e.type === 'slot' || e.type === 'booking'),
+  ) ?? null
+}
+
+function gridCellKey(courtId: string, startTime: string) {
+  return `${courtId}-${startTime}`
+}
+
+function isGridCellSelected(courtId: string, startTime: string, endTime: string) {
+  const event = gridCellEvent(courtId, startTime, endTime)
+  if (event?.slotId && isSlotSelected(event)) return true
+  return props.selectedGridCells?.some((c) => c.courtId === courtId && c.startTime === startTime) ?? false
+}
+
+function onGridCellClick(court: { id: string; name: string }, slot: { startTime: string; endTime: string }) {
+  const event = gridCellEvent(court.id, slot.startTime, slot.endTime)
+  if (event) {
+    onEventClick(event)
+    return
+  }
+
+  const cell: ScheduleGridCell = {
+    courtId: court.id,
+    courtName: court.name,
+    date: selectedDate.value,
+    startTime: slot.startTime,
+    endTime: slot.endTime,
+  }
+
+  if (props.multiSelect) {
+    emit('toggle-grid-cell', cell)
+    return
+  }
+  emit('select-grid-cell', cell)
+}
+
+function gridCellClass(courtId: string, slot: { startTime: string; endTime: string }) {
+  const event = gridCellEvent(courtId, slot.startTime, slot.endTime)
+  const selected = isGridCellSelected(courtId, slot.startTime, slot.endTime)
+
+  if (selected) {
+    return 'ring-[3px] ring-fd-navy ring-offset-1 bg-fd-primary/15 border-fd-primary'
+  }
+  if (!event) {
+    return 'border-dashed border-fd-primary/25 bg-white/80 text-fd-muted hover:border-fd-primary/50 hover:bg-fd-primary/5'
+  }
+  if (event.type === 'booking') {
+    return event.bookingSource === 'CLUB'
+      ? 'bg-brand-blue/20 border-brand-blue/40 text-fd-navy'
+      : 'bg-brand-orange/20 border-brand-orange/40 text-fd-navy'
+  }
+  if (event.type === 'slot' && event.status === 'BLOCKED') {
+    return 'bg-brand-gray-200 border-brand-gray-400 text-brand-gray-600'
+  }
+  if (event.type === 'slot' && event.status === 'AVAILABLE') {
+    return 'bg-brand-gray-100 border-brand-gray-300 text-fd-navy hover:bg-fd-primary/10'
+  }
+  return 'bg-white border-fd-primary/10'
+}
+
+function gridCellLabel(courtId: string, slot: { startTime: string; endTime: string }) {
+  const event = gridCellEvent(courtId, slot.startTime, slot.endTime)
+  if (!event) return t('schedule.freeHour')
+  if (event.type === 'booking') return event.title
+  if (event.type === 'slot' && event.status === 'BLOCKED') return t('schedule.blockedSlot')
+  return t('schedule.openSlot')
 }
 </script>
 
@@ -397,6 +521,7 @@ function courtChipClass(active: boolean) {
 
     <p v-if="bookable && scheduleHintDismissed" :class="variant === 'dashboard' ? 'text-sm text-fd-muted' : 'ios-footnote'">{{ t('schedule.tapToBook') }}</p>
     <p v-else-if="allowSlotSelect" :class="variant === 'dashboard' ? 'text-sm text-fd-muted' : 'ios-footnote'">{{ t('schedule.tapToAssign') }}</p>
+    <p v-else-if="manageNotes && multiSelect" :class="variant === 'dashboard' ? 'text-sm text-fd-muted' : 'ios-footnote'">{{ t('schedule.multiSelectHint') }}</p>
     <p v-else-if="manageNotes" :class="variant === 'dashboard' ? 'text-sm text-fd-muted' : 'ios-footnote'">{{ t('schedule.tapToComment') }}</p>
 
     <div
@@ -411,6 +536,67 @@ function courtChipClass(active: boolean) {
         class="min-h-[10rem] animate-pulse rounded-2xl"
         :class="variant === 'dashboard' ? 'bg-[#F5F5F4]' : 'bg-brand-gray-100'"
       />
+    </div>
+
+    <div
+      v-else-if="showEmptyGrid && gridTimes.length && gridCourts.length"
+      class="space-y-4"
+    >
+      <div v-if="dayClassEvents.length" class="flex flex-wrap gap-2">
+        <button
+          v-for="event in dayClassEvents"
+          :key="event.id"
+          type="button"
+          class="inline-flex items-center gap-2 rounded-xl border border-brand-indigo/30 bg-brand-indigo/10 px-3 py-2 text-start text-xs font-semibold text-fd-navy tap-highlight hover:bg-brand-indigo/20"
+          @click="onEventClick(event)"
+        >
+          <span dir="ltr">{{ formatTimeRange(event.startTime, event.endTime) }}</span>
+          <span>{{ event.title }}</span>
+        </button>
+      </div>
+
+      <div class="schedule-grid-scroll overflow-x-auto overscroll-contain rounded-xl border border-fd-primary/10">
+        <table class="w-full min-w-[32rem] border-collapse text-xs">
+          <thead>
+            <tr class="bg-[#F5F5F4]">
+              <th class="sticky start-0 z-10 bg-[#F5F5F4] px-2 py-2 text-start font-bold text-fd-muted" scope="col">
+                {{ t('schedule.hours') }}
+              </th>
+              <th
+                v-for="court in gridCourts"
+                :key="court.id"
+                class="min-w-[5.5rem] px-2 py-2 text-center font-bold text-fd-navy"
+                scope="col"
+              >
+                {{ court.name }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="slot in gridTimes" :key="slot.startTime" class="border-t border-fd-primary/5">
+              <th
+                class="sticky start-0 z-10 bg-white px-2 py-1.5 text-start font-semibold tabular-nums text-fd-navy"
+                scope="row"
+                dir="ltr"
+              >
+                {{ formatTime(slot.startTime) }}
+              </th>
+              <td v-for="court in gridCourts" :key="gridCellKey(court.id, slot.startTime)" class="p-1">
+                <button
+                  type="button"
+                  class="flex min-h-[2.75rem] w-full flex-col items-center justify-center rounded-lg border px-1 py-1.5 text-center transition tap-highlight"
+                  :class="gridCellClass(court.id, slot)"
+                  @click="onGridCellClick(court, slot)"
+                >
+                  <span class="line-clamp-2 text-[0.65rem] font-semibold leading-tight">
+                    {{ gridCellLabel(court.id, slot) }}
+                  </span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div
@@ -538,5 +724,10 @@ function courtChipClass(active: boolean) {
 .schedule-slot-card:focus-visible {
   outline: 2px solid rgba(67, 24, 255, 0.35);
   outline-offset: 2px;
+}
+
+.schedule-grid-scroll {
+  max-height: min(36rem, 62dvh);
+  scrollbar-gutter: stable;
 }
 </style>

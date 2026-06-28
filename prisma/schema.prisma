@@ -80,6 +80,26 @@ enum GenderPolicy {
   MIXED
 }
 
+enum UserGender {
+  MALE
+  FEMALE
+}
+
+enum ClassType {
+  GROUP
+  SEMI_PRIVATE
+}
+
+enum PackageStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PackageGroupMode {
+  OPEN
+  WITH_STUDENTS
+}
+
 enum PlanType {
   TRAINING
   DIET
@@ -109,6 +129,7 @@ model User {
   role           Role      @default(ATHLETE)
   locale         String    @default("fa")
   phone          String?
+  gender         UserGender?
   favoriteSports String?
   onboardedAt    DateTime?
   suspendedAt    DateTime?
@@ -119,6 +140,7 @@ model User {
   bookings          Booking[]
   athleteProfile    AthleteProfile?
   classEnrollments  ClassEnrollment[]
+  packageEnrollments PackageEnrollment[]
   createdMatches    OpenMatch[]         @relation("MatchCreator")
   matchParticipants MatchParticipant[]
   planAssignments   PlanAssignment[]
@@ -183,6 +205,7 @@ model Sport {
   coaches       Coach[]
   news          NewsArticle[]
   classSessions ClassSession[]
+  classPackages ClassPackage[]
   openMatches   OpenMatch[]
   athleteLevels AthleteProfile[]
   trainingPlans TrainingPlan[]
@@ -218,6 +241,7 @@ model Club {
 
   courts        Court[]
   classSessions ClassSession[]
+  classPackages ClassPackage[]
   activities    ClubActivity[]
   openMatches   OpenMatch[]
   reviews       Review[]
@@ -282,6 +306,7 @@ model Coach {
   user     User?   @relation(fields: [userId], references: [id])
 
   classSessions ClassSession[]
+  classPackages ClassPackage[]
   trainingPlans TrainingPlan[]
   coachSessions CoachSession[]
   reviews       Review[]
@@ -418,18 +443,22 @@ model Message {
 }
 
 model ClassSession {
-  id          String      @id @default(cuid())
-  titleFa     String
-  titleEn     String
-  date        String
-  startTime   String
-  endTime     String
-  price       Int
-  maxSeats    Int         @default(12)
-  bookedSeats Int         @default(0)
-  status      ClassStatus @default(OPEN)
-  clubNote    String?
-  coachNote   String?
+  id           String       @id @default(cuid())
+  titleFa      String
+  titleEn      String
+  date         String
+  startTime    String
+  endTime      String
+  price        Int
+  maxSeats     Int          @default(12)
+  bookedSeats  Int          @default(0)
+  classType    ClassType    @default(GROUP)
+  genderPolicy GenderPolicy @default(MIXED)
+  minLevel     SkillLevel   @default(BEGINNER)
+  maxLevel     SkillLevel   @default(PRO)
+  status       ClassStatus  @default(OPEN)
+  clubNote     String?
+  coachNote    String?
 
   clubId  String
   club    Club    @relation(fields: [clubId], references: [id], onDelete: Cascade)
@@ -452,6 +481,51 @@ model ClassEnrollment {
   classSession   ClassSession @relation(fields: [classSessionId], references: [id], onDelete: Cascade)
 
   @@unique([userId, classSessionId])
+}
+
+model ClassPackage {
+  id              String            @id @default(cuid())
+  titleFa         String
+  titleEn         String
+  descFa          String
+  descEn          String
+  price           Int
+  sessionsPerWeek Int               @default(1)
+  durationWeeks   Int               @default(4)
+  classType       ClassType         @default(GROUP)
+  groupMode       PackageGroupMode  @default(OPEN)
+  genderPolicy    GenderPolicy      @default(MIXED)
+  minLevel        SkillLevel        @default(BEGINNER)
+  maxLevel        SkillLevel        @default(PRO)
+  maxSeats        Int               @default(12)
+  bookedSeats     Int               @default(0)
+  daysOfWeek      String            @default("SAT")
+  startTime       String
+  endTime         String
+  status          PackageStatus     @default(ACTIVE)
+  featured        Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+
+  clubId  String?
+  club    Club?   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  coachId String?
+  coach   Coach?  @relation(fields: [coachId], references: [id], onDelete: SetNull)
+  sportId String
+  sport   Sport   @relation(fields: [sportId], references: [id])
+
+  enrollments PackageEnrollment[]
+}
+
+model PackageEnrollment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  packageId String
+  package   ClassPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, packageId])
 }
 
 model OpenMatch {

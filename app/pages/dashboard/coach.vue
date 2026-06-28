@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Coach, CoachEquipment, CoachSession, ScheduleEvent, Sport, TrainingPlan } from '~/types'
+import type { ClassPackage, Coach, CoachEquipment, CoachSession, ScheduleEvent, Sport, TrainingPlan } from '~/types'
 
 definePageMeta({ layout: 'dashboard', middleware: ['auth', 'role-coach', 'onboarding-gate'] })
 
@@ -39,6 +39,7 @@ interface CoachStudentRow {
 const { data: coaches, refresh: refreshCoaches } = await useApiFetch<Coach[]>('/api/coaches')
 const { data: sports } = await useApiFetch<Sport[]>('/api/sports')
 const { data: plans, refresh: refreshPlans } = await useApiFetch<TrainingPlan[]>('/api/training-plans')
+const { data: coachPackages, refresh: refreshCoachPackages } = await useApiFetch<ClassPackage[]>('/api/coach/packages')
 const { data: students, refresh: refreshStudents } = await useApiFetch<CoachStudentRow[]>('/api/coach/students')
 const { data: coachSessions, refresh: refreshCoachSessions } = await useApiFetch<CoachSession[]>('/api/coach/sessions')
 const { data: equipment, refresh: refreshEquipment } = await useApiFetch<CoachEquipment[]>('/api/coach/equipment', {
@@ -113,6 +114,7 @@ const tabs = computed(() => [
   { id: 'students', label: t('dashboard.myStudents'), icon: 'users' },
   { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet' },
   { id: 'plans', label: t('dashboard.plansTab'), icon: 'users' },
+  { id: 'packages', label: t('packages.title'), icon: 'calendar' },
   { id: 'profile', label: t('dashboard.profileTab'), icon: 'building' },
 ])
 
@@ -695,6 +697,15 @@ function goNextUp(item: NextUpItem) {
           <button type="button" class="fd-btn-primary" @click="createPlan">{{ t('trainingPlans.create') }}</button>
         </div>
       </section>
+    </template>
+
+    <template v-else-if="tab === 'packages'">
+      <PackageManagerPanel
+        mode="coach"
+        :packages="coachPackages"
+        :sports="sports"
+        @refresh="refreshCoachPackages"
+      />
     </template>
 
     <template v-else-if="tab === 'profile'">

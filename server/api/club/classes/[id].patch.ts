@@ -1,4 +1,5 @@
 import { requireClubOwner } from '../../../utils/clubAuth'
+import { parseClassSessionFields } from '../../../utils/classSession'
 
 export default defineEventHandler(async (event) => {
   const user = await requireRole(event, 'CLUB_ADMIN')
@@ -9,6 +10,8 @@ export default defineEventHandler(async (event) => {
   if (!cls) throw createError({ statusCode: 404, statusMessage: 'Class not found' })
   await requireClubOwner(user.id, cls.clubId)
 
+  const extra = parseClassSessionFields(body)
+
   return prisma.classSession.update({
     where: { id },
     data: {
@@ -18,9 +21,9 @@ export default defineEventHandler(async (event) => {
       ...(body.startTime ? { startTime: String(body.startTime) } : {}),
       ...(body.endTime ? { endTime: String(body.endTime) } : {}),
       ...(body.price !== undefined ? { price: Number(body.price) } : {}),
-      ...(body.maxSeats !== undefined ? { maxSeats: Number(body.maxSeats) } : {}),
       ...(body.coachId !== undefined ? { coachId: body.coachId ? String(body.coachId) : null } : {}),
       ...(body.status ? { status: body.status as 'OPEN' | 'FULL' | 'CANCELLED' } : {}),
+      ...extra,
     },
     include: { sport: true, coach: true },
   })

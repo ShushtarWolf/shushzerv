@@ -1,6 +1,7 @@
-import type { SkillLevel } from '@prisma/client'
+import type { SkillLevel, UserGender } from '@prisma/client'
 
 const LEVELS: SkillLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'PRO']
+const GENDERS: UserGender[] = ['MALE', 'FEMALE']
 
 export default defineEventHandler(async (event) => {
   const user = await requireRole(event, 'ATHLETE')
@@ -11,6 +12,7 @@ export default defineEventHandler(async (event) => {
     phone?: string
     locale?: string
     favoriteSports?: string
+    gender?: UserGender
   }>(event)
 
   const profile = await prisma.athleteProfile.findUnique({ where: { userId: user.id } })
@@ -23,11 +25,12 @@ export default defineEventHandler(async (event) => {
     if (sport) data.sportId = sport.id
   }
 
-  const userData: { name?: string; phone?: string; locale?: string; favoriteSports?: string } = {}
+  const userData: { name?: string; phone?: string; locale?: string; favoriteSports?: string; gender?: UserGender } = {}
   if (body.name?.trim()) userData.name = body.name.trim()
   if (body.phone !== undefined) userData.phone = body.phone
   if (body.locale === 'fa' || body.locale === 'en') userData.locale = body.locale
   if (body.favoriteSports !== undefined) userData.favoriteSports = body.favoriteSports
+  if (body.gender && GENDERS.includes(body.gender)) userData.gender = body.gender
 
   const [updated, updatedUser] = await prisma.$transaction([
     prisma.athleteProfile.update({

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { ClassSession } from '~/types'
 
-const props = defineProps<{ classSession: ClassSession }>()
+defineProps<{ classSession: ClassSession }>()
 const { t } = useI18n()
 const { pickName, localized, formatPrice, formatDate, formatTimeRange, formatFraction } = useLocaleContent()
 const localePath = useLocalePath()
 const { accent, softBg } = useSportTheme()
+const { classTypeLabel, classGroupLabel } = useClassSession()
+const { levelLabel } = useSkillLevel()
 </script>
 
 <template>
@@ -41,9 +43,31 @@ const { accent, softBg } = useSportTheme()
         </div>
       </div>
 
+      <div class="flex flex-wrap gap-1.5">
+        <SzBadge tone="blue" class="!text-[10px]">{{ classTypeLabel(classSession.classType) }}</SzBadge>
+        <SzBadge tone="purple" class="!text-[10px]">{{ classGroupLabel(classSession) }}</SzBadge>
+      </div>
+
       <p class="text-xs text-brand-gray-500">
         {{ formatDate(classSession.date) }} · {{ formatTimeRange(classSession.startTime, classSession.endTime) }}
       </p>
+
+      <div v-if="classSession.participants?.length" class="flex flex-wrap gap-1.5">
+        <span
+          v-for="(p, i) in classSession.participants.slice(0, 6)"
+          :key="i"
+          class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-brand-gray-100 px-1.5 text-[10px] font-bold text-brand-gray-700"
+          :title="`${levelLabel(p.level)}`"
+        >
+          {{ p.initials }}
+        </span>
+        <span
+          v-if="classSession.participants.length > 6"
+          class="inline-flex h-7 items-center rounded-full bg-brand-gray-100 px-2 text-[10px] font-semibold text-brand-gray-500"
+        >
+          +{{ classSession.participants.length - 6 }}
+        </span>
+      </div>
 
       <div class="mt-auto pt-3">
         <p class="text-sm font-bold text-brand-gray-900">

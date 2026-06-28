@@ -45,7 +45,8 @@ function markerHtml(club: Club, selected: boolean) {
   const rating = formatRating(club.rating)
   const dir = isRtl.value ? 'rtl' : 'ltr'
   const selectedClass = selected ? ' club-map-pin--selected' : ''
-  return `<div class="club-map-pin${selectedClass}" dir="${dir}" data-slug="${club.slug}" title="${fullName}" role="button" tabindex="0" aria-label="${fullName} — ★ ${rating}">
+  const classesClass = club.hasGroupClasses ? ' club-map-pin--has-classes' : ' club-map-pin--no-classes'
+  return `<div class="club-map-pin${selectedClass}${classesClass}" dir="${dir}" data-slug="${club.slug}" title="${fullName}" role="button" tabindex="0" aria-label="${fullName} — ★ ${rating}">
     <span class="club-map-pin-bubble">
       <span class="club-map-pin-name">${name}</span>
       <span class="club-map-pin-rating">★ ${rating}</span>
@@ -208,9 +209,16 @@ onUnmounted(() => {
         <h2 class="club-map-title">{{ t('map.title') }}</h2>
         <p class="mt-0.5 text-xs text-brand-gray-500">{{ t('map.tapPinHint') }}</p>
       </div>
-      <p v-if="mappableClubs.length" class="club-map-count">
-        {{ t('map.clubsCount', { n: formatNumber(mappableClubs.length) }) }}
-      </p>
+      <div v-if="mappableClubs.length" class="text-end">
+        <p class="club-map-count">
+          {{ t('map.clubsCount', { n: formatNumber(mappableClubs.length) }) }}
+        </p>
+        <p class="mt-1 text-[10px] text-brand-gray-400">
+          <span class="font-extrabold text-brand-gray-600">{{ t('map.legendBold') }}</span>
+          ·
+          <span class="font-medium text-brand-gray-400">{{ t('map.legendNormal') }}</span>
+        </p>
+      </div>
     </div>
     <div class="club-map-stage">
       <div ref="mapRoot" class="club-map-canvas" role="application" :aria-label="t('map.title')" />
@@ -308,7 +316,15 @@ onUnmounted(() => {
 }
 
 .club-map-pin-name {
-  @apply max-w-[7.5rem] truncate text-center text-[11px] font-extrabold leading-tight sm:text-xs;
+  @apply max-w-[7.5rem] truncate text-center text-[11px] leading-tight sm:text-xs;
+}
+
+.club-map-pin--has-classes .club-map-pin-name {
+  @apply font-extrabold;
+}
+
+.club-map-pin--no-classes .club-map-pin-name {
+  @apply font-medium opacity-90;
 }
 
 .club-map-pin-rating {

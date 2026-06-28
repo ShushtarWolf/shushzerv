@@ -200,12 +200,19 @@ const sortedClubs = computed(() => {
 
     <SzSkeleton v-if="pending" :lines="3" class="mb-6" />
 
-    <div v-else-if="view === 'map' && sortedClubs.length">
-      <ClubsMap :clubs="sortedClubs" />
-    </div>
-    <div v-else-if="sortedClubs.length" :key="sportFilter" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <ClubCard v-for="club in sortedClubs" :key="club.id" :club="club" :date="dateFilter" />
-    </div>
+    <template v-else-if="sortedClubs.length">
+      <p class="mb-3 text-xs text-brand-gray-500">
+        <span class="font-extrabold text-brand-gray-700">{{ t('clubs.legendHasClasses') }}</span>
+        ·
+        <span class="font-medium text-brand-gray-400">{{ t('clubs.legendNoClasses') }}</span>
+      </p>
+
+      <ClubsMap v-if="view === 'map'" :clubs="sortedClubs" />
+      <div v-else :key="sportFilter" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ClubCard v-for="club in sortedClubs" :key="club.id" :club="club" :date="dateFilter" />
+      </div>
+    </template>
+
     <SzEmptyState
       v-else
       :message="t('common.noResults')"

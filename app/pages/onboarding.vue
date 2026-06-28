@@ -17,6 +17,7 @@ const { data: sports } = await useApiFetch<Sport[]>('/api/sports')
 
 const selectedSports = ref<string[]>(['tennis'])
 const level = ref<SkillLevel>('BEGINNER')
+const gender = ref<'MALE' | 'FEMALE' | ''>('')
 const pending = ref(false)
 
 function toggleSport(slug: string) {
@@ -32,7 +33,7 @@ async function finish() {
   try {
     await $fetch('/api/profile/onboard', {
       method: 'POST',
-      body: { sports: selectedSports.value, level: level.value },
+      body: { sports: selectedSports.value, level: level.value, gender: gender.value || undefined },
     })
     await navigateTo(resolvePostAuthRedirect(dashboardPath.value))
   } finally {
@@ -67,6 +68,28 @@ async function finish() {
     </section>
 
     <section class="mt-8">
+      <h2 class="ios-title-3 mb-3">{{ t('onboarding.pickGender') }}</h2>
+      <div class="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          class="ios-card p-4 text-center font-bold tap-highlight"
+          :class="gender === 'MALE' ? 'ring-2 ring-brand-orange' : ''"
+          @click="gender = 'MALE'"
+        >
+          {{ t('profile.genderMale') }}
+        </button>
+        <button
+          type="button"
+          class="ios-card p-4 text-center font-bold tap-highlight"
+          :class="gender === 'FEMALE' ? 'ring-2 ring-brand-orange' : ''"
+          @click="gender = 'FEMALE'"
+        >
+          {{ t('profile.genderFemale') }}
+        </button>
+      </div>
+    </section>
+
+    <section class="mt-8">
       <h2 class="ios-title-3 mb-3">{{ t('onboarding.pickLevel') }}</h2>
       <div class="grid grid-cols-2 gap-2">
         <button
@@ -82,7 +105,7 @@ async function finish() {
       </div>
     </section>
 
-    <SzButton class="mt-10" block size="lg" :disabled="pending || !selectedSports.length" @click="finish">
+    <SzButton class="mt-10" block size="lg" :disabled="pending || !selectedSports.length || !gender" @click="finish">
       {{ t('onboarding.finish') }}
     </SzButton>
   </div>

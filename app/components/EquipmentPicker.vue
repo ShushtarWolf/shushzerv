@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { EquipmentPickerItem } from '~/composables/useEquipmentBooking'
-import { equipmentItemMode, equipmentMaxQty } from '~/composables/useEquipmentBooking'
+import { equipmentItemMode, equipmentMaxQty, equipmentRequiresSelection, equipmentHasSelection } from '~/composables/useEquipmentBooking'
 
 const props = defineProps<{
   items: EquipmentPickerItem[]
   modelValue: Record<string, number>
+  required?: boolean
 }>()
 
 const emit = defineEmits<{ 'update:modelValue': [Record<string, number>] }>()
@@ -34,11 +35,21 @@ function stockHint(item: EquipmentPickerItem) {
   if (item.stock != null) return t('equipment.stockCount', { n: item.stock })
   return ''
 }
+
+const showRequired = computed(() => props.required ?? equipmentRequiresSelection(props.items))
+const missingSelection = computed(
+  () => showRequired.value && !equipmentHasSelection(props.modelValue),
+)
 </script>
 
 <template>
-  <div v-if="items.length" class="mt-3 space-y-2 rounded-xl border border-brand-gray-200 bg-brand-gray-50/80 p-3">
-    <p class="text-xs font-bold uppercase tracking-wide text-brand-gray-600">{{ t('equipment.selectGear') }}</p>
+  <div v-if="items.length" class="mt-3 space-y-2 rounded-xl border border-brand-gray-200 bg-brand-gray-50/80 p-3" :class="missingSelection ? 'border-brand-pink/40' : ''">
+    <p class="text-xs font-bold uppercase tracking-wide text-brand-gray-600">
+      {{ t('equipment.selectGear') }}
+      <span v-if="showRequired" class="text-brand-pink">*</span>
+    </p>
+    <p v-if="showRequired" class="text-[11px] text-brand-gray-500">{{ t('equipment.selectGearHint') }}</p>
+    <p v-if="missingSelection" class="text-[11px] font-semibold text-brand-pink">{{ t('equipment.selectGearRequired') }}</p>
     <div
       v-for="item in items"
       :key="item.id"

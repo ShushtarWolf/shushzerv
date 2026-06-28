@@ -16,6 +16,22 @@ export function equipmentMaxQty(item: EquipmentPickerItem) {
   return perBooking
 }
 
+export function equipmentIsBookable(item: EquipmentPickerItem) {
+  return item.available !== 0
+}
+
+export function equipmentBookableItems(items: EquipmentPickerItem[]) {
+  return items.filter(equipmentIsBookable)
+}
+
+export function equipmentRequiresSelection(items: EquipmentPickerItem[]) {
+  return equipmentBookableItems(items).length > 0
+}
+
+export function equipmentHasSelection(selections: Record<string, number>) {
+  return Object.values(selections).some((qty) => qty > 0)
+}
+
 export function equipmentSelectionsPayload(selections: Record<string, number>) {
   return Object.entries(selections)
     .filter(([, qty]) => qty > 0)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Club, ReservedEquipmentLine, ScheduleEvent } from '~/types'
 import type { EquipmentPickerItem } from '~/composables/useEquipmentBooking'
-import { equipmentRentalSubtotal, equipmentSelectionsPayload } from '~/composables/useEquipmentBooking'
+import { equipmentRentalSubtotal, equipmentSelectionsPayload, equipmentRequiresSelection, equipmentHasSelection } from '~/composables/useEquipmentBooking'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -126,6 +126,14 @@ const equipmentRental = computed(() =>
 )
 
 const bookingGrandTotal = computed(() => selectedSlotPrice.value + equipmentRental.value)
+
+const equipmentSelectionMissing = computed(
+  () => equipmentRequiresSelection(availableEquipment.value) && !equipmentHasSelection(selectedEquipment.value),
+)
+
+const canConfirmBooking = computed(
+  () => !bookingPending.value && !equipmentSelectionMissing.value,
+)
 
 const canPayWithWallet = computed(() => loggedIn.value && walletBalance.value >= bookingGrandTotal.value)
 
@@ -262,6 +270,10 @@ async function confirmBooking() {
     return requireLogin(clubReturnPath(event?.date))
   }
   if (!selectedSlotId.value) return
+  if (equipmentSelectionMissing.value) {
+    bookingError.value = t('equipment.selectGearRequired')
+    return
+  }
   bookingPending.value = true
   try {
     const slotId = selectedSlotId.value
@@ -488,7 +500,7 @@ async function confirmBooking() {
               {{ t('booking.createMatch') }}
             </label>
           </div>
-          <SzButton class="mt-3" block :disabled="bookingPending" @click="confirmBooking">
+          <SzButton class="mt-3" block :disabled="!canConfirmBooking" @click="confirmBooking">
             {{ loggedIn ? t('booking.confirm') : t('booking.continueToLogin') }}
           </SzButton>
         </div>

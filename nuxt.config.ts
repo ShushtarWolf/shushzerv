@@ -1,6 +1,12 @@
+import { fileURLToPath } from 'node:url'
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-06-02',
   devtools: { enabled: false },
+
+  alias: {
+    '#shared': fileURLToPath(new URL('./shared', import.meta.url)),
+  },
 
   modules: [
     '@nuxtjs/tailwindcss',

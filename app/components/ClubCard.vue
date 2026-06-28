@@ -46,7 +46,12 @@ const sportChips = computed(() => {
     </div>
     <div class="flex flex-1 flex-col gap-2 p-4">
       <div class="flex items-start justify-between gap-2">
-        <h3 class="text-lg font-extrabold leading-tight">{{ pickName(club) }}</h3>
+        <h3
+          class="text-lg leading-tight"
+          :class="club.hasGroupClasses ? 'font-extrabold text-brand-gray-900' : 'font-medium text-brand-gray-600'"
+        >
+          {{ pickName(club) }}
+        </h3>
         <SzBadge tone="yellow">★ {{ formatRating(club.rating) }}</SzBadge>
       </div>
       <p class="text-xs text-brand-gray-500 line-clamp-1">{{ localized(club.addressFa, club.addressEn) }}</p>
@@ -58,9 +63,14 @@ const sportChips = computed(() => {
           </span>
         </SzBadge>
       </div>
-      <SzBadge v-if="club.addons?.length" tone="green" class="!text-xs w-fit">
-        {{ t('equipment.badge') }}
-      </SzBadge>
+      <div class="flex flex-wrap gap-1">
+        <SzBadge v-if="club.hasGroupClasses" tone="purple" class="!text-xs w-fit">
+          {{ t('clubs.groupClassesBadge') }}
+        </SzBadge>
+        <SzBadge v-if="club.addons?.length" tone="green" class="!text-xs w-fit">
+          {{ t('equipment.badge') }}
+        </SzBadge>
+      </div>
       <div class="mt-auto flex items-center justify-between gap-2 pt-2">
         <span class="text-sm">
           {{ t('clubs.from') }}

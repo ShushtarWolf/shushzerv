@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ClassSession, Club, Coach, NewsArticle, Sport } from '~/types'
+import type { ClassPackage, ClassSession, Club, Coach, NewsArticle, Sport } from '~/types'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -11,9 +11,11 @@ const { data: clubs, pending: clubsPending } = await useApiFetch<Club[]>('/api/c
 const { data: coaches, pending: coachesPending } = await useApiFetch<Coach[]>('/api/coaches')
 const { data: news, pending: newsPending } = await useApiFetch<NewsArticle[]>('/api/news')
 const { data: classes, pending: classesPending } = await useApiFetch<ClassSession[]>('/api/classes')
+const { data: packages, pending: packagesPending } = await useApiFetch<ClassPackage[]>('/api/packages')
 
 const featuredClubs = computed(() => (clubs.value ?? []).slice(0, 6))
 const featuredClasses = computed(() => (classes.value ?? []).slice(0, 3))
+const featuredPackages = computed(() => (packages.value ?? []).slice(0, 6))
 const topCoaches = computed(() => (coaches.value ?? []).slice(0, 4))
 const latestNews = computed(() => (news.value ?? []).slice(0, 4))
 </script>
@@ -44,6 +46,20 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
         :message="t('common.noResults')"
         :action-label="t('common.browseClubs')"
         :action-to="localePath('/clubs')"
+      />
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+      <SzSection :title="t('packages.title')" :to="localePath('/packages')" :link-text="t('packages.viewAll')" />
+      <HomeSectionSkeleton v-if="packagesPending" :count="3" />
+      <div v-else-if="featuredPackages.length" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <PackageCard v-for="pkg in featuredPackages" :key="pkg.id" :pkg="pkg" />
+      </div>
+      <SzEmptyState
+        v-else
+        :message="t('common.noResults')"
+        :action-label="t('packages.viewAll')"
+        :action-to="localePath('/packages')"
       />
     </section>
 

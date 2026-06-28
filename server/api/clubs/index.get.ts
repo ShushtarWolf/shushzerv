@@ -25,9 +25,20 @@ export default defineEventHandler(async (event) => {
           }
         : {}),
     },
-    include: { courts: { include: { sport: true } }, addons: true },
+    include: {
+      courts: { include: { sport: true } },
+      addons: true,
+      classSessions: {
+        where: { status: { not: 'CANCELLED' }, classType: 'GROUP' },
+        select: { id: true },
+        take: 1,
+      },
+    },
     orderBy: [{ featured: 'desc' }, { rating: 'desc' }],
   })
 
-  return clubs
+  return clubs.map(({ classSessions, ...club }) => ({
+    ...club,
+    hasGroupClasses: classSessions.length > 0,
+  }))
 })

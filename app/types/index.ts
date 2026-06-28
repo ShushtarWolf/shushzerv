@@ -46,6 +46,7 @@ export interface Club {
   courts?: Court[]
   activities?: ClubActivity[]
   addons?: CourtAddon[]
+  hasGroupClasses?: boolean
 }
 
 export type EquipmentMode = 'PROVIDED' | 'RENTAL'
@@ -135,6 +136,7 @@ export interface ScheduleEvent {
   status?: string
   paymentStatus?: string
   slotId?: string
+  courtId?: string
   bookingId?: string
   classId?: string
   matchId?: string
@@ -201,6 +203,12 @@ export interface Conversation {
   lastMessage?: ChatMessage | null
 }
 
+export interface ClassParticipant {
+  initials: string
+  level: SkillLevel
+  gender: 'MALE' | 'FEMALE' | null
+}
+
 export interface ClassSession {
   id: string
   titleFa: string
@@ -211,6 +219,10 @@ export interface ClassSession {
   price: number
   maxSeats: number
   bookedSeats: number
+  classType: 'GROUP' | 'SEMI_PRIVATE'
+  genderPolicy: 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED'
+  minLevel: SkillLevel
+  maxLevel: SkillLevel
   status: 'OPEN' | 'FULL' | 'CANCELLED'
   clubId: string
   sportId: string
@@ -219,6 +231,38 @@ export interface ClassSession {
   sport?: Sport
   coach?: Coach
   enrolled?: boolean
+  participants?: ClassParticipant[]
+}
+
+export interface ClassPackage {
+  id: string
+  titleFa: string
+  titleEn: string
+  descFa: string
+  descEn: string
+  price: number
+  sessionsPerWeek: number
+  durationWeeks: number
+  classType: 'GROUP' | 'SEMI_PRIVATE'
+  groupMode: 'OPEN' | 'WITH_STUDENTS'
+  genderPolicy: 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED'
+  minLevel: SkillLevel
+  maxLevel: SkillLevel
+  maxSeats: number
+  bookedSeats: number
+  daysOfWeek: string
+  startTime: string
+  endTime: string
+  status: 'ACTIVE' | 'INACTIVE'
+  featured: boolean
+  createdAt: string
+  clubId?: string | null
+  coachId?: string | null
+  sportId: string
+  club?: Club | null
+  sport?: Sport
+  coach?: Coach | null
+  participants?: ClassParticipant[]
 }
 
 export interface OpenMatch {

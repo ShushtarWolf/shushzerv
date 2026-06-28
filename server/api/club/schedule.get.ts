@@ -75,6 +75,7 @@ export default defineEventHandler(async (event) => {
       bookingSource: b.source,
       bookingId: b.id,
       slotId: b.slotId,
+      courtId: court?.id,
       note: b.ownerNote,
     })
   }
@@ -113,6 +114,7 @@ export default defineEventHandler(async (event) => {
       color: s.status === 'BLOCKED' ? palette.schedule.blocked : SCHEDULE_COLORS.openSlot,
       status: s.status,
       slotId: s.id,
+      courtId: s.court?.id,
       price: s.price,
       note: s.ownerNote,
     })

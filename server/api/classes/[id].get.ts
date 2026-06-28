@@ -1,10 +1,28 @@
+import { mapClassParticipants } from '../../utils/classSession'
+
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
   const session = await getUserSession(event)
 
   const classSession = await prisma.classSession.findUnique({
     where: { id },
-    include: { club: true, sport: true, coach: true },
+    include: {
+      club: true,
+      sport: true,
+      coach: true,
+      enrollments: {
+        include: {
+          user: {
+            select: {
+              name: true,
+              gender: true,
+              athleteProfile: { select: { level: true } },
+            },
+          },
+        },
+        orderBy: { createdAt: 'asc' },
+      },
+    },
   })
   if (!classSession) {
     throw createError({ statusCode: 404, statusMessage: 'Class not found' })
@@ -18,5 +36,11 @@ export default defineEventHandler(async (event) => {
     enrolled = !!e
   }
 
-  return { ...classSession, enrolled }
+  const { enrollments, ...rest } = classSession
+
+  return {
+    ...rest,
+    enrolled,
+    participants: mapClassParticipants(enrollments),
+  }
 })

@@ -8,6 +8,7 @@ const { localized, pickName, formatPrice, formatDate, formatTimeRange, formatFra
 const { loggedIn } = useUserSession()
 const toast = useToast()
 const { requireLogin } = useAuthRedirect()
+const { classTypeLabel, classGroupLabel, levelRangeLabel } = useClassSession()
 const payWithWallet = ref(true)
 
 const { data: wallet, refresh: refreshWallet } = await useApiFetch<{ balance?: number }>('/api/wallet', {
@@ -30,6 +31,14 @@ useHead({ title: () => (classSession.value ? localized(classSession.value.titleF
 const pending = ref(false)
 const error = ref('')
 
+function enrollErrorMessage(err: { statusCode?: number; statusMessage?: string }) {
+  if (err?.statusCode === 402) return t('wallet.insufficientBalance')
+  if (err?.statusMessage === 'Gender required') return t('classes.enrollGenderRequired')
+  if (err?.statusMessage === 'Gender not allowed for this class') return t('classes.enrollGenderError')
+  if (err?.statusMessage === 'Skill level not in range for this class') return t('classes.enrollLevelError')
+  return t('classes.enrollError')
+}
+
 async function enroll() {
   if (!loggedIn.value) return requireLogin()
   error.value = ''
@@ -43,8 +52,8 @@ async function enroll() {
     await refreshWallet()
     toast.success(t('classes.enrollSuccess'))
   } catch (e: unknown) {
-    const err = e as { statusCode?: number }
-    const msg = err?.statusCode === 402 ? t('wallet.insufficientBalance') : t('classes.enrollError')
+    const err = e as { statusCode?: number; statusMessage?: string }
+    const msg = enrollErrorMessage(err)
     error.value = msg
     toast.error(msg)
   } finally {
@@ -79,9 +88,25 @@ async function cancel() {
       <h1 class="sz-headline">{{ localized(classSession.titleFa, classSession.titleEn) }}</h1>
       <p v-if="classSession.club" class="mt-2 text-sz-gray-600">{{ pickName(classSession.club) }}</p>
       <p v-if="classSession.coach" class="ios-footnote mt-1">{{ pickName(classSession.coach) }}</p>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        <SzBadge tone="blue">{{ classTypeLabel(classSession.classType) }}</SzBadge>
+        <SzBadge tone="purple">{{ classGroupLabel(classSession) }}</SzBadge>
+      </div>
+
       <p class="mt-4">{{ formatDate(classSession.date) }} · {{ formatTimeRange(classSession.startTime, classSession.endTime) }}</p>
       <p class="mt-2 font-bold">{{ formatPrice(classSession.price) }} {{ t('clubs.currency') }}</p>
-      <p class="ios-footnote mt-2">{{ t('classes.seats') }}: {{ formatFraction(classSession.bookedSeats, classSession.maxSeats) }}</p>
+      <p class="ios-footnote mt-2">
+        {{ t('classes.levelRange') }}: {{ levelRangeLabel(classSession.minLevel, classSession.maxLevel) }}
+      </p>
+      <p class="ios-footnote mt-1">{{ t('classes.seats') }}: {{ formatFraction(classSession.bookedSeats, classSession.maxSeats) }}</p>
+
+      <ClassParticipantRoster
+        v-if="classSession.participants"
+        :participants="classSession.participants"
+        :max-seats="classSession.maxSeats"
+        :booked-seats="classSession.bookedSeats"
+      />
 
       <p v-if="error" class="mt-4 text-sm text-sz-pink">{{ error }}</p>
       <label v-if="loggedIn && !classSession.enrolled" class="mt-4 flex cursor-pointer items-center gap-2 text-sm">

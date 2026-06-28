@@ -1,17 +1,26 @@
-import type { SkillLevel } from '@prisma/client'
+import type { SkillLevel, UserGender } from '@prisma/client'
 
 const LEVELS: SkillLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'PRO']
+const GENDERS: UserGender[] = ['MALE', 'FEMALE']
 
 export default defineEventHandler(async (event) => {
   const user = await requireUser(event)
-  const body = await readBody<{ sports?: string[]; level?: SkillLevel }>(event)
+  const body = await readBody<{ sports?: string[]; level?: SkillLevel; gender?: UserGender }>(event)
 
   const sports = Array.isArray(body.sports) ? body.sports.filter(Boolean).slice(0, 8) : []
   const favoriteSports = sports.join(',') || null
 
+  if (body.gender && !GENDERS.includes(body.gender)) {
+    throw createError({ statusCode: 400, statusMessage: 'Invalid gender' })
+  }
+
   await prisma.user.update({
     where: { id: user.id },
-    data: { favoriteSports, onboardedAt: new Date() },
+    data: {
+      favoriteSports,
+      onboardedAt: new Date(),
+      ...(body.gender ? { gender: body.gender } : {}),
+    },
   })
 
   if (user.role === 'ATHLETE' && sports.length) {
