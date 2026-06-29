@@ -1,5 +1,5 @@
 import type { SkillLevel, SkillRatingSource } from '@prisma/client'
-import { levelToScore, scoreToLevel } from '../../shared/skillQuiz'
+import { levelToScore, scoreToLevel } from '#shared/skillQuiz'
 
 const SOURCE_WEIGHT: Record<SkillRatingSource, number> = {
   QUIZ: 1,

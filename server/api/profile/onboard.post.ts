@@ -1,5 +1,5 @@
 import type { SkillLevel, UserGender } from '@prisma/client'
-import { scoreQuizAnswers } from '../../../shared/skillQuiz'
+import { scoreQuizAnswers } from '#shared/skillQuiz'
 import { recalculateAthleteLevel } from '../../utils/skillRating'
 
 const GENDERS: UserGender[] = ['MALE', 'FEMALE']
