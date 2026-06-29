@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>این باکس — فهرست تغییرات (۲۱ تا ۲۸ ژوئن ۲۰۲۶)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #ff5a1f;
+      --ink: #1a1a1a;
+      --muted: #555;
+      --border: #e5e5e0;
+      --bg: #fff;
+      --bg-soft: #f7f7f4;
+    }
+
+    * { box-sizing: border-box; }
+
+    @page {
+      size: A4 landscape;
+      margin: 12mm 10mm 14mm;
+    }
+
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      font-size: 10pt;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--bg);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      border-bottom: 3px solid var(--orange);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 18pt;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    .meta {
+      font-size: 9pt;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    col.col-change { width: 22%; }
+    col.col-usage { width: 78%; }
+
+    thead th {
+      background: var(--orange);
+      color: #fff;
+      font-weight: 600;
+      text-align: right;
+      padding: 10px 12px;
+      font-size: 10.5pt;
+    }
+
+    tbody td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: top;
+    }
+
+    tbody tr:nth-child(even) td {
+      background: var(--bg-soft);
+    }
+
+    .change-title {
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .path {
+      font-family: ui-monospace, 'Courier New', monospace;
+      font-size: 8.5pt;
+      color: var(--orange);
+      direction: ltr;
+      text-align: left;
+      display: inline-block;
+      background: #fff3ed;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-top: 4px;
+    }
+
+    footer {
+      margin-top: 14px;
+      font-size: 8.5pt;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>فهرست تغییرات پلتفرم «این باکس»</h1>
+    <p class="meta">بازه زمانی: ۲۱ تا ۲۸ ژوئن ۲۰۲۶ &nbsp;|&nbsp; نسخه: ۱.۰</p>
+  </header>
+
+  <table>
+    <colgroup>
+      <col class="col-change" />
+      <col class="col-usage" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th>تغییر</th>
+        <th>نحوه استفاده و محل دسترسی</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="change-title">پکیج کلاس</span></td>
+        <td>
+          باشگاه یا مربی می‌تواند چند جلسه کلاس را در قالب یک پکیج با قیمت مشخص تعریف کند.
+          کاربران از صفحه فهرست پکیج‌ها، گزینه مناسب را انتخاب و ثبت‌نام می‌کنند.
+          مدیریت پکیج‌ها از داشبورد باشگاه یا مربی انجام می‌شود.
+          <br /><span class="path">/packages &nbsp;|&nbsp; /packages/[id] &nbsp;|&nbsp; /dashboard/club &nbsp;|&nbsp; /dashboard/coach</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">جلسات تکراری کلاس</span></td>
+        <td>
+          هنگام ایجاد کلاس، روزهای هفته و ساعت برگزاری را مشخص کنید تا جلسات به‌صورت خودکار در تقویم ثبت شوند.
+          زمان‌بندی در داشبورد باشگاه و صفحه جزئیات هر کلاس قابل مشاهده است.
+          <br /><span class="path">/dashboard/club &nbsp;|&nbsp; /classes/[id]</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">ایجاد گروهی کلاس</span></td>
+        <td>
+          مدیر باشگاه می‌تواند چند کلاس را هم‌زمان و با یک عملیات ایجاد کند؛ مناسب برای برنامه‌ریزی هفتگی.
+          <br /><span class="path">/dashboard/club → بخش ایجاد گروهی کلاس</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">فهرست شرکت‌کنندگان کلاس</span></td>
+        <td>
+          در صفحه جزئیات هر کلاس، نام و وضعیت ثبت‌نام‌شدگان نمایش داده می‌شود.
+          <br /><span class="path">/classes/[id]</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">رزرو تجهیزات ورزشی</span></td>
+        <td>
+          هنگام رزرو زمین در باشگاه، امکان انتخاب تجهیزات (مانند راکت یا توپ) در همان فرآیند رزرو فراهم شده است.
+          <br /><span class="path">/clubs/[slug]</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">ثبت گروهی رزرو</span></td>
+        <td>
+          مدیر باشگاه می‌تواند چند رزرو زمین را در یک مرحله ثبت کند.
+          <br /><span class="path">/dashboard/club</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">تقویم برنامه باشگاه</span></td>
+        <td>
+          کلاس‌ها، رزروها و یادداشت‌های رویداد در یک تقویم یکپارچه نمایش داده می‌شوند.
+          <br /><span class="path">/dashboard/club &nbsp;|&nbsp; /dashboard/coach</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">نقشه باشگاه‌ها</span></td>
+        <td>
+          باشگاه‌ها روی نقشه نمایش داده می‌شوند. با کلیک روی هر نشانگر، اطلاعات باشگاه و لینک رزرو باز می‌شود.
+          <br /><span class="path">/clubs (نمای نقشه)</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">نظرات و امتیازدهی</span></td>
+        <td>
+          کاربران می‌توانند برای باشگاه و مربی نظر ثبت کرده و امتیاز بدهند.
+          <br /><span class="path">/clubs/[slug] &nbsp;|&nbsp; /coaches/[id]</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">اعلان‌ها</span></td>
+        <td>
+          اعلان‌های جدید از طریق آیکون زنگوله در بالای صفحه قابل مشاهده است.
+          <br /><span class="path">هدر سایت (NotificationBell)</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">جستجوی سراسری</span></td>
+        <td>
+          با کلیک روی آیکون جستجو در بالای صفحه، می‌توانید باشگاه، کلاس، مربی، مسابقه و سایر بخش‌ها را جستجو کنید.
+          <br /><span class="path">هدر سایت (GlobalSearch)</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">داشبورد جدید</span></td>
+        <td>
+          رابط کاربری داشبورد بازطراحی شده و شامل آمار، نمودار و دسترسی سریع به عملیات اصلی است.
+          <br /><span class="path">/dashboard/club &nbsp;|&nbsp; /dashboard/coach &nbsp;|&nbsp; /dashboard/player</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">کیف پول</span></td>
+        <td>
+          کاربران می‌توانند موجودی کیف پول را شارژ کنند و از آن برای پرداخت استفاده کنند.
+          <br /><span class="path">داشبورد → بخش کیف پول</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">فرآیند ثبت‌نام اولیه</span></td>
+        <td>
+          پس از ایجاد حساب کاربری، نقش (بازیکن، مربی، باشگاه) و اطلاعات پایه در صفحه آنبوردینگ تکمیل می‌شود.
+          <br /><span class="path">/onboarding</span>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="change-title">تغییر نام برند</span></td>
+        <td>
+          نام پلتفرم از «Shushzerv» به «این باکس» (IN BOX S) تغییر یافته است. لوگو، متن‌ها و برندینگ در تمام صفحات به‌روز شده‌اند.
+          <br /><span class="path">تمام صفحات سایت</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>این باکس (IN BOX S) — سند داخلی تغییرات</footer>
+</body>
+</html>
