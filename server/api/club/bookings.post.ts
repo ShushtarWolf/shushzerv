@@ -3,20 +3,19 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<{
     slotId?: string
     guestName?: string
+    athleteName?: string
+    athletePhone?: string
     athleteEmail?: string
     payAtClub?: boolean
   }>(event)
 
   const slotId = body.slotId?.trim()
-  const guestName = body.guestName?.trim()
-  const athleteEmail = body.athleteEmail?.trim().toLowerCase()
 
   if (!slotId) {
     throw createError({ statusCode: 400, statusMessage: 'slotId is required' })
   }
-  if (!guestName && !athleteEmail) {
-    throw createError({ statusCode: 400, statusMessage: 'guestName or athleteEmail is required' })
-  }
+
+  const { userId: athleteId, guestName } = await resolveClubBookingAthlete(body)
 
   const slot = await prisma.slot.findUnique({
     where: { id: slotId },
@@ -27,15 +26,6 @@ export default defineEventHandler(async (event) => {
   }
   if (slot.court.club.ownerId !== user.id) {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
-  }
-
-  let athleteId: string | undefined
-  if (athleteEmail) {
-    const athlete = await prisma.user.findUnique({ where: { email: athleteEmail } })
-    if (!athlete) {
-      throw createError({ statusCode: 404, statusMessage: 'User not found' })
-    }
-    athleteId = athlete.id
   }
 
   const booking = await prisma.$transaction(async (tx) => {

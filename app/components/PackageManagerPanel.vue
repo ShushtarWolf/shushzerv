@@ -105,10 +105,22 @@ async function toggleFeatured(pkg: ClassPackage) {
     </div>
 
     <div class="fd-panel grid gap-3 sm:grid-cols-2">
-      <input v-model="form.titleFa" class="fd-input sm:col-span-2" :placeholder="t('packages.titleField')" />
-      <input v-model="form.titleEn" class="fd-input sm:col-span-2" placeholder="Title (EN)" />
-      <textarea v-model="form.descFa" class="fd-input min-h-20 sm:col-span-2" :placeholder="t('packages.descField') + ' (FA)'" />
-      <textarea v-model="form.descEn" class="fd-input min-h-20 sm:col-span-2" placeholder="Description (EN)" />
+      <div class="sm:col-span-2">
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('packages.titleField') }} (FA)</label>
+        <input v-model="form.titleFa" class="fd-input" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('packages.titleField') }} (EN)</label>
+        <input v-model="form.titleEn" class="fd-input" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('packages.descField') }} (FA)</label>
+        <textarea v-model="form.descFa" class="fd-input min-h-20" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('packages.descField') }} (EN)</label>
+        <textarea v-model="form.descEn" class="fd-input min-h-20" />
+      </div>
 
       <div class="sm:col-span-2">
         <p class="mb-2 text-sm text-fd-muted">{{ t('search.sport') }}</p>
@@ -129,16 +141,34 @@ async function toggleFeatured(pkg: ClassPackage) {
         </div>
       </div>
 
-      <select v-if="mode === 'club' && coaches?.length" v-model="form.coachId" class="fd-input sm:col-span-2">
-        <option value="">{{ t('coaches.title') }}</option>
-        <option v-for="c in coaches" :key="c.id" :value="c.id">{{ localized(c.nameFa, c.nameEn) }}</option>
-      </select>
+      <div v-if="mode === 'club' && coaches?.length" class="sm:col-span-2">
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('coaches.title') }}</label>
+        <select v-model="form.coachId" class="fd-input">
+          <option value="">{{ t('coaches.title') }}</option>
+          <option v-for="c in coaches" :key="c.id" :value="c.id">{{ localized(c.nameFa, c.nameEn) }}</option>
+        </select>
+      </div>
 
-      <input v-model.number="form.price" type="number" class="fd-input" min="0" :placeholder="t('dashboard.price')" />
-      <input v-model.number="form.sessionsPerWeek" type="number" class="fd-input" min="1" max="7" :placeholder="t('packages.sessionsPerWeek')" />
-      <input v-model.number="form.durationWeeks" type="number" class="fd-input" min="1" max="52" :placeholder="t('packages.durationWeeksField')" />
-      <input v-model="form.startTime" type="time" class="fd-input" />
-      <input v-model="form.endTime" type="time" class="fd-input" />
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.price') }}</label>
+        <input v-model.number="form.price" type="number" class="fd-input" min="0" />
+      </div>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('packages.sessionsPerWeek') }}</label>
+        <input v-model.number="form.sessionsPerWeek" type="number" class="fd-input" min="1" max="7" />
+      </div>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('packages.durationWeeksField') }}</label>
+        <input v-model.number="form.durationWeeks" type="number" class="fd-input" min="1" max="52" />
+      </div>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('schedule.start') }}</label>
+        <input v-model="form.startTime" type="time" class="fd-input" />
+      </div>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('schedule.end') }}</label>
+        <input v-model="form.endTime" type="time" class="fd-input" />
+      </div>
 
       <div class="sm:col-span-2">
         <p class="mb-2 text-sm text-fd-muted">{{ t('packages.daysOfWeek') }}</p>
@@ -156,42 +186,56 @@ async function toggleFeatured(pkg: ClassPackage) {
         </div>
       </div>
 
-      <select v-model="form.classType" class="fd-input" @change="onClassTypeChange">
-        <option value="GROUP">{{ t('classes.group') }}</option>
-        <option value="SEMI_PRIVATE">{{ t('classes.semiPrivate') }}</option>
-      </select>
-      <select v-if="form.classType === 'GROUP'" v-model="form.groupMode" class="fd-input sm:col-span-2">
-        <option value="OPEN">{{ t('packages.withoutStudents') }}</option>
-        <option value="WITH_STUDENTS">{{ t('packages.withStudents') }}</option>
-      </select>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.filterType') }}</label>
+        <select v-model="form.classType" class="fd-input" @change="onClassTypeChange">
+          <option value="GROUP">{{ t('classes.group') }}</option>
+          <option value="SEMI_PRIVATE">{{ t('classes.semiPrivate') }}</option>
+        </select>
+      </div>
+      <div v-if="form.classType === 'GROUP'" class="sm:col-span-2">
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('packages.groupMode') }}</label>
+        <select v-model="form.groupMode" class="fd-input">
+          <option value="OPEN">{{ t('packages.withoutStudents') }}</option>
+          <option value="WITH_STUDENTS">{{ t('packages.withStudents') }}</option>
+        </select>
+      </div>
       <p v-if="form.classType === 'GROUP'" class="text-xs text-fd-muted sm:col-span-2">
         {{ form.groupMode === 'OPEN' ? t('packages.withoutStudentsHint') : t('packages.withStudentsHint') }}
       </p>
-      <input
-        v-model.number="form.maxSeats"
-        type="number"
-        class="fd-input"
-        :min="form.classType === 'SEMI_PRIVATE' ? 2 : 5"
-        :max="form.classType === 'SEMI_PRIVATE' ? 4 : 50"
-        :placeholder="t('classes.seats')"
-      />
-      <select v-model="form.genderPolicy" class="fd-input">
-        <option v-for="opt in genderPolicyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-      </select>
-      <select v-model="form.minLevel" class="fd-input">
-        <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
-      </select>
-      <select v-model="form.maxLevel" class="fd-input">
-        <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
-      </select>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.seats') }}</label>
+        <input
+          v-model.number="form.maxSeats"
+          type="number"
+          class="fd-input"
+          :min="form.classType === 'SEMI_PRIVATE' ? 2 : 5"
+          :max="form.classType === 'SEMI_PRIVATE' ? 4 : 50"
+        />
+      </div>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.filterGender') }}</label>
+        <select v-model="form.genderPolicy" class="fd-input">
+          <option v-for="opt in genderPolicyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.minLevel') }}</label>
+        <select v-model="form.minLevel" class="fd-input">
+          <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.maxLevel') }}</label>
+        <select v-model="form.maxLevel" class="fd-input">
+          <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+        </select>
+      </div>
 
-      <input
-        v-if="form.classType === 'GROUP' && form.groupMode === 'WITH_STUDENTS'"
-        v-model="form.studentEmails"
-        type="text"
-        class="fd-input sm:col-span-2"
-        :placeholder="t('packages.studentEmails')"
-      />
+      <div v-if="form.classType === 'GROUP' && form.groupMode === 'WITH_STUDENTS'" class="sm:col-span-2">
+        <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('packages.studentEmails') }}</label>
+        <input v-model="form.studentEmails" type="text" class="fd-input" />
+      </div>
 
       <label class="flex items-center gap-2 text-sm text-fd-navy sm:col-span-2">
         <input v-model="form.featured" type="checkbox" class="rounded border-fd-primary/20" />

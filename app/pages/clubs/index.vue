@@ -71,6 +71,7 @@ watch(
   () => sync(sports.value, sportFilter.value),
   { immediate: true },
 )
+useSanitizeSportFilter(sportFilter, sports)
 
 const sortedClubs = computed(() => {
   const list = [...(clubs.value ?? [])]

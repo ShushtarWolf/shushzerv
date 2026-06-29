@@ -1,12 +1,17 @@
+import { entitySportWhere } from '../../utils/visibleSports'
+
 export default defineEventHandler(async (event) => {
   const { sport, city } = getQuery(event)
+  const sportFilter = entitySportWhere(sport)
+  if (sportFilter === null) return []
+
   const session = await getUserSession(event)
   const userId = session?.user?.id
 
   const matches = await prisma.openMatch.findMany({
     where: {
       status: { in: ['OPEN', 'FULL'] },
-      ...(sport ? { sport: { slug: String(sport) } } : {}),
+      ...sportFilter,
       ...(city ? { city: String(city) } : {}),
     },
     include: {

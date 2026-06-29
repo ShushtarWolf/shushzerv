@@ -1,3 +1,5 @@
+import { courtSportWhere, entitySportWhere, visibleSportWhere } from '../utils/visibleSports'
+
 export type GlobalSearchResult = {
   type: 'club' | 'coach' | 'class' | 'match' | 'tournament' | 'news' | 'sport'
   labelFa: string
@@ -23,6 +25,7 @@ export default defineEventHandler(async (event) => {
   const [clubs, coaches, classes, matches, tournaments, news, sports] = await Promise.all([
     prisma.club.findMany({
       where: {
+        courts: { some: courtSportWhere(null)! },
         OR: [
           { nameFa: textFilter(search) },
           { nameEn: textFilter(search) },
@@ -36,6 +39,7 @@ export default defineEventHandler(async (event) => {
     }),
     prisma.coach.findMany({
       where: {
+        ...entitySportWhere(undefined),
         OR: [
           { nameFa: textFilter(search) },
           { nameEn: textFilter(search) },
@@ -49,6 +53,7 @@ export default defineEventHandler(async (event) => {
     prisma.classSession.findMany({
       where: {
         status: { not: 'CANCELLED' },
+        ...entitySportWhere(undefined),
         OR: [{ titleFa: textFilter(search) }, { titleEn: textFilter(search) }],
       },
       include: { club: true, sport: true },
@@ -58,6 +63,7 @@ export default defineEventHandler(async (event) => {
     prisma.openMatch.findMany({
       where: {
         status: 'OPEN',
+        ...entitySportWhere(undefined),
         OR: [
           { city: textFilter(search) },
           { notesFa: textFilter(search) },
@@ -72,6 +78,7 @@ export default defineEventHandler(async (event) => {
     prisma.tournament.findMany({
       where: {
         status: { not: 'CANCELLED' },
+        ...entitySportWhere(undefined),
         OR: [{ titleFa: textFilter(search) }, { titleEn: textFilter(search) }],
       },
       include: { sport: true, club: true },
@@ -92,6 +99,7 @@ export default defineEventHandler(async (event) => {
     }),
     prisma.sport.findMany({
       where: {
+        ...visibleSportWhere(),
         OR: [
           { nameFa: textFilter(search) },
           { nameEn: textFilter(search) },

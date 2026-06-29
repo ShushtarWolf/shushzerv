@@ -23,6 +23,7 @@ watch(
   () => sync(sports.value, sportFilter.value),
   { immediate: true },
 )
+useSanitizeSportFilter(sportFilter, sports)
 
 const typeOptions = [
   { value: '', label: 'classes.filterAll' },

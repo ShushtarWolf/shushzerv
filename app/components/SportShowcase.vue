@@ -9,8 +9,7 @@ const localePath = useLocalePath()
 
 const isRtl = computed(() => locale.value === 'fa')
 
-const popularSlugs = ['tennis', 'padel', 'football', 'basketball']
-const popular = computed(() => props.sports.filter((s) => popularSlugs.includes(s.slug)))
+const popular = computed(() => props.sports)
 
 function courtCount(sport: Sport) {
   return sport.courtCount && sport.courtCount > 0 ? sport.courtCount : null

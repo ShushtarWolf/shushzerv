@@ -1,13 +1,16 @@
+import { courtSportWhere, isVisibleSportSlug } from '../../utils/visibleSports'
+
 export default defineEventHandler(async (event) => {
   const { sport, city, q, featured, indoor, date, genderPolicy } = getQuery(event)
+
+  const courtFilter = courtSportWhere(sport)
+  if (courtFilter === null) return []
 
   const clubs = await prisma.club.findMany({
     where: {
       ...(featured === 'true' ? { featured: true } : {}),
       ...(city ? { city: String(city) } : {}),
-      ...(sport
-        ? { courts: { some: { sport: { slug: String(sport) } } } }
-        : {}),
+      courts: { some: courtFilter },
       ...(indoor === 'true' ? { courts: { some: { indoor: true } } } : {}),
       ...(indoor === 'false' ? { courts: { some: { indoor: false } } } : {}),
       ...(genderPolicy ? { courts: { some: { genderPolicy: String(genderPolicy) as 'MEN' | 'WOMEN' | 'FAMILY' | 'MIXED' } } } : {}),
@@ -37,8 +40,9 @@ export default defineEventHandler(async (event) => {
     orderBy: [{ featured: 'desc' }, { rating: 'desc' }],
   })
 
-  return clubs.map(({ classSessions, ...club }) => ({
+  return clubs.map(({ classSessions, courts, ...club }) => ({
     ...club,
+    courts: courts.filter((court) => isVisibleSportSlug(court.sport.slug)),
     hasGroupClasses: classSessions.length > 0,
   }))
 })

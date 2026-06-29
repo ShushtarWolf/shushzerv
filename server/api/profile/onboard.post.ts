@@ -1,5 +1,6 @@
 import type { SkillLevel, UserGender } from '@prisma/client'
 import { scoreQuizAnswers } from '#shared/skillQuiz'
+import { isVisibleSportSlug } from '#shared/visibleSports'
 import { recalculateAthleteLevel } from '../../utils/skillRating'
 
 const GENDERS: UserGender[] = ['MALE', 'FEMALE']
@@ -12,7 +13,9 @@ export default defineEventHandler(async (event) => {
     quizAnswers?: Record<string, string>
   }>(event)
 
-  const sports = Array.isArray(body.sports) ? body.sports.filter(Boolean).slice(0, 8) : []
+  const sports = Array.isArray(body.sports)
+    ? body.sports.filter((slug): slug is string => typeof slug === 'string' && isVisibleSportSlug(slug)).slice(0, 8)
+    : []
   const favoriteSports = sports.join(',') || null
 
   if (body.gender && !GENDERS.includes(body.gender)) {

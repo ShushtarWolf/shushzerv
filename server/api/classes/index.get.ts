@@ -1,14 +1,18 @@
 import { mapClassParticipants } from '../../utils/classSession'
+import { entitySportWhere } from '../../utils/visibleSports'
 
 export default defineEventHandler(async (event) => {
   const { sport, city, clubId, classType, genderPolicy } = getQuery(event)
+  const sportFilter = entitySportWhere(sport)
+  if (sportFilter === null) return []
+
   const session = await getUserSession(event)
   const userId = session?.user?.id
 
   const classes = await prisma.classSession.findMany({
     where: {
       status: { not: 'CANCELLED' },
-      ...(sport ? { sport: { slug: String(sport) } } : {}),
+      ...sportFilter,
       ...(city ? { club: { city: String(city) } } : {}),
       ...(clubId ? { clubId: String(clubId) } : {}),
       ...(classType ? { classType: String(classType) as 'GROUP' | 'SEMI_PRIVATE' } : {}),

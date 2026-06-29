@@ -1,4 +1,5 @@
 import type { SkillLevel } from '@prisma/client'
+import { isVisibleSportSlug } from '#shared/visibleSports'
 
 const LEVELS: SkillLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'PRO']
 
@@ -17,7 +18,7 @@ export default defineEventHandler(async (event) => {
     notesEn?: string
   }>(event)
 
-  if (!body.sport || !body.city || !body.date || !body.startTime) {
+  if (!body.sport || !isVisibleSportSlug(body.sport) || !body.city || !body.date || !body.startTime) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid input' })
   }
 

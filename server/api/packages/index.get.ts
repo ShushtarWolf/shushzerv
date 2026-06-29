@@ -1,12 +1,15 @@
 import { packageInclude, mapPackage } from '../../utils/classPackage'
+import { entitySportWhere } from '../../utils/visibleSports'
 
 export default defineEventHandler(async (event) => {
   const { sport, city, clubId, coachId, classType, featured, groupMode } = getQuery(event)
+  const sportFilter = entitySportWhere(sport)
+  if (sportFilter === null) return []
 
   const packages = await prisma.classPackage.findMany({
     where: {
       status: 'ACTIVE',
-      ...(sport ? { sport: { slug: String(sport) } } : {}),
+      ...sportFilter,
       ...(city ? { OR: [{ club: { city: String(city) } }, { coach: { city: String(city) } }] } : {}),
       ...(clubId ? { clubId: String(clubId) } : {}),
       ...(coachId ? { coachId: String(coachId) } : {}),

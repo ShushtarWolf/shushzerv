@@ -10,16 +10,13 @@ export default defineEventHandler(async (event) => {
     slotIds?: string[]
     reservations?: ReservationInput[]
     guestName?: string
+    athleteName?: string
+    athletePhone?: string
     athleteEmail?: string
     payAtClub?: boolean
   }>(event)
 
-  const guestName = body.guestName?.trim()
-  const athleteEmail = body.athleteEmail?.trim().toLowerCase()
-
-  if (!guestName && !athleteEmail) {
-    throw createError({ statusCode: 400, statusMessage: 'guestName or athleteEmail is required' })
-  }
+  const { userId: athleteId, guestName } = await resolveClubBookingAthlete(body)
 
   const inputs: ReservationInput[] = []
   if (body.slotIds?.length) {
@@ -33,13 +30,6 @@ export default defineEventHandler(async (event) => {
   }
   if (inputs.length > 50) {
     throw createError({ statusCode: 400, statusMessage: 'Maximum 50 slots per request' })
-  }
-
-  let athleteId: string | undefined
-  if (athleteEmail) {
-    const athlete = await prisma.user.findUnique({ where: { email: athleteEmail } })
-    if (!athlete) throw createError({ statusCode: 404, statusMessage: 'User not found' })
-    athleteId = athlete.id
   }
 
   const resolvedSlotIds: string[] = []

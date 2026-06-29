@@ -1,5 +1,6 @@
 import { datesMatchingWeekdays } from '#shared/scheduleWeekday'
 import { parseDaysOfWeek } from '#shared/classPackage'
+import { blockSlotsForClassSession } from '../../../utils/classSlots'
 import { defaultMaxSeatsForType, parseClassSessionFields } from '../../../utils/classSession'
 
 const MAX_BULK_CLASS_DAYS = 90
@@ -23,6 +24,7 @@ export default defineEventHandler(async (event) => {
     genderPolicy?: string
     minLevel?: string
     maxLevel?: string
+    courtIds?: string[]
   }>(event)
 
   if (
@@ -70,23 +72,38 @@ export default defineEventHandler(async (event) => {
     return { created: 0, skipped: dates.length }
   }
 
-  await prisma.classSession.createMany({
-    data: toCreate.map((date) => ({
-      clubId: body.clubId!,
-      sportId: body.sportId!,
-      coachId: body.coachId || null,
-      titleFa: body.titleFa!,
-      titleEn: body.titleEn || body.titleFa!,
-      date,
-      startTime: body.startTime!,
-      endTime: body.endTime!,
-      price: body.price ?? club.priceFrom,
-      maxSeats: body.maxSeats ?? defaultMaxSeatsForType(classType),
-      classType,
-      genderPolicy: extra.genderPolicy ?? 'MIXED',
-      minLevel: extra.minLevel ?? 'BEGINNER',
-      maxLevel: extra.maxLevel ?? 'PRO',
-    })),
+  const courtIds = body.courtIds?.filter(Boolean)
+
+  await prisma.$transaction(async (tx) => {
+    await tx.classSession.createMany({
+      data: toCreate.map((date) => ({
+        clubId: body.clubId!,
+        sportId: body.sportId!,
+        coachId: body.coachId || null,
+        titleFa: body.titleFa!,
+        titleEn: body.titleEn || body.titleFa!,
+        date,
+        startTime: body.startTime!,
+        endTime: body.endTime!,
+        price: body.price ?? club.priceFrom,
+        maxSeats: body.maxSeats ?? defaultMaxSeatsForType(classType),
+        classType,
+        genderPolicy: extra.genderPolicy ?? 'MIXED',
+        minLevel: extra.minLevel ?? 'BEGINNER',
+        maxLevel: extra.maxLevel ?? 'PRO',
+      })),
+    })
+
+    for (const date of toCreate) {
+      await blockSlotsForClassSession({
+        clubId: body.clubId!,
+        sportId: body.sportId!,
+        date,
+        startTime: body.startTime!,
+        endTime: body.endTime!,
+        courtIds,
+      }, tx)
+    }
   })
 
   return { created: toCreate.length, skipped: dates.length - toCreate.length }

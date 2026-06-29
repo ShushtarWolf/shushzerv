@@ -194,7 +194,8 @@ const selectedGridCells = ref<GridCellSelection[]>([])
 const showBulkReservePanel = ref(false)
 const showRecurringClassPanel = ref(false)
 const clubBookGuestName = ref('')
-const clubBookAthleteEmail = ref('')
+const clubBookAthletePhone = ref('')
+const clubBookAthleteKnown = ref(false)
 const clubBookError = ref('')
 const clubBookPending = ref(false)
 const recurringClassPending = ref(false)
@@ -725,7 +726,7 @@ async function addClass() {
     maxLevel: 'PRO',
   }
   message.value = t('classes.created')
-  await refreshClasses()
+  await Promise.all([refreshClasses(), refreshSchedule()])
 }
 
 async function addTournament() {
@@ -813,8 +814,38 @@ function clearScheduleSelection() {
   showBulkReservePanel.value = false
   showRecurringClassPanel.value = false
   clubBookGuestName.value = ''
-  clubBookAthleteEmail.value = ''
+  clubBookAthletePhone.value = ''
+  clubBookAthleteKnown.value = false
   clubBookError.value = ''
+}
+
+async function lookupClubAthleteByPhone() {
+  const phone = clubBookAthletePhone.value.trim()
+  if (phone.length < 8) {
+    clubBookAthleteKnown.value = false
+    return
+  }
+  try {
+    const res = await $fetch<{ found: boolean; athlete?: { name: string } }>('/api/club/athletes', { query: { phone } })
+    if (res.found && res.athlete) {
+      clubBookGuestName.value = res.athlete.name
+      clubBookAthleteKnown.value = true
+    } else {
+      clubBookAthleteKnown.value = false
+    }
+  } catch {
+    clubBookAthleteKnown.value = false
+  }
+}
+
+function selectedCourtIdsForClass(): string[] {
+  const ids = new Set<string>()
+  for (const cell of selectedGridCells.value) ids.add(cell.courtId)
+  for (const slotId of clubBookSlotIds.value) {
+    const event = scheduleEvents.value.find((e) => e.slotId === slotId)
+    if (event?.courtId) ids.add(event.courtId)
+  }
+  return [...ids]
 }
 
 function onToggleScheduleSlot(event: ScheduleEvent) {
@@ -911,7 +942,7 @@ async function confirmClubBooking() {
   clubBookError.value = ''
   const slotId = focusedScheduleEvent.value?.slotId
   if (!slotId) return
-  if (!clubBookGuestName.value.trim() && !clubBookAthleteEmail.value.trim()) {
+  if (!clubBookGuestName.value.trim() || !clubBookAthletePhone.value.trim()) {
     clubBookError.value = t('dashboard.clubBookNameRequired')
     return
   }
@@ -921,8 +952,8 @@ async function confirmClubBooking() {
       method: 'POST',
       body: {
         slotId,
-        guestName: clubBookGuestName.value.trim() || undefined,
-        athleteEmail: clubBookAthleteEmail.value.trim() || undefined,
+        athleteName: clubBookGuestName.value.trim(),
+        athletePhone: clubBookAthletePhone.value.trim(),
       },
     })
     closeScheduleFocus()
@@ -939,7 +970,7 @@ async function confirmClubBooking() {
 async function confirmBulkClubBooking() {
   clubBookError.value = ''
   if (!totalScheduleSelection.value) return
-  if (!clubBookGuestName.value.trim() && !clubBookAthleteEmail.value.trim()) {
+  if (!clubBookGuestName.value.trim() || !clubBookAthletePhone.value.trim()) {
     clubBookError.value = t('dashboard.clubBookNameRequired')
     return
   }
@@ -955,8 +986,8 @@ async function confirmBulkClubBooking() {
           startTime: c.startTime,
           endTime: c.endTime,
         })),
-        guestName: clubBookGuestName.value.trim() || undefined,
-        athleteEmail: clubBookAthleteEmail.value.trim() || undefined,
+        athleteName: clubBookGuestName.value.trim(),
+        athletePhone: clubBookAthletePhone.value.trim(),
       },
     })
     clearScheduleSelection()
@@ -980,9 +1011,10 @@ async function confirmRecurringClasses() {
   }
   recurringClassPending.value = true
   try {
+    const courtIds = selectedCourtIdsForClass()
     const res = await $fetch<{ created: number; skipped: number }>('/api/club/classes/bulk', {
       method: 'POST',
-      body: { clubId: selectedClubId.value, ...form },
+      body: { clubId: selectedClubId.value, ...form, courtIds: courtIds.length ? courtIds : undefined },
     })
     clearScheduleSelection()
     showRecurringClassPanel.value = false
@@ -1158,9 +1190,23 @@ async function confirmRecurringClasses() {
         <div v-if="showBulkReservePanel" class="mt-4 border-t border-fd-primary/10 pt-4">
           <h3 class="mb-3 text-sm font-bold text-fd-navy">{{ t('dashboard.reserveSelected') }}</h3>
           <div class="grid gap-3 sm:grid-cols-2">
-            <input v-model="clubBookGuestName" class="fd-input" :placeholder="t('dashboard.clubBookGuestName')" />
-            <input v-model="clubBookAthleteEmail" type="email" class="fd-input" :placeholder="t('dashboard.clubBookEmail')" />
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.clubBookGuestName') }}</label>
+              <input v-model="clubBookGuestName" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.clubBookPhone') }}</label>
+              <input
+                v-model="clubBookAthletePhone"
+                type="tel"
+                class="fd-input"
+                inputmode="tel"
+                dir="ltr"
+                @blur="lookupClubAthleteByPhone"
+              />
+            </div>
           </div>
+          <p v-if="clubBookAthleteKnown" class="mt-2 text-sm text-fd-success">{{ t('dashboard.clubBookAthleteFound') }}</p>
           <p class="mt-2 text-sm text-fd-muted">{{ t('dashboard.clubBookHint') }}</p>
           <p v-if="clubBookError" class="mt-2 text-sm text-fd-danger">{{ clubBookError }}</p>
           <button
@@ -1177,21 +1223,48 @@ async function confirmRecurringClasses() {
           <h3 class="mb-1 text-sm font-bold text-fd-navy">{{ t('dashboard.scheduleRecurringClass') }}</h3>
           <p class="mb-3 text-xs text-fd-muted">{{ t('dashboard.recurringClassHint') }}</p>
           <div class="grid gap-3 sm:grid-cols-2">
-            <input v-model="recurringClassForm.titleFa" class="fd-input sm:col-span-2" :placeholder="t('classes.titleField')" />
-            <select v-model="recurringClassForm.sportId" class="fd-input">
-              <option value="">{{ t('search.sport') }}</option>
-              <option v-for="s in sports" :key="s.id" :value="s.id">{{ pickName(s) }}</option>
-            </select>
-            <select v-model="recurringClassForm.coachId" class="fd-input">
-              <option value="">{{ t('coaches.title') }}</option>
-              <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
-            </select>
-            <input v-model="recurringClassForm.fromDate" type="date" class="fd-input" />
-            <input v-model="recurringClassForm.toDate" type="date" class="fd-input" />
-            <input v-model="recurringClassForm.startTime" type="time" class="fd-input" />
-            <input v-model="recurringClassForm.endTime" type="time" class="fd-input" />
-            <input v-model.number="recurringClassForm.price" type="number" class="fd-input" :placeholder="t('dashboard.price')" />
-            <input v-model.number="recurringClassForm.maxSeats" type="number" class="fd-input" :placeholder="t('classes.seats')" />
+            <div class="sm:col-span-2">
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.titleField') }}</label>
+              <input v-model="recurringClassForm.titleFa" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('search.sport') }}</label>
+              <select v-model="recurringClassForm.sportId" class="fd-input">
+                <option value="">{{ t('search.sport') }}</option>
+                <option v-for="s in sports" :key="s.id" :value="s.id">{{ pickName(s) }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('coaches.title') }}</label>
+              <select v-model="recurringClassForm.coachId" class="fd-input">
+                <option value="">{{ t('coaches.title') }}</option>
+                <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.fromDate') }}</label>
+              <input v-model="recurringClassForm.fromDate" type="date" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.toDate') }}</label>
+              <input v-model="recurringClassForm.toDate" type="date" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('schedule.start') }}</label>
+              <input v-model="recurringClassForm.startTime" type="time" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('schedule.end') }}</label>
+              <input v-model="recurringClassForm.endTime" type="time" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.price') }}</label>
+              <input v-model.number="recurringClassForm.price" type="number" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.seats') }}</label>
+              <input v-model.number="recurringClassForm.maxSeats" type="number" class="fd-input" />
+            </div>
           </div>
           <div class="mt-3">
             <p class="mb-2 text-xs font-semibold text-fd-muted">{{ t('packages.daysOfWeek') }}</p>
@@ -1234,9 +1307,23 @@ async function confirmRecurringClasses() {
         >
           <h3 class="mb-3 text-sm font-bold text-fd-navy">{{ t('dashboard.clubBookTitle') }}</h3>
           <div class="grid gap-3">
-            <input v-model="clubBookGuestName" class="fd-input" :placeholder="t('dashboard.clubBookGuestName')" />
-            <input v-model="clubBookAthleteEmail" type="email" class="fd-input" :placeholder="t('dashboard.clubBookEmail')" />
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.clubBookGuestName') }}</label>
+              <input v-model="clubBookGuestName" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.clubBookPhone') }}</label>
+              <input
+                v-model="clubBookAthletePhone"
+                type="tel"
+                class="fd-input"
+                inputmode="tel"
+                dir="ltr"
+                @blur="lookupClubAthleteByPhone"
+              />
+            </div>
           </div>
+          <p v-if="clubBookAthleteKnown" class="mt-2 text-sm text-fd-success">{{ t('dashboard.clubBookAthleteFound') }}</p>
           <p class="mt-2 text-sm text-fd-muted">{{ t('dashboard.clubBookHint') }}</p>
           <p v-if="clubBookError" class="mt-2 text-sm text-fd-danger">{{ clubBookError }}</p>
           <div class="mt-4 flex flex-wrap gap-2">
@@ -1598,7 +1685,10 @@ async function confirmRecurringClasses() {
           </div>
         </div>
         <div class="fd-panel grid gap-3 sm:grid-cols-2">
-          <input v-model="newClass.titleFa" class="fd-input sm:col-span-2" :placeholder="t('classes.titleField')" />
+          <div class="sm:col-span-2">
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.titleField') }}</label>
+            <input v-model="newClass.titleFa" class="fd-input" />
+          </div>
           <div class="sm:col-span-2">
             <p class="mb-2 text-sm text-fd-muted">{{ t('search.sport') }}</p>
             <div class="flex flex-wrap gap-2">
@@ -1617,41 +1707,70 @@ async function confirmRecurringClasses() {
               </button>
             </div>
           </div>
-          <input v-model="newClass.date" type="date" class="fd-input" />
-          <input v-model="newClass.startTime" type="time" class="fd-input" />
-          <input v-model="newClass.endTime" type="time" class="fd-input" />
-          <input v-model.number="newClass.price" type="number" class="fd-input" :placeholder="t('dashboard.price')" />
-          <select v-model="newClass.classType" class="fd-input" @change="onClassTypeChange(newClass)">
-            <option value="GROUP">{{ t('classes.group') }}</option>
-            <option value="SEMI_PRIVATE">{{ t('classes.semiPrivate') }}</option>
-          </select>
-          <input
-            v-model.number="newClass.maxSeats"
-            type="number"
-            class="fd-input"
-            :min="newClass.classType === 'SEMI_PRIVATE' ? 2 : 5"
-            :max="newClass.classType === 'SEMI_PRIVATE' ? 4 : 50"
-            :placeholder="t('classes.seats')"
-          />
-          <select v-model="newClass.genderPolicy" class="fd-input">
-            <option v-for="opt in genderPolicyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-          </select>
-          <select v-model="newClass.minLevel" class="fd-input">
-            <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
-          </select>
-          <select v-model="newClass.maxLevel" class="fd-input">
-            <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
-          </select>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.date') }}</label>
+            <input v-model="newClass.date" type="date" class="fd-input" />
+          </div>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('schedule.start') }}</label>
+            <input v-model="newClass.startTime" type="time" class="fd-input" />
+          </div>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('schedule.end') }}</label>
+            <input v-model="newClass.endTime" type="time" class="fd-input" />
+          </div>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.price') }}</label>
+            <input v-model.number="newClass.price" type="number" class="fd-input" />
+          </div>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.filterType') }}</label>
+            <select v-model="newClass.classType" class="fd-input" @change="onClassTypeChange(newClass)">
+              <option value="GROUP">{{ t('classes.group') }}</option>
+              <option value="SEMI_PRIVATE">{{ t('classes.semiPrivate') }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.seats') }}</label>
+            <input
+              v-model.number="newClass.maxSeats"
+              type="number"
+              class="fd-input"
+              :min="newClass.classType === 'SEMI_PRIVATE' ? 2 : 5"
+              :max="newClass.classType === 'SEMI_PRIVATE' ? 4 : 50"
+            />
+          </div>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.filterGender') }}</label>
+            <select v-model="newClass.genderPolicy" class="fd-input">
+              <option v-for="opt in genderPolicyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.minLevel') }}</label>
+            <select v-model="newClass.minLevel" class="fd-input">
+              <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.maxLevel') }}</label>
+            <select v-model="newClass.maxLevel" class="fd-input">
+              <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+            </select>
+          </div>
           <div class="sm:col-span-2 flex flex-wrap gap-2">
             <button type="button" class="fd-btn-ghost text-xs" @click="applyClassTierPreset(newClass, 'MEN', 'beginner')">{{ t('dashboard.genderMen') }} · {{ t('classes.tierBeginner') }}</button>
             <button type="button" class="fd-btn-ghost text-xs" @click="applyClassTierPreset(newClass, 'MEN', 'advanced')">{{ t('dashboard.genderMen') }} · {{ t('classes.tierAdvanced') }}</button>
             <button type="button" class="fd-btn-ghost text-xs" @click="applyClassTierPreset(newClass, 'WOMEN', 'beginner')">{{ t('dashboard.genderWomen') }} · {{ t('classes.tierBeginner') }}</button>
             <button type="button" class="fd-btn-ghost text-xs" @click="applyClassTierPreset(newClass, 'WOMEN', 'advanced')">{{ t('dashboard.genderWomen') }} · {{ t('classes.tierAdvanced') }}</button>
           </div>
-          <select v-model="newClass.coachId" class="fd-input sm:col-span-2">
-            <option value="">{{ t('coaches.title') }}</option>
-            <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
-          </select>
+          <div class="sm:col-span-2">
+            <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('coaches.title') }}</label>
+            <select v-model="newClass.coachId" class="fd-input">
+              <option value="">{{ t('coaches.title') }}</option>
+              <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
+            </select>
+          </div>
           <button type="button" class="fd-btn-primary sm:col-span-2" @click="addClass">{{ t('classes.create') }}</button>
         </div>
       </section>
@@ -1836,36 +1955,68 @@ async function confirmRecurringClasses() {
           </div>
 
           <div v-else-if="editModal === 'class'" class="grid gap-3 sm:grid-cols-2">
-            <input v-model="editClass.titleFa" class="fd-input sm:col-span-2" :placeholder="t('classes.titleField')" />
-            <input v-model="editClass.date" type="date" class="fd-input" />
-            <input v-model="editClass.startTime" type="time" class="fd-input" />
-            <input v-model="editClass.endTime" type="time" class="fd-input" />
-            <input v-model.number="editClass.price" type="number" class="fd-input" :placeholder="t('dashboard.price')" />
-            <select v-model="editClass.classType" class="fd-input" @change="onClassTypeChange(editClass)">
-              <option value="GROUP">{{ t('classes.group') }}</option>
-              <option value="SEMI_PRIVATE">{{ t('classes.semiPrivate') }}</option>
-            </select>
-            <input
-              v-model.number="editClass.maxSeats"
-              type="number"
-              class="fd-input"
-              :min="editClass.classType === 'SEMI_PRIVATE' ? 2 : 5"
-              :max="editClass.classType === 'SEMI_PRIVATE' ? 4 : 50"
-              :placeholder="t('classes.seats')"
-            />
-            <select v-model="editClass.genderPolicy" class="fd-input">
-              <option v-for="opt in genderPolicyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
-            </select>
-            <select v-model="editClass.minLevel" class="fd-input">
-              <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
-            </select>
-            <select v-model="editClass.maxLevel" class="fd-input">
-              <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
-            </select>
-            <select v-model="editClass.coachId" class="fd-input sm:col-span-2">
-              <option value="">{{ t('coaches.title') }}</option>
-              <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
-            </select>
+            <div class="sm:col-span-2">
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.titleField') }}</label>
+              <input v-model="editClass.titleFa" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.date') }}</label>
+              <input v-model="editClass.date" type="date" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('schedule.start') }}</label>
+              <input v-model="editClass.startTime" type="time" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('schedule.end') }}</label>
+              <input v-model="editClass.endTime" type="time" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.price') }}</label>
+              <input v-model.number="editClass.price" type="number" class="fd-input" />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.filterType') }}</label>
+              <select v-model="editClass.classType" class="fd-input" @change="onClassTypeChange(editClass)">
+                <option value="GROUP">{{ t('classes.group') }}</option>
+                <option value="SEMI_PRIVATE">{{ t('classes.semiPrivate') }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.seats') }}</label>
+              <input
+                v-model.number="editClass.maxSeats"
+                type="number"
+                class="fd-input"
+                :min="editClass.classType === 'SEMI_PRIVATE' ? 2 : 5"
+                :max="editClass.classType === 'SEMI_PRIVATE' ? 4 : 50"
+              />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.filterGender') }}</label>
+              <select v-model="editClass.genderPolicy" class="fd-input">
+                <option v-for="opt in genderPolicyOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.minLevel') }}</label>
+              <select v-model="editClass.minLevel" class="fd-input">
+                <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('classes.maxLevel') }}</label>
+              <select v-model="editClass.maxLevel" class="fd-input">
+                <option v-for="l in levels" :key="l" :value="l">{{ levelLabel(l) }}</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('coaches.title') }}</label>
+              <select v-model="editClass.coachId" class="fd-input">
+                <option value="">{{ t('coaches.title') }}</option>
+                <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
+              </select>
+            </div>
           </div>
 
           <div v-else-if="editModal === 'tournament'" class="grid gap-3 sm:grid-cols-2">

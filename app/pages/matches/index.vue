@@ -24,6 +24,7 @@ watch(
   () => sync(sports.value, sportFilter.value),
   { immediate: true },
 )
+useSanitizeSportFilter(sportFilter, sports)
 
 const showForm = ref(false)
 const form = ref({

@@ -1,3 +1,4 @@
+import { blockSlotsForClassSession } from '../../utils/classSlots'
 import { defaultMaxSeatsForType, parseClassSessionFields } from '../../utils/classSession'
 
 export default defineEventHandler(async (event) => {
@@ -17,6 +18,7 @@ export default defineEventHandler(async (event) => {
     genderPolicy?: string
     minLevel?: string
     maxLevel?: string
+    courtIds?: string[]
   }>(event)
 
   if (!body.clubId || !body.sportId || !body.titleFa || !body.date || !body.startTime || !body.endTime) {
@@ -35,22 +37,39 @@ export default defineEventHandler(async (event) => {
     maxSeats: body.maxSeats ?? defaultMaxSeatsForType(classType),
   })
 
-  return prisma.classSession.create({
-    data: {
+  const courtIds = body.courtIds?.filter(Boolean)
+
+  const session = await prisma.$transaction(async (tx) => {
+    const created = await tx.classSession.create({
+      data: {
+        clubId: body.clubId,
+        sportId: body.sportId,
+        coachId: body.coachId || null,
+        titleFa: body.titleFa,
+        titleEn: body.titleEn || body.titleFa,
+        date: body.date,
+        startTime: body.startTime,
+        endTime: body.endTime,
+        price: body.price ?? club.priceFrom,
+        maxSeats: body.maxSeats ?? defaultMaxSeatsForType(classType),
+        classType,
+        genderPolicy: extra.genderPolicy ?? 'MIXED',
+        minLevel: extra.minLevel ?? 'BEGINNER',
+        maxLevel: extra.maxLevel ?? 'PRO',
+      },
+    })
+
+    await blockSlotsForClassSession({
       clubId: body.clubId,
       sportId: body.sportId,
-      coachId: body.coachId || null,
-      titleFa: body.titleFa,
-      titleEn: body.titleEn || body.titleFa,
       date: body.date,
       startTime: body.startTime,
       endTime: body.endTime,
-      price: body.price ?? club.priceFrom,
-      maxSeats: body.maxSeats ?? defaultMaxSeatsForType(classType),
-      classType,
-      genderPolicy: extra.genderPolicy ?? 'MIXED',
-      minLevel: extra.minLevel ?? 'BEGINNER',
-      maxLevel: extra.maxLevel ?? 'PRO',
-    },
+      courtIds,
+    }, tx)
+
+    return created
   })
+
+  return session
 })
