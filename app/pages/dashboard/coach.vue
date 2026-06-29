@@ -473,6 +473,8 @@ function goNextUp(item: NextUpItem) {
         />
       </DashboardMetricsStrip>
 
+      <SkillRatingPanel class="mb-6" />
+
       <div v-if="pendingSessions.length" class="fd-panel mb-6">
         <h2 class="fd-section-title mb-3">{{ t('dashboard.pendingSessions') }}</h2>
         <div class="space-y-2">

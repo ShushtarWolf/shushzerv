@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { WalletTransaction } from '~/types'
 
-definePageMeta({ layout: 'dashboard', middleware: ['auth', 'role-admin'] })
+definePageMeta({ layout: 'admin', middleware: ['auth', 'role-admin'] })
 
 const { t } = useI18n()
 const localePath = useLocalePath()
-const { user } = useUserSession()
 const { displayName } = useUserDisplayName()
 const { pickName, localized, formatPrice, formatNumber, formatRating } = useLocaleContent()
 
@@ -87,6 +86,8 @@ const activitySeries = computed(() => [
   { name: t('dashboard.platformFees'), data: chartData.value?.fees ?? [] },
 ])
 
+const searchableTabs = ['users', 'clubs', 'coaches']
+
 const { data: usersData, refresh: refreshUsers } = await useApiFetch<{ items: AdminUser[]; total: number }>('/api/admin/users', {
   query: computed(() => ({ q: searchQuery.value || undefined, page: userPage.value, limit: 20 })),
   watch: [searchQuery, userPage],
@@ -117,24 +118,26 @@ const editingArticleId = ref('')
 const editArticle = ref({ titleFa: '', titleEn: '', bodyFa: '', excerptFa: '' })
 
 const tabs = computed(() => [
-  { id: 'overview', label: t('dashboard.overview'), icon: 'grid' },
-  { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet' },
-  { id: 'users', label: t('dashboard.allUsers'), icon: 'users' },
-  { id: 'clubs', label: t('dashboard.allClubs'), icon: 'building' },
-  { id: 'coaches', label: t('dashboard.allCoaches'), icon: 'users' },
-  { id: 'bookings', label: t('dashboard.bookingsTab'), icon: 'chart' },
-  { id: 'matches', label: t('matches.title'), icon: 'calendar' },
-  { id: 'classes', label: t('classes.title'), icon: 'users' },
-  { id: 'news', label: t('nav.news'), icon: 'grid' },
+  { id: 'overview', label: t('dashboard.overview'), icon: 'grid', group: 'general' },
+  { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet', group: 'general' },
+  { id: 'users', label: t('dashboard.allUsers'), icon: 'users', group: 'manage' },
+  { id: 'clubs', label: t('dashboard.allClubs'), icon: 'building', group: 'manage' },
+  { id: 'coaches', label: t('dashboard.allCoaches'), icon: 'users', group: 'manage' },
+  { id: 'bookings', label: t('dashboard.bookingsTab'), icon: 'chart', group: 'operations' },
+  { id: 'matches', label: t('matches.title'), icon: 'calendar', group: 'operations' },
+  { id: 'classes', label: t('classes.title'), icon: 'users', group: 'operations' },
+  { id: 'news', label: t('nav.news'), icon: 'grid', group: 'content' },
 ])
 
-provideDashboardSidebar(tabs, tab)
+provideAdminSidebar(tabs, tab)
+
+const pageTitle = computed(() => tabs.value.find((item) => item.id === tab.value)?.label ?? t('dashboard.platformAdmin'))
 
 const statItems = computed(() => [
-  { label: t('dashboard.platformFees'), value: formatPrice(stats.value?.platformFees ?? 0), tone: 'blue' as const, icon: 'wallet' },
-  { label: t('dashboard.allUsers'), value: formatNumber(stats.value?.users ?? 0), tone: 'pink' as const, icon: 'users' },
-  { label: t('dashboard.allClubs'), value: formatNumber(stats.value?.clubs ?? 0), tone: 'orange' as const, icon: 'building' },
-  { label: t('dashboard.myBookings'), value: formatNumber(stats.value?.bookings ?? 0), tone: 'green' as const, icon: 'chart' },
+  { label: t('dashboard.platformFees'), value: formatPrice(stats.value?.platformFees ?? 0) },
+  { label: t('dashboard.allUsers'), value: formatNumber(stats.value?.users ?? 0) },
+  { label: t('dashboard.allClubs'), value: formatNumber(stats.value?.clubs ?? 0) },
+  { label: t('dashboard.myBookings'), value: formatNumber(stats.value?.bookings ?? 0) },
 ])
 
 const topClubs = computed(() => {
@@ -153,6 +156,10 @@ const topClubs = computed(() => {
 
 const newArticle = ref({ slug: '', titleFa: '', titleEn: '', excerptFa: '', bodyFa: '' })
 const message = ref('')
+
+watch(tab, () => {
+  searchQuery.value = ''
+})
 
 function txLabel(type: WalletTransaction['type']) {
   return t(`wallet.types.${type}`, type)
@@ -224,247 +231,388 @@ async function deleteArticle(id: string) {
 
 <template>
   <div class="page-enter">
-    <DashboardPageHeader :title="t('dashboard.platformAdmin')" :subtitle="t('dashboard.welcomeUser', { name: displayName })" />
-    <p v-if="message" class="mb-4 text-sm text-fd-success">{{ message }}</p>
+    <AdminPageHeader
+      :title="pageTitle"
+      :subtitle="tab === 'overview' ? t('dashboard.welcomeUser', { name: displayName }) : undefined"
+    />
 
-    <div v-if="['users', 'clubs'].includes(tab)" class="mb-4">
-      <input v-model="searchQuery" type="search" class="fd-input max-w-md" :placeholder="t('dashboard.searchPlaceholder')" />
+    <div v-if="message" class="admin-banner-success">
+      <span>{{ message }}</span>
+      <button type="button" class="admin-btn-plain ms-auto !py-1" @click="message = ''">{{ t('common.close') }}</button>
     </div>
 
+    <AdminCard v-if="searchableTabs.includes(tab)" class="mb-4" flush>
+      <template #header>
+        <div class="relative w-full max-w-md">
+          <SzIcon name="search" class="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--admin-subtle)]" />
+          <input
+            v-model="searchQuery"
+            type="search"
+            class="admin-input !py-2 ps-9"
+            :placeholder="t('admin.searchInList')"
+          />
+        </div>
+      </template>
+    </AdminCard>
+
     <template v-if="tab === 'overview'">
-      <DashboardMetricsStrip
-        :title="t('dashboard.platformSummary')"
-        :subtitle="t('dashboard.walletBalance') + ': ' + formatPrice(stats?.walletBalance ?? 0)"
-      >
-        <DashboardMetricCard
+      <div class="mb-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <AdminMetricCard
           v-for="item in statItems"
           :key="item.label"
           :label="item.label"
           :value="item.value"
-          :tone="item.tone"
-          :icon="item.icon"
         />
-      </DashboardMetricsStrip>
-
-      <div class="mb-6 grid gap-4 lg:grid-cols-12">
-        <div class="lg:col-span-8">
-          <DashboardChartCard
-            :title="t('dashboard.growthTrend')"
-            :subtitle="t('dashboard.last6Months')"
-            :loading="chartsPending"
-            :error="!!chartsError"
-            @retry="refreshCharts()"
-          >
-            <DashboardApexChart
-              type="line"
-              :series="growthSeries"
-              :options="lineOptions(monthLabels, [colors.primary, colors.orange])"
-              :height="260"
-            />
-          </DashboardChartCard>
-        </div>
-        <div class="lg:col-span-4">
-          <DashboardChartCard
-            :title="t('dashboard.platformActivity')"
-            :subtitle="t('dashboard.last6Months')"
-            :loading="chartsPending"
-            :error="!!chartsError"
-            @retry="refreshCharts()"
-          >
-            <DashboardApexChart
-              type="bar"
-              :series="[{ name: t('dashboard.myBookings'), data: chartData?.bookings ?? [] }]"
-              :options="barOptions(monthLabels, [colors.success])"
-              :height="260"
-            />
-          </DashboardChartCard>
-        </div>
-        <div class="lg:col-span-5">
-          <DashboardRankTable v-if="topClubs.length" :items="topClubs" />
-          <SzEmptyState v-else :message="t('common.noResults')" />
-        </div>
-        <div class="lg:col-span-7">
-          <DashboardChartCard
-            :title="t('dashboard.revenueAndFees')"
-            :subtitle="t('dashboard.last6Months')"
-            :loading="chartsPending"
-            :error="!!chartsError"
-            @retry="refreshCharts()"
-          >
-            <DashboardApexChart
-              type="bar"
-              :series="activitySeries"
-              :options="barOptions(monthLabels, [colors.primary, colors.pink])"
-              :height="240"
-            />
-          </DashboardChartCard>
-        </div>
       </div>
 
-      <h2 class="fd-section-title mb-4">{{ t('dashboard.recentActivity') }}</h2>
-      <div v-if="stats?.recentTransactions?.length" class="space-y-2">
-        <div v-for="tx in stats.recentTransactions.slice(0, 10)" :key="tx.id" class="fd-transaction-row">
-          <div class="min-w-0">
-            <p class="font-semibold text-fd-navy">{{ localized(tx.noteFa, tx.noteEn) || txLabel(tx.type) }}</p>
-            <p class="text-sm text-fd-muted">
-              {{ tx.user?.name ?? (tx.club ? pickName(tx.club) : '') }}
-            </p>
-          </div>
-          <p class="shrink-0 font-bold" :class="tx.amount >= 0 ? 'text-fd-success' : 'text-fd-danger'">
-            {{ tx.amount >= 0 ? '+' : '' }}{{ formatPrice(tx.amount) }}
+      <AdminCard class="mb-4">
+        <p class="text-[0.8125rem] text-[var(--admin-muted)]">
+          {{ t('dashboard.walletBalance') }}:
+          <span class="font-semibold text-[var(--admin-text)]">{{ formatPrice(stats?.walletBalance ?? 0) }}</span>
+        </p>
+      </AdminCard>
+
+      <div class="mb-4 grid gap-4 lg:grid-cols-12">
+        <AdminCard class="lg:col-span-8">
+          <h2 class="mb-1 text-[0.9375rem] font-semibold text-[var(--admin-text)]">{{ t('dashboard.growthTrend') }}</h2>
+          <p class="mb-4 text-[0.75rem] text-[var(--admin-muted)]">{{ t('dashboard.last6Months') }}</p>
+          <DashboardApexChart
+            v-if="!chartsPending && !chartsError"
+            type="line"
+            :series="growthSeries"
+            :options="lineOptions(monthLabels, [colors.primary, colors.orange])"
+            :height="260"
+          />
+          <p v-else-if="chartsError" class="text-sm text-[var(--admin-critical)]">
+            {{ t('common.error') }}
+            <button type="button" class="admin-btn-plain !px-1" @click="refreshCharts()">{{ t('admin.reload') }}</button>
           </p>
-        </div>
+          <p v-else class="text-sm text-[var(--admin-muted)]">{{ t('common.loading') }}</p>
+        </AdminCard>
+
+        <AdminCard class="lg:col-span-4">
+          <h2 class="mb-1 text-[0.9375rem] font-semibold text-[var(--admin-text)]">{{ t('dashboard.platformActivity') }}</h2>
+          <p class="mb-4 text-[0.75rem] text-[var(--admin-muted)]">{{ t('dashboard.last6Months') }}</p>
+          <DashboardApexChart
+            v-if="!chartsPending && !chartsError"
+            type="bar"
+            :series="[{ name: t('dashboard.myBookings'), data: chartData?.bookings ?? [] }]"
+            :options="barOptions(monthLabels, [colors.success])"
+            :height="260"
+          />
+        </AdminCard>
+
+        <AdminCard class="lg:col-span-5" flush>
+          <template #header>
+            <h2 class="text-[0.9375rem] font-semibold text-[var(--admin-text)]">{{ t('dashboard.allClubs') }}</h2>
+          </template>
+          <AdminResourceTable :empty="!topClubs.length" :empty-message="t('admin.noItems')">
+            <template #head>
+              <tr>
+                <th>{{ t('admin.name') }}</th>
+                <th>{{ t('dashboard.court') }}</th>
+                <th>{{ t('dashboard.popularity') }}</th>
+              </tr>
+            </template>
+            <tr v-for="club in topClubs" :key="club.name">
+              <td class="font-medium">{{ club.name }}</td>
+              <td>{{ club.value }}</td>
+              <td>{{ club.popularity }}%</td>
+            </tr>
+          </AdminResourceTable>
+        </AdminCard>
+
+        <AdminCard class="lg:col-span-7">
+          <h2 class="mb-1 text-[0.9375rem] font-semibold text-[var(--admin-text)]">{{ t('dashboard.revenueAndFees') }}</h2>
+          <p class="mb-4 text-[0.75rem] text-[var(--admin-muted)]">{{ t('dashboard.last6Months') }}</p>
+          <DashboardApexChart
+            v-if="!chartsPending && !chartsError"
+            type="bar"
+            :series="activitySeries"
+            :options="barOptions(monthLabels, [colors.primary, colors.pink])"
+            :height="240"
+          />
+        </AdminCard>
       </div>
+
+      <AdminCard flush>
+        <template #header>
+          <h2 class="text-[0.9375rem] font-semibold text-[var(--admin-text)]">{{ t('dashboard.recentActivity') }}</h2>
+        </template>
+        <AdminResourceTable :empty="!stats?.recentTransactions?.length" :empty-message="t('admin.noItems')">
+          <template #head>
+            <tr>
+              <th>{{ t('admin.name') }}</th>
+              <th>{{ t('admin.customer') }}</th>
+              <th class="text-end">{{ t('admin.amount') }}</th>
+            </tr>
+          </template>
+          <tr v-for="tx in stats?.recentTransactions?.slice(0, 10) ?? []" :key="tx.id">
+            <td>{{ localized(tx.noteFa, tx.noteEn) || txLabel(tx.type) }}</td>
+            <td class="text-[var(--admin-muted)]">{{ tx.user?.name ?? (tx.club ? pickName(tx.club) : '—') }}</td>
+            <td class="text-end font-medium" :class="tx.amount >= 0 ? 'text-[#108043]' : 'text-[var(--admin-critical)]'">
+              {{ tx.amount >= 0 ? '+' : '' }}{{ formatPrice(tx.amount) }}
+            </td>
+          </tr>
+        </AdminResourceTable>
+      </AdminCard>
     </template>
 
     <template v-else-if="tab === 'wallet'">
-      <div class="fd-panel mb-6 p-5">
-        <h2 class="fd-section-title mb-2">{{ t('dashboard.platformFees') }}</h2>
-        <p class="text-3xl font-black text-fd-primary">{{ formatPrice(stats?.platformFees ?? 0) }}</p>
-        <p class="mt-1 text-sm text-fd-muted">{{ t('dashboard.walletBalance') }}: {{ formatPrice(stats?.walletBalance ?? 0) }}</p>
+      <div class="mb-4 grid gap-3 sm:grid-cols-2">
+        <AdminMetricCard :label="t('dashboard.platformFees')" :value="formatPrice(stats?.platformFees ?? 0)" />
+        <AdminMetricCard :label="t('dashboard.walletBalance')" :value="formatPrice(stats?.walletBalance ?? 0)" />
       </div>
-      <WalletPanel kind="user" variant="fd" />
+      <AdminCard>
+        <WalletPanel kind="user" variant="fd" />
+      </AdminCard>
     </template>
 
     <template v-else-if="tab === 'users'">
-      <div class="space-y-2">
-        <div v-for="u in users" :key="u.id" class="fd-transaction-row">
-          <div>
-            <p class="font-semibold text-fd-navy">
-              {{ u.name }}
-              <SzBadge v-if="u.suspendedAt" tone="pink" class="ms-2 text-xs">{{ t('dashboard.suspended') }}</SzBadge>
-            </p>
-            <p class="text-sm text-fd-muted">{{ u.email }} · {{ u.role }} · {{ formatNumber(u._count.bookings) }} {{ t('dashboard.myBookings').toLowerCase() }}</p>
+      <AdminCard flush>
+        <AdminResourceTable :empty="!users.length" :empty-message="t('admin.noItems')">
+          <template #head>
+            <tr>
+              <th>{{ t('admin.name') }}</th>
+              <th>{{ t('admin.email') }}</th>
+              <th>{{ t('admin.role') }}</th>
+              <th>{{ t('dashboard.myBookings') }}</th>
+              <th>{{ t('admin.balance') }}</th>
+              <th>{{ t('admin.status') }}</th>
+              <th class="text-end">{{ t('admin.actions') }}</th>
+            </tr>
+          </template>
+          <tr v-for="u in users" :key="u.id">
+            <td class="font-medium">{{ u.name }}</td>
+            <td class="text-[var(--admin-muted)]">{{ u.email }}</td>
+            <td>
+              <select :value="u.role" class="admin-input !w-auto !py-1.5" @change="updateUserRole(u.id, ($event.target as HTMLSelectElement).value)">
+                <option value="ATHLETE">ATHLETE</option>
+                <option value="COACH">COACH</option>
+                <option value="CLUB_ADMIN">CLUB_ADMIN</option>
+                <option value="PLATFORM_ADMIN">PLATFORM_ADMIN</option>
+              </select>
+            </td>
+            <td>{{ formatNumber(u._count.bookings) }}</td>
+            <td>{{ formatPrice(u.wallet?.balance ?? 0) }}</td>
+            <td>
+              <AdminBadge v-if="u.suspendedAt" tone="critical">{{ t('dashboard.suspended') }}</AdminBadge>
+              <AdminBadge v-else tone="success">{{ t('admin.active') }}</AdminBadge>
+            </td>
+            <td class="text-end">
+              <button type="button" class="admin-btn-plain !py-1" @click="toggleUserSuspended(u.id, !!u.suspendedAt)">
+                {{ u.suspendedAt ? t('dashboard.unsuspend') : t('dashboard.suspend') }}
+              </button>
+            </td>
+          </tr>
+        </AdminResourceTable>
+        <template v-if="userTotalPages > 1" #footer>
+          <div class="admin-pagination w-full">
+            <button type="button" class="admin-btn-secondary" :disabled="userPage <= 1" @click="userPage--">{{ t('common.back') }}</button>
+            <span>{{ userPage }} / {{ userTotalPages }}</span>
+            <button type="button" class="admin-btn-secondary" :disabled="userPage >= userTotalPages" @click="userPage++">{{ t('common.next') }}</button>
           </div>
-          <div class="flex flex-wrap items-center gap-2 text-end text-sm">
-            <select :value="u.role" class="fd-input !py-1 text-xs" @change="updateUserRole(u.id, ($event.target as HTMLSelectElement).value)">
-              <option value="ATHLETE">ATHLETE</option>
-              <option value="COACH">COACH</option>
-              <option value="CLUB_ADMIN">CLUB_ADMIN</option>
-              <option value="PLATFORM_ADMIN">PLATFORM_ADMIN</option>
-            </select>
-            <button type="button" class="fd-btn-ghost text-xs" @click="toggleUserSuspended(u.id, !!u.suspendedAt)">
-              {{ u.suspendedAt ? t('dashboard.unsuspend') : t('dashboard.suspend') }}
-            </button>
-            <p class="font-bold text-fd-navy">{{ formatPrice(u.wallet?.balance ?? 0) }}</p>
-          </div>
-        </div>
-      </div>
-      <div v-if="userTotalPages > 1" class="mt-4 flex items-center justify-center gap-3">
-        <button type="button" class="fd-btn-ghost text-xs" :disabled="userPage <= 1" @click="userPage--">{{ t('common.back') }}</button>
-        <span class="text-sm text-fd-muted">{{ userPage }} / {{ userTotalPages }}</span>
-        <button type="button" class="fd-btn-ghost text-xs" :disabled="userPage >= userTotalPages" @click="userPage++">{{ t('common.next') }}</button>
-      </div>
+        </template>
+      </AdminCard>
     </template>
 
     <template v-else-if="tab === 'clubs'">
-      <div class="space-y-2">
-        <div v-for="c in clubs" :key="c.id" class="fd-card p-4">
-          <div class="flex flex-wrap items-start justify-between gap-2">
-            <div>
-              <p class="font-semibold text-fd-navy">{{ pickName(c) }}</p>
-              <p class="text-sm text-fd-muted">{{ c.city }} · {{ c.owner?.name ?? '—' }}</p>
-            </div>
-            <button type="button" class="fd-btn-ghost text-xs" @click="toggleClubFeatured(c.id, c.featured)">
-              {{ c.featured ? t('dashboard.unfeature') : t('dashboard.feature') }}
-            </button>
+      <AdminCard flush>
+        <AdminResourceTable :empty="!clubs.length" :empty-message="t('admin.noItems')">
+          <template #head>
+            <tr>
+              <th>{{ t('admin.name') }}</th>
+              <th>{{ t('admin.city') }}</th>
+              <th>{{ t('admin.owner') }}</th>
+              <th>{{ t('dashboard.court') }}</th>
+              <th>{{ t('admin.featured') }}</th>
+              <th class="text-end">{{ t('admin.actions') }}</th>
+            </tr>
+          </template>
+          <tr v-for="c in clubs" :key="c.id">
+            <td class="font-medium">{{ pickName(c) }}</td>
+            <td>{{ c.city }}</td>
+            <td class="text-[var(--admin-muted)]">{{ c.owner?.name ?? '—' }}</td>
+            <td>{{ formatNumber(c._count?.courts ?? 0) }}</td>
+            <td>
+              <AdminBadge :tone="c.featured ? 'success' : 'default'">
+                {{ c.featured ? t('admin.featured') : '—' }}
+              </AdminBadge>
+            </td>
+            <td class="text-end">
+              <button type="button" class="admin-btn-plain !py-1" @click="toggleClubFeatured(c.id, c.featured)">
+                {{ c.featured ? t('dashboard.unfeature') : t('dashboard.feature') }}
+              </button>
+            </td>
+          </tr>
+        </AdminResourceTable>
+        <template v-if="clubTotalPages > 1" #footer>
+          <div class="admin-pagination w-full">
+            <button type="button" class="admin-btn-secondary" :disabled="clubPage <= 1" @click="clubPage--">{{ t('common.back') }}</button>
+            <span>{{ clubPage }} / {{ clubTotalPages }}</span>
+            <button type="button" class="admin-btn-secondary" :disabled="clubPage >= clubTotalPages" @click="clubPage++">{{ t('common.next') }}</button>
           </div>
-        </div>
-      </div>
-      <div v-if="clubTotalPages > 1" class="mt-4 flex items-center justify-center gap-3">
-        <button type="button" class="fd-btn-ghost text-xs" :disabled="clubPage <= 1" @click="clubPage--">{{ t('common.back') }}</button>
-        <span class="text-sm text-fd-muted">{{ clubPage }} / {{ clubTotalPages }}</span>
-        <button type="button" class="fd-btn-ghost text-xs" :disabled="clubPage >= clubTotalPages" @click="clubPage++">{{ t('common.next') }}</button>
-      </div>
+        </template>
+      </AdminCard>
     </template>
 
     <template v-else-if="tab === 'coaches'">
-      <div class="space-y-2">
-        <div v-for="c in coaches" :key="c.id" class="fd-card p-4">
-          <div class="flex flex-wrap items-start justify-between gap-2">
-            <div>
-              <p class="font-semibold text-fd-navy">{{ pickName(c) }}</p>
-              <p class="text-sm text-fd-muted">
-                {{ c.city }} · ★ {{ formatRating(c.rating) }} ·
-                {{ formatNumber(c._count?.coachSessions ?? 0) }} {{ t('dashboard.sessionsTab') }}
-              </p>
-              <p v-if="c.user" class="text-xs text-fd-muted">{{ c.user.email }}</p>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <NuxtLink :to="localePath(`/coaches/${c.id}`)" class="fd-btn-ghost text-xs">{{ t('dashboard.viewPublicProfile') }}</NuxtLink>
-              <button type="button" class="fd-btn-ghost text-xs" @click="toggleCoachFeatured(c.id, c.featured)">
-                {{ c.featured ? t('dashboard.unfeature') : t('dashboard.feature') }}
-              </button>
-            </div>
+      <AdminCard flush>
+        <AdminResourceTable :empty="!coaches.length" :empty-message="t('admin.noItems')">
+          <template #head>
+            <tr>
+              <th>{{ t('admin.name') }}</th>
+              <th>{{ t('admin.city') }}</th>
+              <th>{{ t('dashboard.sessionsTab') }}</th>
+              <th>{{ t('admin.email') }}</th>
+              <th>{{ t('admin.featured') }}</th>
+              <th class="text-end">{{ t('admin.actions') }}</th>
+            </tr>
+          </template>
+          <tr v-for="c in coaches" :key="c.id">
+            <td class="font-medium">{{ pickName(c) }}</td>
+            <td>{{ c.city }}</td>
+            <td>★ {{ formatRating(c.rating) }} · {{ formatNumber(c._count?.coachSessions ?? 0) }}</td>
+            <td class="text-[var(--admin-muted)]">{{ c.user?.email ?? '—' }}</td>
+            <td>
+              <AdminBadge :tone="c.featured ? 'success' : 'default'">
+                {{ c.featured ? t('admin.featured') : '—' }}
+              </AdminBadge>
+            </td>
+            <td class="text-end">
+              <div class="flex justify-end gap-1">
+                <NuxtLink :to="localePath(`/coaches/${c.id}`)" class="admin-btn-plain !py-1">{{ t('dashboard.viewPublicProfile') }}</NuxtLink>
+                <button type="button" class="admin-btn-plain !py-1" @click="toggleCoachFeatured(c.id, c.featured)">
+                  {{ c.featured ? t('dashboard.unfeature') : t('dashboard.feature') }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </AdminResourceTable>
+        <template v-if="coachTotalPages > 1" #footer>
+          <div class="admin-pagination w-full">
+            <button type="button" class="admin-btn-secondary" :disabled="coachPage <= 1" @click="coachPage--">{{ t('common.back') }}</button>
+            <span>{{ coachPage }} / {{ coachTotalPages }}</span>
+            <button type="button" class="admin-btn-secondary" :disabled="coachPage >= coachTotalPages" @click="coachPage++">{{ t('common.next') }}</button>
           </div>
-        </div>
-      </div>
-      <div v-if="coachTotalPages > 1" class="mt-4 flex items-center justify-center gap-3">
-        <button type="button" class="fd-btn-ghost text-xs" :disabled="coachPage <= 1" @click="coachPage--">{{ t('common.back') }}</button>
-        <span class="text-sm text-fd-muted">{{ coachPage }} / {{ coachTotalPages }}</span>
-        <button type="button" class="fd-btn-ghost text-xs" :disabled="coachPage >= coachTotalPages" @click="coachPage++">{{ t('common.next') }}</button>
-      </div>
+        </template>
+      </AdminCard>
     </template>
 
     <template v-else-if="tab === 'bookings'">
-      <div class="space-y-2">
-        <div v-for="b in adminBookings?.items ?? []" :key="b.id" class="fd-card p-4 text-sm">
-          <p class="font-semibold text-fd-navy">{{ b.user?.name ?? b.guestName ?? 'Guest' }}</p>
-          <p class="text-fd-muted">
-            {{ b.slot?.court?.club ? pickName(b.slot.court.club) : '' }} ·
-            {{ b.slot?.date ?? '' }} · {{ b.slot ? `${b.slot.startTime}–${b.slot.endTime}` : '' }}
-          </p>
-          <p class="text-fd-navy">{{ b.status }} · {{ b.paymentStatus }} · {{ formatPrice(b.slot?.price ?? 0) }}</p>
-        </div>
-      </div>
+      <AdminCard flush>
+        <AdminResourceTable :empty="!(adminBookings?.items?.length)" :empty-message="t('admin.noItems')">
+          <template #head>
+            <tr>
+              <th>{{ t('admin.customer') }}</th>
+              <th>{{ t('admin.club') }}</th>
+              <th>{{ t('admin.date') }}</th>
+              <th>{{ t('admin.time') }}</th>
+              <th>{{ t('admin.status') }}</th>
+              <th>{{ t('admin.payment') }}</th>
+              <th class="text-end">{{ t('admin.amount') }}</th>
+            </tr>
+          </template>
+          <tr v-for="b in adminBookings?.items ?? []" :key="b.id">
+            <td class="font-medium">{{ b.user?.name ?? b.guestName ?? 'Guest' }}</td>
+            <td>{{ b.slot?.court?.club ? pickName(b.slot.court.club) : '—' }}</td>
+            <td>{{ b.slot?.date ?? '—' }}</td>
+            <td>{{ b.slot ? `${b.slot.startTime}–${b.slot.endTime}` : '—' }}</td>
+            <td><AdminBadge tone="info">{{ b.status }}</AdminBadge></td>
+            <td>{{ b.paymentStatus }}</td>
+            <td class="text-end font-medium">{{ formatPrice(b.slot?.price ?? 0) }}</td>
+          </tr>
+        </AdminResourceTable>
+      </AdminCard>
     </template>
 
     <template v-else-if="tab === 'matches'">
-      <div class="space-y-2">
-        <div v-for="m in adminMatches?.items ?? []" :key="m.id" class="fd-card p-4 text-sm">
-          <p class="font-semibold text-fd-navy">{{ m.sport ? pickName(m.sport) : '' }} · {{ m.city }}</p>
-          <p class="text-fd-muted">{{ m.date }} · {{ m.status }} · {{ formatNumber(m.joinedCount) }}/{{ formatNumber(m.maxPlayers) }}</p>
-        </div>
-      </div>
+      <AdminCard flush>
+        <AdminResourceTable :empty="!(adminMatches?.items?.length)" :empty-message="t('admin.noItems')">
+          <template #head>
+            <tr>
+              <th>{{ t('admin.sport') }}</th>
+              <th>{{ t('admin.city') }}</th>
+              <th>{{ t('admin.date') }}</th>
+              <th>{{ t('admin.status') }}</th>
+              <th>{{ t('admin.players') }}</th>
+            </tr>
+          </template>
+          <tr v-for="m in adminMatches?.items ?? []" :key="m.id">
+            <td class="font-medium">{{ m.sport ? pickName(m.sport) : '—' }}</td>
+            <td>{{ m.city }}</td>
+            <td>{{ m.date }}</td>
+            <td><AdminBadge tone="info">{{ m.status }}</AdminBadge></td>
+            <td>{{ formatNumber(m.joinedCount) }}/{{ formatNumber(m.maxPlayers) }}</td>
+          </tr>
+        </AdminResourceTable>
+      </AdminCard>
     </template>
 
     <template v-else-if="tab === 'classes'">
-      <div class="space-y-2">
-        <div v-for="c in adminClasses?.items ?? []" :key="c.id" class="fd-card p-4 text-sm">
-          <p class="font-semibold text-fd-navy">{{ localized(c.titleFa, c.titleEn) }}</p>
-          <p class="text-fd-muted">{{ c.club ? pickName(c.club) : '' }} · {{ c.date }} · {{ c.status }}</p>
-        </div>
-      </div>
+      <AdminCard flush>
+        <AdminResourceTable :empty="!(adminClasses?.items?.length)" :empty-message="t('admin.noItems')">
+          <template #head>
+            <tr>
+              <th>{{ t('admin.title') }}</th>
+              <th>{{ t('admin.club') }}</th>
+              <th>{{ t('admin.date') }}</th>
+              <th>{{ t('admin.status') }}</th>
+            </tr>
+          </template>
+          <tr v-for="c in adminClasses?.items ?? []" :key="c.id">
+            <td class="font-medium">{{ localized(c.titleFa, c.titleEn) }}</td>
+            <td>{{ c.club ? pickName(c.club) : '—' }}</td>
+            <td>{{ c.date }}</td>
+            <td><AdminBadge tone="info">{{ c.status }}</AdminBadge></td>
+          </tr>
+        </AdminResourceTable>
+      </AdminCard>
     </template>
 
     <template v-else-if="tab === 'news'">
-      <div v-if="newsArticles?.length" class="mb-6 space-y-2">
-        <div v-for="a in newsArticles" :key="a.id" class="fd-card flex items-center justify-between gap-2 p-4">
-          <p class="font-semibold text-fd-navy">{{ localized(a.titleFa, a.titleEn) }}</p>
+      <AdminCard v-if="newsArticles?.length" class="mb-4" flush>
+        <AdminResourceTable>
+          <template #head>
+            <tr>
+              <th>{{ t('admin.title') }}</th>
+              <th class="text-end">{{ t('admin.actions') }}</th>
+            </tr>
+          </template>
+          <tr v-for="a in newsArticles" :key="a.id">
+            <td class="font-medium">{{ localized(a.titleFa, a.titleEn) }}</td>
+            <td class="text-end">
+              <button type="button" class="admin-btn-plain !py-1" @click="startEditArticle(a)">{{ t('common.edit') }}</button>
+              <button type="button" class="admin-btn-critical !py-1" @click="deleteArticle(a.id)">{{ t('common.delete') }}</button>
+            </td>
+          </tr>
+        </AdminResourceTable>
+      </AdminCard>
+
+      <AdminCard v-if="editingArticleId">
+        <h3 class="mb-4 text-[0.9375rem] font-semibold">{{ t('admin.editArticle') }}</h3>
+        <div class="grid gap-3">
+          <input v-model="editArticle.titleFa" class="admin-input" :placeholder="t('news.title') + ' (FA)'" />
+          <input v-model="editArticle.titleEn" class="admin-input" placeholder="Title EN" />
+          <textarea v-model="editArticle.excerptFa" class="admin-input min-h-16" :placeholder="t('news.excerpt')" />
+          <textarea v-model="editArticle.bodyFa" class="admin-input min-h-24" :placeholder="t('news.body')" />
           <div class="flex gap-2">
-            <button type="button" class="text-xs font-semibold text-fd-primary" @click="startEditArticle(a)">{{ t('common.edit') }}</button>
-            <button type="button" class="text-xs font-semibold text-fd-danger" @click="deleteArticle(a.id)">{{ t('common.delete') }}</button>
+            <button type="button" class="admin-btn-primary" @click="saveArticleEdit">{{ t('common.save') }}</button>
+            <button type="button" class="admin-btn-secondary" @click="editingArticleId = ''">{{ t('common.cancel') }}</button>
           </div>
         </div>
-      </div>
-      <div v-if="editingArticleId" class="fd-panel mb-6 grid gap-3">
-        <h3 class="text-sm font-bold text-fd-navy">{{ t('common.edit') }}</h3>
-        <input v-model="editArticle.titleFa" class="fd-input" :placeholder="t('news.title') + ' (FA)'" />
-        <input v-model="editArticle.titleEn" class="fd-input" placeholder="Title EN" />
-        <textarea v-model="editArticle.excerptFa" class="fd-input min-h-16" :placeholder="t('news.excerpt')" />
-        <textarea v-model="editArticle.bodyFa" class="fd-input min-h-24" :placeholder="t('news.body')" />
-        <div class="flex gap-2">
-          <button type="button" class="fd-btn-primary" @click="saveArticleEdit">{{ t('common.save') }}</button>
-          <button type="button" class="fd-btn-ghost" @click="editingArticleId = ''">{{ t('common.cancel') }}</button>
+      </AdminCard>
+
+      <AdminCard>
+        <h3 class="mb-4 text-[0.9375rem] font-semibold">{{ t('admin.createArticle') }}</h3>
+        <div class="grid gap-3">
+          <input v-model="newArticle.slug" class="admin-input" :placeholder="t('admin.slug')" />
+          <input v-model="newArticle.titleFa" class="admin-input" :placeholder="t('news.title')" />
+          <input v-model="newArticle.titleEn" class="admin-input" placeholder="Title EN" />
+          <textarea v-model="newArticle.bodyFa" class="admin-input min-h-24" :placeholder="t('news.body')" />
+          <button type="button" class="admin-btn-primary w-fit" @click="createArticle">{{ t('common.save') }}</button>
         </div>
-      </div>
-      <div class="fd-panel grid gap-3">
-        <input v-model="newArticle.slug" class="fd-input" placeholder="slug" />
-        <input v-model="newArticle.titleFa" class="fd-input" :placeholder="t('news.title')" />
-        <input v-model="newArticle.titleEn" class="fd-input" placeholder="Title EN" />
-        <textarea v-model="newArticle.bodyFa" class="fd-input min-h-24" :placeholder="t('news.body')" />
-        <button type="button" class="fd-btn-primary" @click="createArticle">{{ t('common.save') }}</button>
-      </div>
+      </AdminCard>
     </template>
   </div>
 </template>

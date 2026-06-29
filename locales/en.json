@@ -600,6 +600,38 @@
       "rating": "Rating"
     }
   },
+  "admin": {
+    "backToStore": "Back to store",
+    "navGeneral": "General",
+    "navManage": "Manage",
+    "navOperations": "Operations",
+    "navContent": "Content",
+    "searchInList": "Search in this list",
+    "noItems": "No items found",
+    "actions": "Actions",
+    "status": "Status",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "balance": "Balance",
+    "city": "City",
+    "owner": "Owner",
+    "featured": "Featured",
+    "date": "Date",
+    "payment": "Payment",
+    "amount": "Amount",
+    "customer": "Customer",
+    "club": "Club",
+    "time": "Time",
+    "sport": "Sport",
+    "players": "Players",
+    "title": "Title",
+    "slug": "Slug",
+    "createArticle": "Create article",
+    "editArticle": "Edit article",
+    "active": "Active",
+    "reload": "Reload"
+  },
   "notifications": {
     "title": "Notifications",
     "empty": "No notifications yet",
@@ -778,11 +810,28 @@
   "onboarding": {
     "eyebrow": "Welcome",
     "title": "Set up your profile",
-    "subtitle": "Pick your sports, gender, and level so we can find the right classes.",
+    "subtitle": "Pick your sports and gender so we can find the right classes.",
     "pickSports": "Favorite sports",
     "pickGender": "Your gender",
     "pickLevel": "Your level",
+    "skillQuiz": "Skill assessment",
+    "quizSubtitle": "Answer a few questions so we can place you at the right level.",
+    "quizHint": "New players take this quiz instead of picking a level manually. Coaches and classmates can refine your rating after shared classes.",
+    "continueToQuiz": "Continue to quiz",
     "finish": "Let's go!"
+  },
+  "skillQuiz": {
+    "back": "Back",
+    "done": "All questions answered — you can finish setup."
+  },
+  "skillRating": {
+    "pendingTitle": "Rate skill level",
+    "pendingHint": "Rate players from classes you've finished together.",
+    "coachRate": "Coach rating",
+    "peerRate": "Classmate rating",
+    "submit": "Submit rating",
+    "submitted": "Skill rating saved",
+    "error": "Could not save rating"
   },
   "profile": {
     "genderMale": "Male",

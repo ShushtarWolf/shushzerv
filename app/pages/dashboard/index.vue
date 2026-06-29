@@ -392,6 +392,8 @@ const hasReviewTargets = computed(() => reviewableClubs.value.length > 0 || revi
         />
       </DashboardMetricsStrip>
 
+      <SkillRatingPanel class="mb-6" />
+
       <div class="mb-6 grid gap-4 lg:grid-cols-12">
         <div class="lg:col-span-8">
           <DashboardChartCard

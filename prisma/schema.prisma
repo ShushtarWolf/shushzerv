@@ -120,6 +120,12 @@ enum NotificationType {
   SYSTEM
 }
 
+enum SkillRatingSource {
+  COACH
+  PEER
+  QUIZ
+}
+
 model User {
   id             String    @id @default(cuid())
   email          String    @unique
@@ -153,6 +159,8 @@ model User {
   notifications     Notification[]
   tournamentRegs    TournamentRegistration[]
   coachSessions     CoachSession[]      @relation("CoachSessionAthlete")
+  skillRatingsGiven   SkillRating[]       @relation("SkillRatingsGiven")
+  skillRatingsReceived SkillRating[]      @relation("SkillRatingsReceived")
 }
 
 model Wallet {
@@ -210,6 +218,7 @@ model Sport {
   athleteLevels AthleteProfile[]
   trainingPlans TrainingPlan[]
   tournaments   Tournament[]
+  skillRatings  SkillRating[]
 }
 
 model Club {
@@ -467,7 +476,8 @@ model ClassSession {
   coachId String?
   coach   Coach?  @relation(fields: [coachId], references: [id])
 
-  enrollments ClassEnrollment[]
+  enrollments  ClassEnrollment[]
+  skillRatings SkillRating[]
 }
 
 model ClassEnrollment {
@@ -712,6 +722,31 @@ model CoachSession {
 
   equipmentTotal Int                     @default(0)
   equipment      CoachSessionEquipment[]
+  skillRatings   SkillRating[]
+}
+
+model SkillRating {
+  id        String            @id @default(cuid())
+  level     SkillLevel
+  source    SkillRatingSource
+  createdAt DateTime          @default(now())
+
+  ratedUserId String
+  ratedUser   User   @relation("SkillRatingsReceived", fields: [ratedUserId], references: [id], onDelete: Cascade)
+  raterId     String?
+  rater       User?  @relation("SkillRatingsGiven", fields: [raterId], references: [id], onDelete: Cascade)
+
+  classSessionId String?
+  classSession   ClassSession? @relation(fields: [classSessionId], references: [id], onDelete: SetNull)
+  coachSessionId String?
+  coachSession   CoachSession? @relation(fields: [coachSessionId], references: [id], onDelete: SetNull)
+
+  sportId String
+  sport   Sport  @relation(fields: [sportId], references: [id])
+
+  @@unique([raterId, ratedUserId, classSessionId])
+  @@unique([raterId, ratedUserId, coachSessionId])
+  @@index([ratedUserId])
 }
 
 model CoachSessionEquipment {

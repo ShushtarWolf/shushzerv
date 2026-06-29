@@ -199,6 +199,7 @@ async function main() {
   await prisma.conversationMember.deleteMany()
   await prisma.conversation.deleteMany()
   await prisma.userBadge.deleteMany()
+  await prisma.skillRating.deleteMany()
   await prisma.review.deleteMany()
   await prisma.planAssignment.deleteMany()
   await prisma.trainingPlan.deleteMany()
@@ -373,6 +374,7 @@ async function main() {
     if (c.sport === 'padel') coachIds.maryam = coach.id
     if (c.sport === 'football') coachIds.ali = coach.id
     if (c.sport === 'basketball') coachIds.sina = coach.id
+    if (c.sport === 'swim') coachIds.amir = coach.id
   }
 
   const clubs = await prisma.club.findMany({ select: { id: true, slug: true, city: true } })
@@ -623,6 +625,42 @@ async function main() {
       price: 3_600_000, sessionsPerWeek: 1, durationWeeks: 6, classType: 'SEMI_PRIVATE',
       daysOfWeek: 'SUN', startTime: '16:00', endTime: '17:00', maxSeats: 2,
       genderPolicy: 'WOMEN', minLevel: 'BEGINNER', maxLevel: 'ADVANCED', featured: true,
+    },
+    {
+      club: 'zen-yoga-studio', coach: coachIds.leila, sport: 'yoga',
+      titleFa: 'پکیج یوگای صبحگاهی', titleEn: 'Morning Yoga Package',
+      descFa: '۳ جلسه در هفته · ۸ هفته · مناسب زنان مبتدی تا متوسط',
+      descEn: '3 sessions/week · 8 weeks · Women beginner to intermediate',
+      price: 2_100_000, sessionsPerWeek: 3, durationWeeks: 8, classType: 'GROUP', groupMode: 'OPEN',
+      daysOfWeek: 'SAT,MON,WED', startTime: '08:00', endTime: '09:30', maxSeats: 15, bookedSeats: 3,
+      genderPolicy: 'WOMEN', minLevel: 'BEGINNER', maxLevel: 'INTERMEDIATE', featured: true,
+    },
+    {
+      club: 'enghelab-tennis', coach: coachIds.sara, sport: 'tennis',
+      titleFa: 'پکیج تنیس مبتدی — مردان', titleEn: 'Beginner Tennis Package — Men',
+      descFa: '۲ جلسه در هفته · ۶ هفته · آموزش اصول و بازی',
+      descEn: '2 sessions/week · 6 weeks · Fundamentals and match play',
+      price: 2_800_000, sessionsPerWeek: 2, durationWeeks: 6, classType: 'GROUP', groupMode: 'OPEN',
+      daysOfWeek: 'TUE,THU', startTime: '18:00', endTime: '19:30', maxSeats: 8, bookedSeats: 2,
+      genderPolicy: 'MEN', minLevel: 'BEGINNER', maxLevel: 'INTERMEDIATE', featured: true,
+    },
+    {
+      club: 'aqua-swim-center', coach: coachIds.amir, sport: 'swim',
+      titleFa: 'پکیج شنا تکنیک', titleEn: 'Swim Technique Package',
+      descFa: '۲ جلسه در هفته · ۴ هفته · بهبود تکنیک و استamina',
+      descEn: '2 sessions/week · 4 weeks · Technique and endurance',
+      price: 1_800_000, sessionsPerWeek: 2, durationWeeks: 4, classType: 'GROUP', groupMode: 'OPEN',
+      daysOfWeek: 'SAT,TUE', startTime: '10:00', endTime: '11:00', maxSeats: 6, bookedSeats: 1,
+      genderPolicy: 'MIXED', minLevel: 'BEGINNER', maxLevel: 'ADVANCED', featured: true,
+    },
+    {
+      club: 'hoops-basketball-arena', coach: coachIds.sina, sport: 'basketball',
+      titleFa: 'پکیج بسکتبال گروهی', titleEn: 'Group Basketball Package',
+      descFa: '۲ جلسه در هفته · ۶ هفته · مهارت فردی و بازی تیمی',
+      descEn: '2 sessions/week · 6 weeks · Skills and team play',
+      price: 2_200_000, sessionsPerWeek: 2, durationWeeks: 6, classType: 'GROUP', groupMode: 'OPEN',
+      daysOfWeek: 'MON,THU', startTime: '17:00', endTime: '18:30', maxSeats: 10, bookedSeats: 4,
+      genderPolicy: 'MIXED', minLevel: 'INTERMEDIATE', maxLevel: 'PRO', featured: true,
     },
   ]
   for (const ps of packageSeeds) {
