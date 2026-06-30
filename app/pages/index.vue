@@ -27,6 +27,8 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
 
 <template>
   <div class="page-enter">
+    <PadelPitchHero />
+
     <section class="mx-auto max-w-7xl space-y-4 px-4 pt-6 sm:px-6">
       <HeroSearch :sports="sports ?? []" />
     </section>
