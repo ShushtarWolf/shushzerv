@@ -80,6 +80,7 @@ export default defineNuxtConfig({
     workbox: {
       navigateFallback: '/',
       globPatterns: ['**/*.{js,css,html,svg,png,ico,woff2}'],
+      globIgnores: ['**/videos/**'],
     },
     client: {
       installPrompt: true,
