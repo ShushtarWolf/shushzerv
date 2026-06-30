@@ -44,19 +44,11 @@
     "pickSport": "Pick a sport",
     "greeting": "Hey {name}! Ready to play?"
   },
-  "pitchHero": {
-    "eyebrow": "Padel courts",
-    "title": "The court comes to you.",
-    "subtitle": "Scroll to explore a full-size padel pitch — glass walls, net, and lines — then book your slot in one tap.",
-    "zoomCaption": "Every element converges into your reservation",
-    "cardEyebrow": "Ready to play",
-    "cardTitle": "Reserve your court",
-    "cardBody": "Pick a club, choose your time, and confirm. Your padel court is waiting.",
-    "statLength": "Length",
-    "statWidth": "Width",
-    "statWalls": "Glass walls",
-    "cta": "Book a padel court",
-    "secondary": "Browse all clubs",
+  "courtHero": {
+    "eyebrow": "Clay courts",
+    "title": "Red clay. Real tennis.",
+    "subtitle": "Scroll to orbit a full clay court — then book your slot without leaving the page.",
+    "zoomCaption": "Rotate and zoom into the court",
     "scrollHint": "Scroll to explore"
   },
   "trust": {
