@@ -14,6 +14,12 @@ const toast = useToast()
 
 useHead({ title: () => t('dashboard.coach') })
 
+provideDashboardShellConfig(computed(() => ({
+  subtitle: t('dashboard.coach'),
+  homeLink: '/dashboard/coach',
+  showSearch: true,
+})))
+
 const tab = useDashboardTab('overview')
 
 interface CoachStats {
@@ -108,15 +114,24 @@ watch(profile, (p) => {
 }, { immediate: true })
 
 const tabs = computed(() => [
-  { id: 'overview', label: t('dashboard.overview'), icon: 'grid' },
-  { id: 'sessions', label: t('dashboard.sessionsTab'), icon: 'chart' },
-  { id: 'schedule', label: t('dashboard.scheduleTab'), icon: 'calendar' },
-  { id: 'students', label: t('dashboard.myStudents'), icon: 'users' },
-  { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet' },
-  { id: 'plans', label: t('dashboard.plansTab'), icon: 'users' },
-  { id: 'packages', label: t('packages.title'), icon: 'calendar' },
-  { id: 'profile', label: t('dashboard.profileTab'), icon: 'building' },
+  { id: 'overview', label: t('dashboard.overview'), icon: 'grid', group: 'general' },
+  { id: 'sessions', label: t('dashboard.sessionsTab'), icon: 'chart', group: 'general' },
+  { id: 'schedule', label: t('dashboard.scheduleTab'), icon: 'calendar', group: 'general' },
+  { id: 'students', label: t('dashboard.myStudents'), icon: 'users', group: 'general' },
+  { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet', group: 'general' },
+  { id: 'clubs', label: t('coaches.findClubs'), icon: 'building', group: 'business' },
+  { id: 'plans', label: t('dashboard.plansTab'), icon: 'users', group: 'business' },
+  { id: 'packages', label: t('packages.title'), icon: 'calendar', group: 'business' },
+  { id: 'profile', label: t('dashboard.profileTab'), icon: 'building', group: 'account' },
 ])
+
+const coachStudents = computed(() =>
+  (students.value ?? []).map((s) => ({
+    id: s.athlete.id,
+    name: pickName(s.athlete),
+    email: s.athlete.email,
+  })),
+)
 
 provideDashboardSidebar(tabs, tab)
 
@@ -697,6 +712,26 @@ function goNextUp(item: NextUpItem) {
           </select>
           <input v-model="newPlan.athleteEmail" type="email" class="fd-input" :placeholder="t('trainingPlans.assignEmail')" />
           <button type="button" class="fd-btn-primary" @click="createPlan">{{ t('trainingPlans.create') }}</button>
+        </div>
+      </section>
+    </template>
+
+    <template v-else-if="tab === 'clubs'">
+      <section class="admin-card">
+        <div class="admin-card-header">
+          <h2 class="text-sm font-semibold text-[var(--admin-text,#303030)]">{{ t('coaches.findClubs') }}</h2>
+        </div>
+        <div class="admin-card-body">
+          <p class="mb-4 text-sm text-[var(--admin-muted,#616161)]">{{ t('coaches.findClubsHint') }}</p>
+          <CoachClubBookingPanel
+            v-if="profile?.id && profile.sport"
+            mode="coach"
+            :coach-id="profile.id"
+            :sport-slug="profile.sport.slug"
+            :session-price="profile.sessionPrice ?? 300000"
+            :students="coachStudents"
+            @booked="refreshCoachSessions(); refreshStats()"
+          />
         </div>
       </section>
     </template>

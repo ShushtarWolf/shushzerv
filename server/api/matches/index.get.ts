@@ -1,6 +1,8 @@
 import { entitySportWhere } from '../../utils/visibleSports'
+import { assertFindPlayersEnabled } from '../../utils/features'
 
 export default defineEventHandler(async (event) => {
+  assertFindPlayersEnabled()
   const { sport, city } = getQuery(event)
   const sportFilter = entitySportWhere(sport)
   if (sportFilter === null) return []

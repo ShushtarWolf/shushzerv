@@ -8,6 +8,7 @@ const router = useRouter()
 const { loggedIn, user, clear } = useUserSession()
 const { displayName } = useUserDisplayName()
 const sidebarNav = useDashboardSidebar()
+const { showFindPlayers } = useFeatures()
 
 const sidebarOpen = ref(false)
 const searchQuery = ref('')
@@ -174,7 +175,7 @@ watch(() => route.path, closeSidebar)
         </nav>
       </template>
 
-      <div class="mt-6 rounded-[1.25rem] bg-[#F5F5F4] p-4">
+      <div v-if="showFindPlayers" class="mt-6 rounded-[1.25rem] bg-[#F5F5F4] p-4">
         <p class="text-sm font-bold text-fd-navy">{{ t('dashboard.referralTitle') }}</p>
         <p class="mt-1 text-xs text-fd-muted">{{ t('dashboard.referralDesc') }}</p>
         <NuxtLink :to="localePath('/matches')" class="mt-3 inline-flex rounded-xl bg-fd-primary px-4 py-2 text-xs font-bold text-white tap-highlight" @click="closeSidebar">

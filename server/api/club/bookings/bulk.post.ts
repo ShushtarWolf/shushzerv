@@ -1,4 +1,9 @@
 import { generateSlotsForCourtDate, resolveSlotGenerationParams } from '../../../utils/clubSlots'
+import {
+  assertCoachAvailableForSlots,
+  createClubCoachSession,
+  notifyCoachOfClubSession,
+} from '../../../utils/clubBooking'
 
 type ReservationInput =
   | { slotId: string }
@@ -9,6 +14,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody<{
     slotIds?: string[]
     reservations?: ReservationInput[]
+    coachId?: string
     guestName?: string
     athleteName?: string
     athletePhone?: string
@@ -16,7 +22,15 @@ export default defineEventHandler(async (event) => {
     payAtClub?: boolean
   }>(event)
 
+  const coachId = body.coachId?.trim() || undefined
   const { userId: athleteId, guestName } = await resolveClubBookingAthlete(body)
+
+  if (coachId && !athleteId) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Coach session requires customer phone number',
+    })
+  }
 
   const inputs: ReservationInput[] = []
   if (body.slotIds?.length) {
@@ -93,6 +107,19 @@ export default defineEventHandler(async (event) => {
   }
 
   const uniqueSlotIds = [...new Set(resolvedSlotIds)]
+
+  const slotsForCoach = await prisma.slot.findMany({
+    where: { id: { in: uniqueSlotIds } },
+    select: { id: true, date: true, startTime: true, endTime: true, court: { select: { clubId: true } } },
+  })
+
+  if (coachId) {
+    await assertCoachAvailableForSlots(coachId, slotsForCoach)
+  }
+
+  const payAtClub = body.payAtClub !== false
+  const coachSessions: Awaited<ReturnType<typeof createClubCoachSession>>[] = []
+
   const bookings = await prisma.$transaction(async (tx) => {
     const created = []
     for (const slotId of uniqueSlotIds) {
@@ -111,16 +138,33 @@ export default defineEventHandler(async (event) => {
           userId: athleteId,
           guestName: guestName || undefined,
           status: 'CONFIRMED',
-          paymentStatus: body.payAtClub === false ? 'PAID' : 'PAY_AT_CLUB',
+          paymentStatus: payAtClub ? 'PAY_AT_CLUB' : 'PAID',
         },
         include: {
           user: { select: { name: true, email: true } },
           slot: { include: { court: { include: { club: true, sport: true } } } },
         },
       }))
+
+      if (coachId && athleteId) {
+        const slot = slotsForCoach.find((s) => s.id === slotId)
+        if (slot) {
+          coachSessions.push(await createClubCoachSession(tx, {
+            coachId,
+            athleteId,
+            clubId: slot.court.clubId,
+            slot,
+            payAtClub,
+          }))
+        }
+      }
     }
     return created
   })
+
+  for (const session of coachSessions) {
+    await notifyCoachOfClubSession(session)
+  }
 
   return { count: bookings.length, bookings }
 })

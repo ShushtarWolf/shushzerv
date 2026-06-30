@@ -2,6 +2,8 @@
 import type { OpenMatch, Sport } from '~/types'
 import { DEFAULT_CITY } from '~/composables/useCities'
 
+definePageMeta({ middleware: ['feature-find-players'] })
+
 const { t } = useI18n()
 const localePath = useLocalePath()
 const { loggedIn } = useUserSession()

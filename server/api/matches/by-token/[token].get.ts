@@ -1,4 +1,7 @@
+import { assertFindPlayersEnabled } from '../../../utils/features'
+
 export default defineEventHandler(async (event) => {
+  assertFindPlayersEnabled()
   const token = getRouterParam(event, 'token')
   if (!token) throw createError({ statusCode: 400, statusMessage: 'token required' })
 

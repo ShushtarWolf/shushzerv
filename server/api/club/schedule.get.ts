@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   const toDate = typeof to === 'string' ? to : undefined
   const dateFilter = fromDate && toDate ? { gte: fromDate, lte: toDate } : undefined
 
-  const [bookings, classes, slots] = await Promise.all([
+  const [bookings, classes, slots, coachSessions] = await Promise.all([
     prisma.booking.findMany({
       where: {
         status: { not: 'CANCELLED' },
@@ -33,7 +33,12 @@ export default defineEventHandler(async (event) => {
       },
       include: {
         user: { select: { name: true } },
-        slot: { include: { court: { include: { sport: true } } } },
+        slot: {
+          include: {
+            coachSession: { include: { coach: true } },
+            court: { include: { sport: true } },
+          },
+        },
       },
     }),
     prisma.classSession.findMany({
@@ -53,6 +58,15 @@ export default defineEventHandler(async (event) => {
         booking: { select: { id: true, status: true } },
       },
     }),
+    prisma.coachSession.findMany({
+      where: {
+        clubId,
+        status: { not: 'CANCELLED' },
+        ...(dateFilter ? { date: dateFilter } : {}),
+        slotId: null,
+      },
+      include: { coach: true, athlete: { select: { name: true } } },
+    }),
   ])
 
   const bookedSlotIds = new Set(bookings.map((b) => b.slotId))
@@ -61,6 +75,11 @@ export default defineEventHandler(async (event) => {
   for (const b of bookings) {
     if (!b.slot) continue
     const court = b.slot.court
+    const coach = b.slot.coachSession?.coach
+    const subtitleParts = [
+      court ? schedulePickName(court, locale) : undefined,
+      coach ? schedulePickName(coach, locale) : undefined,
+    ].filter(Boolean)
     events.push({
       id: `booking-${b.id}`,
       type: 'booking',
@@ -68,7 +87,7 @@ export default defineEventHandler(async (event) => {
       startTime: b.slot.startTime,
       endTime: b.slot.endTime,
       title: bookingDisplayName(b, locale),
-      subtitle: court ? schedulePickName(court, locale) : undefined,
+      subtitle: subtitleParts.length ? subtitleParts.join(' · ') : undefined,
       color: bookingScheduleColor(b.source),
       status: b.status,
       paymentStatus: b.paymentStatus,
@@ -76,6 +95,8 @@ export default defineEventHandler(async (event) => {
       bookingId: b.id,
       slotId: b.slotId,
       courtId: court?.id,
+      coachId: coach?.id,
+      sessionId: b.slot.coachSession?.id,
       note: b.ownerNote,
     })
   }
@@ -95,6 +116,23 @@ export default defineEventHandler(async (event) => {
       status: c.status,
       classId: c.id,
       note: c.clubNote,
+    })
+  }
+
+  for (const s of coachSessions) {
+    events.push({
+      id: `session-${s.id}`,
+      type: 'session',
+      date: s.date,
+      startTime: s.startTime,
+      endTime: s.endTime,
+      title: s.coach ? schedulePickName(s.coach, locale) : (locale === 'fa' ? 'جلسه مربی' : 'Coach session'),
+      subtitle: s.athlete?.name,
+      color: SCHEDULE_COLORS.clubBooking,
+      status: s.status,
+      coachId: s.coachId,
+      sessionId: s.id,
+      price: s.price,
     })
   }
 

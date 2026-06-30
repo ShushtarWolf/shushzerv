@@ -1,3 +1,5 @@
+import { FIND_PLAYERS_ENABLED } from '#shared/features'
+
 export default defineEventHandler(async (event) => {
   const user = await requireAuth(event)
   const { q } = getQuery(event)
@@ -12,11 +14,13 @@ export default defineEventHandler(async (event) => {
         where: { OR: [{ nameFa: { contains: search } }, { nameEn: { contains: search } }, { city: { contains: search } }] },
         take: 5,
       }),
-      prisma.openMatch.findMany({
-        where: { city: { contains: search }, status: 'OPEN' },
-        include: { sport: true },
-        take: 5,
-      }),
+      FIND_PLAYERS_ENABLED
+        ? prisma.openMatch.findMany({
+          where: { city: { contains: search }, status: 'OPEN' },
+          include: { sport: true },
+          take: 5,
+        })
+        : Promise.resolve([]),
     ])
     for (const c of clubs) results.push({ type: 'club', label: c.nameFa, link: `/clubs/${c.slug}` })
     for (const m of matches) results.push({ type: 'match', label: `${m.sport?.nameFa ?? 'Match'} · ${m.city}`, link: `/matches/${m.id}` })

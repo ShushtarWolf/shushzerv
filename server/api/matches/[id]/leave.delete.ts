@@ -1,4 +1,7 @@
+import { assertFindPlayersEnabled } from '../../../utils/features'
+
 export default defineEventHandler(async (event) => {
+  assertFindPlayersEnabled()
   const user = await requireRole(event, 'ATHLETE')
   const matchId = getRouterParam(event, 'id')
 

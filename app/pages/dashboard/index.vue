@@ -7,10 +7,17 @@ const { t, locales } = useI18n()
 const localePath = useLocalePath()
 const { user, fetch: refreshSession } = useUserSession()
 const { displayName } = useUserDisplayName()
+const { showFindPlayers } = useFeatures()
 const { pickName, localized, formatPrice, formatDate, formatTimeRange, formatFraction, formatNumber, localDateISO } = useLocaleContent()
 const { levels, levelLabel } = useSkillLevel()
 
 useHead({ title: () => t('dashboard.title') })
+
+provideDashboardShellConfig(computed(() => ({
+  subtitle: t('dashboard.athlete'),
+  homeLink: '/dashboard',
+  showSearch: true,
+})))
 
 const tab = useDashboardTab('overview')
 
@@ -106,13 +113,13 @@ watch(user, (u) => {
 }, { immediate: true })
 
 const tabs = computed(() => [
-  { id: 'overview', label: t('dashboard.overview'), icon: 'grid' },
-  { id: 'schedule', label: t('dashboard.scheduleTab'), icon: 'calendar' },
-  { id: 'bookings', label: t('dashboard.bookingsTab'), icon: 'chart' },
-  { id: 'enrollments', label: t('dashboard.enrollmentsTab'), icon: 'users' },
-  { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet' },
-  { id: 'plans', label: t('dashboard.plansTab'), icon: 'users' },
-  { id: 'profile', label: t('dashboard.profileTab'), icon: 'building' },
+  { id: 'overview', label: t('dashboard.overview'), icon: 'grid', group: 'general' },
+  { id: 'schedule', label: t('dashboard.scheduleTab'), icon: 'calendar', group: 'general' },
+  { id: 'bookings', label: t('dashboard.bookingsTab'), icon: 'chart', group: 'general' },
+  { id: 'enrollments', label: t('dashboard.enrollmentsTab'), icon: 'users', group: 'general' },
+  { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet', group: 'account' },
+  { id: 'plans', label: t('dashboard.plansTab'), icon: 'users', group: 'account' },
+  { id: 'profile', label: t('dashboard.profileTab'), icon: 'building', group: 'account' },
 ])
 
 provideDashboardSidebar(tabs, tab)
@@ -128,7 +135,7 @@ const quickActions = computed(() => [
   { id: 'book', label: t('dashboard.bookCourt'), icon: 'building', to: localePath('/clubs?book=1') },
   { id: 'wallet', label: t('dashboard.viewWallet'), icon: 'wallet', onClick: () => { tab.value = 'wallet' } },
   { id: 'schedule', label: t('dashboard.viewSchedule'), icon: 'calendar', onClick: () => { tab.value = 'schedule' } },
-  { id: 'matches', label: t('dashboard.viewMatches'), icon: 'users', to: localePath('/matches') },
+  ...(showFindPlayers.value ? [{ id: 'matches', label: t('dashboard.viewMatches'), icon: 'users', to: localePath('/matches') }] : []),
 ])
 
 const today = computed(() => localDateISO())
@@ -170,8 +177,8 @@ async function cancelEnrollment(classSessionId: string) {
 }
 
 function onScheduleEvent(event: ScheduleEvent) {
-  if (event.classId) navigateTo(localePath(`/classes/${event.classId}`))
-  else if (event.matchId) navigateTo(localePath(`/matches/${event.matchId}`))
+  if (event.classId) tab.value = 'enrollments'
+  else if (event.matchId && showFindPlayers.value) navigateTo(localePath(`/matches/${event.matchId}`))
   else if (event.coachId) navigateTo(localePath(`/coaches/${event.coachId}`))
   else if (event.tournamentId) navigateTo(localePath('/tournaments'))
   else if (event.type === 'booking') tab.value = 'bookings'
@@ -227,7 +234,7 @@ const nextUp = computed<NextUpItem | null>(() => {
       endTime: c.endTime,
       title: localized(c.titleFa, c.titleEn),
       subtitle: c.club ? pickName(c.club) : undefined,
-      to: localePath(`/classes/${c.id}`),
+      to: localePath('/dashboard?tab=enrollments'),
     })
   }
   items.sort((a, b) => {
@@ -543,15 +550,17 @@ const hasReviewTargets = computed(() => reviewableClubs.value.length > 0 || revi
       </div>
       <SzEmptyState v-else class="mb-10" :message="t('common.noResults')" :action-label="t('coaches.title')" :action-to="localePath('/coaches')" />
 
-      <h2 class="fd-section-title mb-4">{{ t('matches.title') }}</h2>
-      <div v-if="matchList?.length" class="mb-10 space-y-3">
-        <div v-for="item in matchList.filter((m) => m.match.status !== 'CANCELLED' && m.match.date >= today)" :key="item.id" class="fd-card p-4">
-          <p class="font-semibold text-fd-navy">{{ item.match.sport ? pickName(item.match.sport) : '' }} · {{ item.match.city }}</p>
-          <p class="text-sm text-fd-muted">{{ formatDate(item.match.date) }} · {{ item.match.startTime }}</p>
-          <NuxtLink :to="localePath(`/matches/${item.match.id}`)" class="mt-2 inline-block text-sm font-semibold text-fd-primary">{{ t('matches.view') }}</NuxtLink>
+      <template v-if="showFindPlayers">
+        <h2 class="fd-section-title mb-4">{{ t('matches.title') }}</h2>
+        <div v-if="matchList?.length" class="mb-10 space-y-3">
+          <div v-for="item in matchList.filter((m) => m.match.status !== 'CANCELLED' && m.match.date >= today)" :key="item.id" class="fd-card p-4">
+            <p class="font-semibold text-fd-navy">{{ item.match.sport ? pickName(item.match.sport) : '' }} · {{ item.match.city }}</p>
+            <p class="text-sm text-fd-muted">{{ formatDate(item.match.date) }} · {{ item.match.startTime }}</p>
+            <NuxtLink :to="localePath(`/matches/${item.match.id}`)" class="mt-2 inline-block text-sm font-semibold text-fd-primary">{{ t('matches.view') }}</NuxtLink>
+          </div>
         </div>
-      </div>
-      <SzEmptyState v-else class="mb-10" :message="t('common.noResults')" />
+        <SzEmptyState v-else class="mb-10" :message="t('common.noResults')" />
+      </template>
 
       <h2 class="fd-section-title mb-4">{{ t('dashboard.past') }}</h2>
       <div v-if="pastBookings.length" class="space-y-3">
@@ -603,7 +612,6 @@ const hasReviewTargets = computed(() => reviewableClubs.value.length > 0 || revi
             {{ e.paymentStatus === 'PAID' ? t('wallet.payWithWallet') : t('booking.payAtClub') }}
           </p>
           <div class="mt-3 flex flex-wrap gap-3">
-            <NuxtLink v-if="e.classSession" :to="localePath(`/classes/${e.classSession.id}`)" class="text-sm font-semibold text-fd-primary">{{ t('classes.title') }}</NuxtLink>
             <button
               v-if="e.classSession"
               class="text-sm font-semibold text-fd-danger"

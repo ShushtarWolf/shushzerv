@@ -4,6 +4,7 @@ import {
   resolveClubAddonSelections,
   type EquipmentSelection,
 } from '../../utils/equipment'
+import { FIND_PLAYERS_ENABLED } from '#shared/features'
 import { payBookingFromWalletTx } from '../../utils/wallet'
 import { awardXp } from '../../utils/gamification'
 import { createNotification } from '../../utils/notifications'
@@ -85,7 +86,7 @@ export default defineEventHandler(async (event) => {
   await awardXp(user.id, 'booking')
 
   let match = null
-  if (body.createMatch && booking.slot?.court?.sport) {
+  if (FIND_PLAYERS_ENABLED && body.createMatch && booking.slot?.court?.sport) {
     const shareToken = crypto.randomUUID().slice(0, 8)
     match = await prisma.openMatch.create({
       data: {

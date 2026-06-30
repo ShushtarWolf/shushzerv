@@ -38,8 +38,8 @@ function title(c: Conversation) {
     <SzEmptyState
       v-else
       :message="t('chat.empty')"
-      :action-label="t('common.createMatch')"
-      :action-to="localePath('/matches')"
+      :action-label="t('common.browseClubs')"
+      :action-to="localePath('/clubs?book=1')"
     />
   </div>
 </template>

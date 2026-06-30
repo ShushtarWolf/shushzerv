@@ -131,6 +131,12 @@ const tabs = computed(() => [
 
 provideAdminSidebar(tabs, tab)
 
+provideDashboardShellConfig(computed(() => ({
+  subtitle: t('dashboard.platformAdmin'),
+  homeLink: '/dashboard/admin',
+  showSearch: false,
+})))
+
 const pageTitle = computed(() => tabs.value.find((item) => item.id === tab.value)?.label ?? t('dashboard.platformAdmin'))
 
 const statItems = computed(() => [

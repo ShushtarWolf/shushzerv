@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { Coach, CoachBusySlot } from '~/types'
-import type { EquipmentPickerItem } from '~/composables/useEquipmentBooking'
-import { equipmentRentalSubtotal, equipmentSelectionsPayload, equipmentRequiresSelection, equipmentHasSelection } from '~/composables/useEquipmentBooking'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -17,24 +15,6 @@ const { data: coach, error, refresh: refreshCoach } = await useApiFetch<Coach>((
 const { data: busySlots } = await useApiFetch<CoachBusySlot[]>(
   () => `/api/coach/sessions?coachId=${id.value}`,
   { watch: [id] },
-)
-const { data: wallet, refresh: refreshWallet } = await useApiFetch<{ balance?: number }>('/api/wallet', {
-  immediate: false,
-  lazy: true,
-  server: false,
-})
-
-watch(loggedIn, (v) => {
-  if (v) refreshWallet()
-}, { immediate: true })
-
-const walletBalance = computed(() => wallet.value?.balance ?? 0)
-
-const upcomingBusy = computed(() =>
-  (busySlots.value ?? [])
-    .filter((s) => s.date >= localDateISO())
-    .sort((a, b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime))
-    .slice(0, 8),
 )
 
 const canMessageCoach = computed(() =>
@@ -63,65 +43,12 @@ useHead({ title: () => (coach.value ? pickName(coach.value) : t('coaches.title')
 
 const sessionPrice = computed(() => coach.value?.sessionPrice ?? 300000)
 
-const sessionForm = ref({ date: localDateISO(), startTime: '10:00', endTime: '11:00' })
-const payWithWallet = ref(false)
-const bookingPending = ref(false)
-const selectedEquipment = ref<Record<string, number>>({})
-const availableEquipment = ref<EquipmentPickerItem[]>([])
-
-const equipmentRental = computed(() =>
-  equipmentRentalSubtotal(availableEquipment.value, selectedEquipment.value),
+const upcomingBusy = computed(() =>
+  (busySlots.value ?? [])
+    .filter((s) => s.date >= localDateISO())
+    .sort((a, b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime))
+    .slice(0, 8),
 )
-const sessionGrandTotal = computed(() => sessionPrice.value + equipmentRental.value)
-const canPayWithWallet = computed(() => loggedIn.value && walletBalance.value >= sessionGrandTotal.value)
-const equipmentSelectionMissing = computed(
-  () => equipmentRequiresSelection(availableEquipment.value) && !equipmentHasSelection(selectedEquipment.value),
-)
-const canBookSession = computed(() => !bookingPending.value && !equipmentSelectionMissing.value)
-
-watch(() => sessionForm.value.date, async (date) => {
-  selectedEquipment.value = {}
-  if (!date) {
-    availableEquipment.value = []
-    return
-  }
-  try {
-    availableEquipment.value = await $fetch<EquipmentPickerItem[]>(
-      `/api/coaches/${id.value}/equipment-availability`,
-      { query: { date } },
-    )
-  } catch {
-    availableEquipment.value = []
-  }
-}, { immediate: true })
-
-async function bookSession() {
-  if (!loggedIn.value) return requireLogin()
-  if (equipmentSelectionMissing.value) {
-    toast.error(t('equipment.selectGearRequired'))
-    return
-  }
-  bookingPending.value = true
-  try {
-    await $fetch('/api/coach/sessions', {
-      method: 'POST',
-      body: {
-        coachId: id.value,
-        ...sessionForm.value,
-        payWithWallet: payWithWallet.value && canPayWithWallet.value,
-        equipment: equipmentSelectionsPayload(selectedEquipment.value),
-      },
-    })
-    toast.success(t('coaches.sessionBooked'))
-    selectedEquipment.value = {}
-    await Promise.all([refreshCoach(), refreshWallet()])
-  } catch (e: unknown) {
-    const err = e as { data?: { message?: string }; statusMessage?: string }
-    toast.error(err?.data?.message || err?.statusMessage || t('common.error'))
-  } finally {
-    bookingPending.value = false
-  }
-}
 </script>
 
 <template>
@@ -181,39 +108,21 @@ async function bookSession() {
 
       <section class="mt-8 rounded-xl border border-brand-gray-200 p-4">
         <h2 class="ios-title-3 mb-3">{{ t('coaches.bookSession') }}</h2>
-        <p class="mb-3 text-sm text-brand-gray-600">
+        <p class="mb-4 text-sm text-brand-gray-600">
           {{ t('coaches.sessionPriceLabel', { price: formatPrice(sessionPrice) }) }}
         </p>
-        <div class="grid gap-3 sm:grid-cols-3">
-          <SzInput v-model="sessionForm.date" type="date" :label="t('hero.when')" />
-          <SzInput v-model="sessionForm.startTime" type="time" :label="t('schedule.start')" />
-          <SzInput v-model="sessionForm.endTime" type="time" :label="t('schedule.end')" />
-        </div>
-        <EquipmentPicker v-model="selectedEquipment" :items="availableEquipment" />
-        <p class="mt-3 text-sm font-semibold text-brand-gray-800">
-          {{ t('equipment.bookingTotal') }}: {{ formatPrice(sessionGrandTotal) }} {{ t('clubs.currency') }}
-        </p>
-        <p v-if="equipmentRental > 0" class="text-xs text-brand-gray-500">
-          {{ t('equipment.rentalSubtotal') }}: {{ formatPrice(equipmentRental) }} {{ t('clubs.currency') }}
-        </p>
-        <label v-if="loggedIn" class="mt-3 flex items-center gap-2 text-sm text-brand-gray-700">
-          <input v-model="payWithWallet" type="checkbox" class="rounded border-brand-gray-300" />
-          {{ t('wallet.payWithWallet') }} ({{ formatPrice(walletBalance) }})
-        </label>
-        <p v-if="loggedIn && payWithWallet && sessionGrandTotal > 0 && !canPayWithWallet" class="mt-1 text-sm text-brand-pink">
-          {{ t('wallet.insufficientBalance') }}
-        </p>
-        <SzButton class="mt-3" :disabled="!canBookSession" @click="bookSession">
-          {{ t('coaches.bookSession') }}
-        </SzButton>
-        <SzButton v-if="canMessageCoach" variant="ghost" class="mt-2" @click="messageCoach">
+        <CoachClubBookingPanel
+          v-if="coach.sport"
+          mode="athlete"
+          :coach-id="coach.id"
+          :sport-slug="coach.sport.slug"
+          :session-price="sessionPrice"
+          @booked="refreshCoach()"
+        />
+        <SzButton v-if="canMessageCoach" variant="ghost" class="mt-4" @click="messageCoach">
           {{ t('coaches.messageCoach') }}
         </SzButton>
       </section>
-
-      <SzButton :to="localePath('/clubs')" variant="ghost" class="mt-4">
-        {{ t('coaches.bookAtClub') }}
-      </SzButton>
 
       <CoachReviews :coach-id="coach.id" @rated="refreshCoach()" />
     </div>

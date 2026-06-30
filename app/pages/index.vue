@@ -3,6 +3,7 @@ import type { ClassPackage, ClassSession, Club, Coach, NewsArticle, Sport } from
 
 const { t } = useI18n()
 const localePath = useLocalePath()
+const { showGroupClasses, showPublicPackages } = useFeatures()
 useHead({ title: () => `${t('brand.name')} — ${t('brand.tagline')}` })
 
 const { data: sports } = await useApiFetch<Sport[]>('/api/sports')
@@ -10,8 +11,12 @@ const { data: allClubs } = await useApiFetch<Club[]>('/api/clubs')
 const { data: clubs, pending: clubsPending } = await useApiFetch<Club[]>('/api/clubs', { query: { featured: 'true' } })
 const { data: coaches, pending: coachesPending } = await useApiFetch<Coach[]>('/api/coaches')
 const { data: news, pending: newsPending } = await useApiFetch<NewsArticle[]>('/api/news')
-const { data: classes, pending: classesPending } = await useApiFetch<ClassSession[]>('/api/classes')
-const { data: packages, pending: packagesPending } = await useApiFetch<ClassPackage[]>('/api/packages')
+const { data: classes, pending: classesPending } = await useApiFetch<ClassSession[]>('/api/classes', {
+  immediate: showGroupClasses.value,
+})
+const { data: packages, pending: packagesPending } = await useApiFetch<ClassPackage[]>('/api/packages', {
+  immediate: showPublicPackages.value,
+})
 
 const featuredClubs = computed(() => (clubs.value ?? []).slice(0, 6))
 const featuredClasses = computed(() => (classes.value ?? []).slice(0, 3))
@@ -49,7 +54,7 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
       />
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <section v-if="showPublicPackages" class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <SzSection :title="t('packages.title')" :to="localePath('/packages')" :link-text="t('packages.viewAll')" />
       <HomeSectionSkeleton v-if="packagesPending" :count="3" />
       <div v-else-if="featuredPackages.length" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -63,7 +68,7 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
       />
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <section v-if="showGroupClasses" class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
       <SzSection :title="t('classes.title')" :to="localePath('/classes')" :link-text="t('classes.viewAll')" />
       <HomeSectionSkeleton v-if="classesPending" :count="3" />
       <div v-else-if="featuredClasses.length" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ClassPackage } from '~/types'
 
+definePageMeta({ middleware: ['feature-group-classes'] })
+
 const { t } = useI18n()
 const localePath = useLocalePath()
 const route = useRoute()

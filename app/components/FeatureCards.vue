@@ -3,12 +3,14 @@ import { brandSurface } from '#shared/palette'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
-const cards = [
-  { key: 'classes', sport: 'fitness', to: '/classes' },
-  { key: 'matches', sport: 'football', to: '/matches' },
-  { key: 'coaches', sport: 'tennis', to: '/coaches' },
-  { key: 'clubs', sport: 'padel', to: '/clubs' },
-] as const
+const { showGroupClasses, showFindPlayers } = useFeatures()
+
+const cards = computed(() => [
+  ...(showGroupClasses.value ? [{ key: 'classes' as const, sport: 'fitness', to: '/classes' }] : []),
+  ...(showFindPlayers.value ? [{ key: 'matches' as const, sport: 'football', to: '/matches' }] : []),
+  { key: 'coaches' as const, sport: 'tennis', to: '/coaches' },
+  { key: 'clubs' as const, sport: 'padel', to: '/clubs' },
+])
 </script>
 
 <template>

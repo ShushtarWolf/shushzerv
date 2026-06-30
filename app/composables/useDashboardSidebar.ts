@@ -2,6 +2,7 @@ export interface DashboardSidebarTab {
   id: string
   label: string
   icon?: string
+  group?: string
 }
 
 interface DashboardSidebarState {

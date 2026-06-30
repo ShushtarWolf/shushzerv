@@ -1,3 +1,5 @@
+import { FIND_PLAYERS_ENABLED, PUBLIC_GROUP_CLASSES_ENABLED } from '#shared/features'
+
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
   const { message, locale } = await readBody<{ message?: string; locale?: string }>(event)
@@ -5,8 +7,8 @@ export default defineEventHandler(async (event) => {
   const isFa = locale !== 'en'
 
   const topSuggestions = isFa
-    ? ['رزرو زمین', 'همبازی', 'مسابقات', 'مربیان', 'کیف پول', 'داشبورد']
-    : ['Book a court', 'Find matches', 'Tournaments', 'Coaches', 'Wallet balance', 'Dashboard']
+    ? ['رزرو زمین', ...(FIND_PLAYERS_ENABLED ? ['همبازی'] : []), 'مسابقات', 'مربیان', 'کیف پول', 'داشبورد']
+    : ['Book a court', ...(FIND_PLAYERS_ENABLED ? ['Find matches'] : []), 'Tournaments', 'Coaches', 'Wallet balance', 'Dashboard']
 
   if (!text) {
     return {
@@ -91,7 +93,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (/match.*near|همبازی.*نزدیک|find match|همبازی/.test(text)) {
+  if (FIND_PLAYERS_ENABLED && /match.*near|همبازی.*نزدیک|find match|همبازی/.test(text)) {
     const open = await prisma.openMatch.count({ where: { status: 'OPEN' } })
     return {
       reply: isFa
@@ -117,7 +119,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (/کلاس|class|group/.test(text)) {
+  if (PUBLIC_GROUP_CLASSES_ENABLED && /کلاس|class|group/.test(text)) {
     return {
       reply: isFa
         ? `${classCount} کلاس گروهی باز برای ثبت‌نام وجود دارد.`
@@ -126,7 +128,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (/match|player|بازی/.test(text)) {
+  if (FIND_PLAYERS_ENABLED && /match|player|بازی/.test(text)) {
     return {
       reply: isFa
         ? `${matchCount} بازی باز برای پیوستن هست.`
@@ -171,8 +173,8 @@ export default defineEventHandler(async (event) => {
 
   return {
     reply: isFa
-      ? 'می‌توانم درباره رزرو زمین، همبازی، کیف پول، رزروهای من و تماس کمک کنم.'
-      : 'I can help with court booking, matches, wallet balance, my bookings, and contact.',
+      ? `می‌توانم درباره رزرو زمین${FIND_PLAYERS_ENABLED ? '، همبازی' : ''}، کیف پول، رزروهای من و تماس کمک کنم.`
+      : `I can help with court booking${FIND_PLAYERS_ENABLED ? ', matches' : ''}, wallet balance, my bookings, and contact.`,
     suggestions: topSuggestions,
   }
 })

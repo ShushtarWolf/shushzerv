@@ -9,6 +9,7 @@ const route = useRoute()
 const { pickName, localized, formatPrice, formatRating, formatTimeRange, formatDate, formatTime } = useLocaleContent()
 const { loggedIn } = useUserSession()
 const toast = useToast()
+const { showFindPlayers } = useFeatures()
 const { requireLogin, saveBookingIntent, consumeBookingIntent } = useAuthRedirect()
 const payWithWallet = ref(true)
 const playerCount = ref(2)
@@ -374,11 +375,13 @@ async function confirmBooking() {
             {{ payWithWallet && canPayWithWallet ? t('wallet.payWithWallet') : t('booking.payAtClub') }}
           </p>
           <BookingEquipmentList v-if="lastReservedEquipment.length" :lines="lastReservedEquipment" />
-          <p class="mt-4 text-sm font-semibold text-brand-orange">{{ t('booking.shareMatchHint') }}</p>
-          <div class="mt-6 flex flex-col gap-2">
-            <SzButton :to="localePath('/dashboard?tab=bookings')" block>{{ t('booking.viewBookings') }}</SzButton>
+          <template v-if="showFindPlayers">
+            <p class="mt-4 text-sm font-semibold text-brand-orange">{{ t('booking.shareMatchHint') }}</p>
             <SzButton v-if="createdMatchId" :to="localePath(`/matches/${createdMatchId}`)" variant="ghost" block>{{ t('matches.view') }}</SzButton>
             <SzButton v-else :to="localePath('/matches')" variant="ghost" block>{{ t('matches.create') }}</SzButton>
+          </template>
+          <div class="mt-6 flex flex-col gap-2">
+            <SzButton :to="localePath('/dashboard?tab=bookings')" block>{{ t('booking.viewBookings') }}</SzButton>
             <a
               v-if="bookingIcsHref"
               :href="bookingIcsHref"
@@ -495,7 +498,7 @@ async function confirmBooking() {
               <option :value="2">2</option>
               <option :value="4">4</option>
             </select>
-            <label for="booking-create-match" class="flex items-center gap-2">
+            <label for="booking-create-match" v-if="showFindPlayers" class="flex items-center gap-2">
               <input id="booking-create-match" v-model="createMatchAfterBook" type="checkbox" />
               {{ t('booking.createMatch') }}
             </label>

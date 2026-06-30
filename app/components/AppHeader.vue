@@ -4,6 +4,7 @@ const localePath = useLocalePath()
 const { loggedIn, user, clear } = useUserSession()
 const { dashboardPath } = useDashboardPath()
 const { firstName } = useUserDisplayName()
+const { showGroupClasses, showFindPlayers } = useFeatures()
 
 const showMore = ref(false)
 const showMobileNav = ref(false)
@@ -12,8 +13,8 @@ const primaryLinks = computed(() => [
   { to: localePath('/'), label: t('nav.home') },
   { to: localePath('/explore'), label: t('nav.explore') },
   { to: localePath('/clubs'), label: t('nav.clubs') },
-  { to: localePath('/classes'), label: t('nav.classes') },
-  { to: localePath('/matches'), label: t('nav.matches') },
+  ...(showGroupClasses.value ? [{ to: localePath('/classes'), label: t('nav.classes') }] : []),
+  ...(showFindPlayers.value ? [{ to: localePath('/matches'), label: t('nav.matches') }] : []),
   { to: localePath('/tournaments'), label: t('tournaments.title') },
 ])
 

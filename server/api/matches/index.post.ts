@@ -1,9 +1,11 @@
 import type { SkillLevel } from '@prisma/client'
 import { isVisibleSportSlug } from '#shared/visibleSports'
+import { assertFindPlayersEnabled } from '../../utils/features'
 
 const LEVELS: SkillLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'PRO']
 
 export default defineEventHandler(async (event) => {
+  assertFindPlayersEnabled()
   const user = await requireRole(event, 'ATHLETE')
   const body = await readBody<{
     sport?: string

@@ -58,14 +58,14 @@ export function useClubDashboard() {
   })
 
   const tabs = computed(() => [
-    { id: 'overview', label: t('dashboard.overview'), icon: 'grid' },
-    { id: 'schedule', label: t('dashboard.scheduleTab'), icon: 'calendar' },
-    { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet' },
-    { id: 'finance', label: t('dashboard.financeTab'), icon: 'chart' },
-    { id: 'manage', label: t('dashboard.manageTab'), icon: 'building' },
-    { id: 'bookings', label: t('dashboard.bookingsTab'), icon: 'chart' },
-    { id: 'reviews', label: t('reviews.title'), icon: 'users' },
-    { id: 'tournaments', label: t('tournaments.title'), icon: 'calendar' },
+    { id: 'overview', label: t('dashboard.overview'), icon: 'grid', group: 'general' },
+    { id: 'schedule', label: t('dashboard.scheduleTab'), icon: 'calendar', group: 'general' },
+    { id: 'bookings', label: t('dashboard.bookingsTab'), icon: 'chart', group: 'operations' },
+    { id: 'wallet', label: t('dashboard.walletTab'), icon: 'wallet', group: 'account' },
+    { id: 'finance', label: t('dashboard.financeTab'), icon: 'chart', group: 'account' },
+    { id: 'manage', label: t('dashboard.manageTab'), icon: 'building', group: 'business' },
+    { id: 'reviews', label: t('reviews.title'), icon: 'users', group: 'business' },
+    { id: 'tournaments', label: t('tournaments.title'), icon: 'calendar', group: 'business' },
   ])
 
   return {

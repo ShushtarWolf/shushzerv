@@ -1,4 +1,7 @@
+import { assertFindPlayersEnabled } from '../../utils/features'
+
 export default defineEventHandler(async (event) => {
+  assertFindPlayersEnabled()
   const id = getRouterParam(event, 'id')
   const session = await getUserSession(event)
 

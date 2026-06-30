@@ -1,6 +1,6 @@
 <template>
-  <DashboardShell>
+  <AdminShell>
     <slot />
     <SzToast />
-  </DashboardShell>
+  </AdminShell>
 </template>

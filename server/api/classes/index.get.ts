@@ -1,7 +1,9 @@
 import { mapClassParticipants } from '../../utils/classSession'
+import { assertGroupClassesPublicAccess } from '../../utils/features'
 import { entitySportWhere } from '../../utils/visibleSports'
 
 export default defineEventHandler(async (event) => {
+  await assertGroupClassesPublicAccess(event)
   const { sport, city, clubId, classType, genderPolicy } = getQuery(event)
   const sportFilter = entitySportWhere(sport)
   if (sportFilter === null) return []

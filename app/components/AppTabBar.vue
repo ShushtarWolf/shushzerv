@@ -3,12 +3,15 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 const { loggedIn } = useUserSession()
 const { dashboardPath } = useDashboardPath()
+const { showFindPlayers } = useFeatures()
 
 const tabs = computed(() => [
   { to: localePath('/'), label: t('nav.home'), icon: 'home' },
   { to: localePath('/explore'), label: t('nav.explore'), icon: 'explore' },
   { to: localePath('/clubs?book=1'), label: t('nav.book'), icon: 'book', center: true },
-  { to: localePath('/matches'), label: t('nav.matches'), icon: 'matches' },
+  ...(showFindPlayers.value
+    ? [{ to: localePath('/matches'), label: t('nav.matches'), icon: 'matches' as const }]
+    : [{ to: localePath('/coaches'), label: t('nav.coaches'), icon: 'coaches' as const }]),
   { to: loggedIn.value ? dashboardPath.value : localePath('/login'), label: loggedIn.value ? t('nav.profile') : t('nav.login'), icon: 'profile' },
 ])
 </script>
@@ -37,6 +40,7 @@ const tabs = computed(() => [
           <template v-if="tab.icon === 'home'"><path d="M3 11l9-8 9 8" /><path d="M5 10v10h14V10" /></template>
           <template v-else-if="tab.icon === 'explore'"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></template>
           <template v-else-if="tab.icon === 'matches'"><circle cx="9" cy="8" r="3" /><circle cx="15" cy="8" r="3" /><path d="M4 20v-1a5 5 0 0 1 10 0v1" /></template>
+          <template v-else-if="tab.icon === 'coaches'"><circle cx="12" cy="8" r="4" /><path d="M6 21v-1a6 6 0 0 1 12 0v1" /></template>
           <template v-else><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></template>
         </svg>
         <span class="text-[0.6rem] font-bold" :class="tab.center ? 'text-brand-orange' : ''">{{ tab.label }}</span>

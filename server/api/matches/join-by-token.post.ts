@@ -1,4 +1,7 @@
+import { assertFindPlayersEnabled } from '../../utils/features'
+
 export default defineEventHandler(async (event) => {
+  assertFindPlayersEnabled()
   const user = await requireRole(event, 'ATHLETE')
   const body = await readBody<{ token?: string }>(event)
   if (!body.token) throw createError({ statusCode: 400, statusMessage: 'token required' })

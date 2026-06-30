@@ -1,4 +1,5 @@
 import { courtSportWhere, entitySportWhere, visibleSportWhere } from '../utils/visibleSports'
+import { FIND_PLAYERS_ENABLED, canAccessGroupClasses } from '#shared/features'
 
 export type GlobalSearchResult = {
   type: 'club' | 'coach' | 'class' | 'match' | 'tournament' | 'news' | 'sport'
@@ -21,6 +22,8 @@ export default defineEventHandler(async (event) => {
   if (!search) return { results: [] as GlobalSearchResult[] }
 
   const results: GlobalSearchResult[] = []
+  const session = await getUserSession(event)
+  const includeClasses = canAccessGroupClasses(session?.user?.role)
 
   const [clubs, coaches, classes, matches, tournaments, news, sports] = await Promise.all([
     prisma.club.findMany({
@@ -50,7 +53,8 @@ export default defineEventHandler(async (event) => {
       take: TAKE,
       orderBy: [{ featured: 'desc' }, { rating: 'desc' }],
     }),
-    prisma.classSession.findMany({
+    includeClasses
+      ? prisma.classSession.findMany({
       where: {
         status: { not: 'CANCELLED' },
         ...entitySportWhere(undefined),
@@ -59,8 +63,10 @@ export default defineEventHandler(async (event) => {
       include: { club: true, sport: true },
       take: TAKE,
       orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
-    }),
-    prisma.openMatch.findMany({
+    })
+      : Promise.resolve([]),
+    FIND_PLAYERS_ENABLED
+      ? prisma.openMatch.findMany({
       where: {
         status: 'OPEN',
         ...entitySportWhere(undefined),
@@ -74,7 +80,8 @@ export default defineEventHandler(async (event) => {
       include: { sport: true, club: true },
       take: TAKE,
       orderBy: { date: 'asc' },
-    }),
+    })
+      : Promise.resolve([]),
     prisma.tournament.findMany({
       where: {
         status: { not: 'CANCELLED' },

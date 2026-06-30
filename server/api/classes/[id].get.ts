@@ -1,6 +1,8 @@
 import { mapClassParticipants } from '../../utils/classSession'
+import { assertGroupClassesPublicAccess } from '../../utils/features'
 
 export default defineEventHandler(async (event) => {
+  await assertGroupClassesPublicAccess(event)
   const id = getRouterParam(event, 'id')
   const session = await getUserSession(event)
 

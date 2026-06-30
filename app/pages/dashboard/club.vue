@@ -19,6 +19,12 @@ const { displayName } = useUserDisplayName()
 
 useHead({ title: () => t('dashboard.clubAdmin') })
 
+provideDashboardShellConfig(computed(() => ({
+  subtitle: t('dashboard.clubAdmin'),
+  homeLink: '/dashboard/club',
+  showSearch: true,
+})))
+
 const {
   tab,
   clubs,
@@ -195,6 +201,7 @@ const showBulkReservePanel = ref(false)
 const showRecurringClassPanel = ref(false)
 const clubBookGuestName = ref('')
 const clubBookAthletePhone = ref('')
+const clubBookCoachId = ref('')
 const clubBookAthleteKnown = ref(false)
 const clubBookError = ref('')
 const clubBookPending = ref(false)
@@ -815,6 +822,7 @@ function clearScheduleSelection() {
   showRecurringClassPanel.value = false
   clubBookGuestName.value = ''
   clubBookAthletePhone.value = ''
+  clubBookCoachId.value = ''
   clubBookAthleteKnown.value = false
   clubBookError.value = ''
 }
@@ -952,6 +960,7 @@ async function confirmClubBooking() {
       method: 'POST',
       body: {
         slotId,
+        coachId: clubBookCoachId.value || undefined,
         athleteName: clubBookGuestName.value.trim(),
         athletePhone: clubBookAthletePhone.value.trim(),
       },
@@ -986,6 +995,7 @@ async function confirmBulkClubBooking() {
           startTime: c.startTime,
           endTime: c.endTime,
         })),
+        coachId: clubBookCoachId.value || undefined,
         athleteName: clubBookGuestName.value.trim(),
         athletePhone: clubBookAthletePhone.value.trim(),
       },
@@ -1205,6 +1215,13 @@ async function confirmRecurringClasses() {
                 @blur="lookupClubAthleteByPhone"
               />
             </div>
+            <div class="sm:col-span-2">
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.clubBookCoach') }}</label>
+              <select v-model="clubBookCoachId" class="fd-input">
+                <option value="">{{ t('dashboard.clubBookNoCoach') }}</option>
+                <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
+              </select>
+            </div>
           </div>
           <p v-if="clubBookAthleteKnown" class="mt-2 text-sm text-fd-success">{{ t('dashboard.clubBookAthleteFound') }}</p>
           <p class="mt-2 text-sm text-fd-muted">{{ t('dashboard.clubBookHint') }}</p>
@@ -1321,6 +1338,13 @@ async function confirmRecurringClasses() {
                 dir="ltr"
                 @blur="lookupClubAthleteByPhone"
               />
+            </div>
+            <div>
+              <label class="mb-1.5 block text-xs font-semibold text-fd-muted">{{ t('dashboard.clubBookCoach') }}</label>
+              <select v-model="clubBookCoachId" class="fd-input">
+                <option value="">{{ t('dashboard.clubBookNoCoach') }}</option>
+                <option v-for="c in coaches" :key="c.id" :value="c.id">{{ pickName(c) }}</option>
+              </select>
             </div>
           </div>
           <p v-if="clubBookAthleteKnown" class="mt-2 text-sm text-fd-success">{{ t('dashboard.clubBookAthleteFound') }}</p>

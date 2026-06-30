@@ -1,7 +1,9 @@
 import { assertCanEnrollInClass } from '../../utils/classSession'
+import { assertGroupClassesPublicAccess } from '../../utils/features'
 import { payClassFromWallet } from '../../utils/wallet'
 
 export default defineEventHandler(async (event) => {
+  await assertGroupClassesPublicAccess(event)
   const user = await requireRole(event, 'ATHLETE')
   const { classSessionId, payWithWallet } = await readBody<{ classSessionId?: string; payWithWallet?: boolean }>(event)
   if (!classSessionId) {
