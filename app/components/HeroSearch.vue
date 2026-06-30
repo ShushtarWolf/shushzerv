@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { Sport } from '~/types'
 
-const props = withDefaults(
-  defineProps<{ sports: Sport[]; embedded?: boolean }>(),
-  { embedded: false },
-)
+const props = defineProps<{ sports: Sport[] }>()
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const { cities } = useCities()
@@ -55,45 +52,18 @@ function submit() {
 </script>
 
 <template>
-  <section
-    :class="embedded
-      ? 'relative'
-      : 'relative overflow-hidden rounded-ios-xl bg-brand-primary p-6 text-white shadow-lifted sm:p-10'"
-  >
-    <ShapeGridBackground v-if="!embedded" class="absolute inset-0 h-full w-full" />
-    <div
-      class="relative z-10 space-y-4"
-      :class="embedded ? 'rounded-ios-xl border border-white/10 bg-black/45 p-4 shadow-2xl backdrop-blur-xl sm:space-y-5 sm:p-6' : 'space-y-5'"
-    >
-      <p
-        v-if="loggedIn"
-        class="text-sm font-semibold"
-        :class="embedded ? 'text-white/90' : 'text-white/95'"
-      >
+  <section class="relative overflow-hidden rounded-ios-xl bg-brand-primary p-6 text-white shadow-lifted sm:p-10">
+    <ShapeGridBackground class="absolute inset-0 h-full w-full" />
+    <div class="relative z-10 space-y-5">
+      <p v-if="loggedIn" class="text-sm font-semibold text-white/95">
         {{ t('hero.greeting', { name: firstName }) }}
       </p>
-      <h2
-        v-if="embedded"
-        class="text-xl font-bold text-white sm:text-2xl"
-      >
-        {{ t('hero.bookNow') }}
-      </h2>
-      <h1 v-else class="sz-display text-white">
+      <h1 class="sz-display text-white">
         {{ t('hero.bookNow') }}
       </h1>
-      <p
-        class="max-w-xl text-base"
-        :class="embedded ? 'text-white/75' : 'text-white/95'"
-      >
-        {{ t('hero.subtitle') }}
-      </p>
+      <p class="max-w-xl text-base text-white/95">{{ t('hero.subtitle') }}</p>
 
-      <p
-        class="text-sm font-semibold"
-        :class="embedded ? 'text-white/70' : 'text-white/80'"
-      >
-        {{ t('hero.pickSport') }}
-      </p>
+      <p class="text-sm font-semibold text-white/80">{{ t('hero.pickSport') }}</p>
       <SzSportTabs variant="hero" :model-value="sport" :sports="sports" @update:model-value="onSportChange" />
 
       <form

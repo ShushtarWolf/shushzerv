@@ -24,10 +24,21 @@ export function defaultMaxSeatsForType(classType: ClassType) {
   return classType === 'SEMI_PRIVATE' ? 3 : 12
 }
 
+const ARABIC_SCRIPT_RE = /[\u0600-\u06FF\u0750-\u077F]/
+
+function graphemes(text: string) {
+  return [...text.replace(/\u200c/g, '')]
+}
+
 export function userInitials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean)
   if (!parts.length) return '?'
-  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase()
+  const given = parts[0]!
+  if (ARABIC_SCRIPT_RE.test(given)) {
+    const chars = graphemes(given)
+    return chars.slice(0, 2).join('') || '?'
+  }
+  if (parts.length === 1) return given.slice(0, 2).toUpperCase()
   return `${parts[0]![0]}${parts[parts.length - 1]![0]}`.toUpperCase()
 }
 

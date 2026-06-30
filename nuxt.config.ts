@@ -13,12 +13,7 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     'nuxt-auth-utils',
     '@vite-pwa/nuxt',
-    '@tresjs/nuxt',
   ],
-
-  tres: {
-    devtools: false,
-  },
 
   css: ['~/assets/css/main.css', 'leaflet/dist/leaflet.css'],
 

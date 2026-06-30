@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Club, ReservedEquipmentLine, ScheduleEvent } from '~/types'
 import type { EquipmentPickerItem } from '~/composables/useEquipmentBooking'
-import { equipmentRentalSubtotal, equipmentSelectionsPayload, equipmentRequiresSelection, equipmentHasSelection } from '~/composables/useEquipmentBooking'
+import { equipmentRentalSubtotal, equipmentSelectionsPayload, equipmentRequiresSelection, equipmentHasSelection, equipmentItemMode, equipmentIsBookable } from '~/composables/useEquipmentBooking'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -42,6 +42,24 @@ if (error.value) {
 }
 
 useHead({ title: () => (club.value ? pickName(club.value) : t('clubs.details')) })
+
+const bookingSectionRef = ref<HTMLElement | null>(null)
+
+const wantsBookFlow = computed(() => route.query.book === '1' || route.query.book === 'true')
+
+function scrollToBooking() {
+  bookingSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+onMounted(() => {
+  if (wantsBookFlow.value) {
+    nextTick(() => scrollToBooking())
+  }
+})
+
+watch(wantsBookFlow, (v) => {
+  if (v) nextTick(() => scrollToBooking())
+})
 
 const accent = '#2C4A6E'
 
@@ -133,7 +151,7 @@ const equipmentSelectionMissing = computed(
 )
 
 const canConfirmBooking = computed(
-  () => !bookingPending.value && !equipmentSelectionMissing.value,
+  () => !bookingPending.value && (loggedIn.value ? !equipmentSelectionMissing.value : true),
 )
 
 const canPayWithWallet = computed(() => loggedIn.value && walletBalance.value >= bookingGrandTotal.value)
@@ -165,6 +183,17 @@ async function loadEquipmentAvailability() {
   selectedEquipment.value = Object.fromEntries(
     Object.entries(selectedEquipment.value).filter(([id]) => allowed.has(id)),
   )
+  applyDefaultEquipmentSelections()
+}
+
+function applyDefaultEquipmentSelections() {
+  if (equipmentHasSelection(selectedEquipment.value)) return
+  const defaults: Record<string, number> = {}
+  for (const item of availableEquipment.value) {
+    if (!equipmentIsBookable(item)) continue
+    if (equipmentItemMode(item) === 'PROVIDED') defaults[item.id] = 1
+  }
+  if (Object.keys(defaults).length) selectedEquipment.value = defaults
 }
 
 watch([selectedSlotId, selectedCourtId], () => {
@@ -394,7 +423,7 @@ async function confirmBooking() {
       </div>
     </Teleport>
 
-    <section class="mb-8">
+    <section ref="bookingSectionRef" class="mb-8 scroll-mt-24">
       <h2 class="ios-title-3 mb-4">{{ t('booking.title') }}</h2>
 
       <ol class="mb-6 flex items-center justify-center gap-1 text-sm font-bold sm:gap-2">
@@ -434,7 +463,7 @@ async function confirmBooking() {
               : 'border-brand-gray-200 bg-white'"
             @click="selectedCourtId = court.id; selectedSlotId = ''"
           >
-            <span class="inline-flex items-center gap-1.5" :class="selectedCourtId === court.id ? 'text-white' : 'text-brand-gray-700'">
+            <span class="inline-flex items-center gap-1.5" :class="selectedCourtId === court.id ? 'text-brand-primary' : 'text-brand-gray-700'">
               <SportIcon v-if="court.sport" :slug="court.sport.slug" size="xs" />
               {{ pickName(court) }}
             </span>
@@ -504,7 +533,11 @@ async function confirmBooking() {
             </label>
           </div>
           <SzButton class="mt-3" block :disabled="!canConfirmBooking" @click="confirmBooking">
-            {{ loggedIn ? t('booking.confirm') : t('booking.continueToLogin') }}
+            {{
+              loggedIn
+                ? (equipmentSelectionMissing ? t('equipment.selectGearRequired') : t('booking.confirm'))
+                : t('booking.continueToLogin')
+            }}
           </SzButton>
         </div>
       </div>

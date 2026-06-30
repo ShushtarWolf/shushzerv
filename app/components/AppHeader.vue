@@ -8,6 +8,25 @@ const { showGroupClasses, showFindPlayers } = useFeatures()
 
 const showMore = ref(false)
 const showMobileNav = ref(false)
+const moreMenuRef = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  if (!import.meta.client) return
+  document.addEventListener('click', onDocumentClick)
+})
+
+onUnmounted(() => {
+  if (!import.meta.client) return
+  document.removeEventListener('click', onDocumentClick)
+})
+
+function onDocumentClick(event: MouseEvent) {
+  if (!showMore.value) return
+  const target = event.target as Node | null
+  if (moreMenuRef.value && target && !moreMenuRef.value.contains(target)) {
+    showMore.value = false
+  }
+}
 
 const primaryLinks = computed(() => [
   { to: localePath('/'), label: t('nav.home') },
@@ -64,7 +83,7 @@ function closeMobileNav() {
         >
           {{ link.label }}
         </NuxtLink>
-        <div class="relative">
+        <div ref="moreMenuRef" class="relative">
           <button
             type="button"
             class="inline-flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-semibold text-brand-gray-600 hover:bg-brand-gray-100 xl:px-3"

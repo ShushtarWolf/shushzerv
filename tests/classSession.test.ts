@@ -14,6 +14,11 @@ describe('classSession utils', () => {
     expect(userInitials('Sara')).toBe('SA')
   })
 
+  it('userInitials uses given-name graphemes for Persian names', () => {
+    expect(userInitials('آرش ورزشکار')).toBe('آر')
+    expect(userInitials('پریسا کریمی')).toBe('پر')
+  })
+
   it('skillLevelInRange checks bounds', () => {
     expect(skillLevelInRange('INTERMEDIATE', 'BEGINNER', 'ADVANCED')).toBe(true)
     expect(skillLevelInRange('PRO', 'BEGINNER', 'INTERMEDIATE')).toBe(false)

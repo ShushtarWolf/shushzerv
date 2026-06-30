@@ -57,7 +57,7 @@ const { levelLabel } = useSkillLevel()
           v-for="(p, i) in classSession.participants.slice(0, 6)"
           :key="i"
           class="inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-brand-gray-100 px-1.5 text-[10px] font-bold text-brand-gray-700"
-          :title="`${levelLabel(p.level)}`"
+          :title="levelLabel(p.level)"
         >
           {{ p.initials }}
         </span>

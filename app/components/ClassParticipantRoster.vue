@@ -31,14 +31,14 @@ const openSpotCount = computed(() => Math.max(0, props.maxSeats - props.bookedSe
       >
         <span
           class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-orange/10 text-xs font-bold text-brand-orange"
-          :aria-label="p.initials"
+          :aria-label="`${levelLabel(p.level)} — ${userGenderLabel(p.gender)}`"
         >
           {{ p.initials }}
         </span>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-semibold text-brand-gray-900">{{ p.initials }}</p>
+          <p class="text-sm font-semibold text-brand-gray-900">{{ levelLabel(p.level) }}</p>
           <p class="text-xs text-brand-gray-500">
-            {{ levelLabel(p.level) }} · {{ userGenderLabel(p.gender) }}
+            {{ userGenderLabel(p.gender) }}
           </p>
         </div>
       </li>

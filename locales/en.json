@@ -44,14 +44,6 @@
     "pickSport": "Pick a sport",
     "greeting": "Hey {name}! Ready to play?"
   },
-  "courtHero": {
-    "eyebrow": "Tennis courts",
-    "title": "Step onto the court.",
-    "subtitle": "Scroll to orbit the full isometric tennis court — players, net, and all — then book in seconds.",
-    "zoomCaption": "Rotate and zoom into the court",
-    "scrollHint": "Scroll to explore",
-    "attribution": "Court art by macrovector / Freepik"
-  },
   "trust": {
     "rating": "App rating",
     "players": "players",
