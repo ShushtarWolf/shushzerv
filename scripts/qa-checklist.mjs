@@ -25,6 +25,7 @@ const PHASE_FILTER = process.env.QA_PHASE ?? 'all'
 const REPORT_PATH = resolve(process.env.QA_REPORT ?? 'docs/qa-report.json')
 const CLUB_SLUG = process.env.SMOKE_CLUB_SLUG ?? 'azadi-tennis'
 const MATCH_TOKEN = process.env.QA_MATCH_TOKEN ?? 'demo1match'
+const MATCHES_ENABLED = process.env.QA_MATCHES === '1'
 
 const DEMO = {
   ATHLETE: { email: 'athlete@inboxs.local', password: 'demo1234' },
@@ -187,9 +188,7 @@ async function phasePagesFa(ctx) {
     ctx.classPath,
     '/coaches',
     ctx.coachPath,
-    '/matches',
-    ctx.matchPath,
-    `/m/${MATCH_TOKEN}`,
+    ...(MATCHES_ENABLED ? ['/matches', ctx.matchPath, `/m/${MATCH_TOKEN}`] : []),
     '/tournaments',
     ctx.tournamentPath,
     '/news',
@@ -241,7 +240,7 @@ async function phaseApiPublic(ctx) {
     `/api/clubs/${CLUB_SLUG}`,
     '/api/coaches',
     '/api/classes',
-    '/api/matches',
+    ...(MATCHES_ENABLED ? ['/api/matches'] : []),
     '/api/news',
     '/api/news/in-box-s-launch',
     '/api/tournaments',
@@ -378,6 +377,18 @@ async function phaseClub(ctx) {
     return { ok: res.status === 200, detail: `HTTP ${res.status}`, ms: res.ms }
   })
 
+  await step('club', 'dashboard sidebar SSR labels', async () => {
+    const res = await fetchReq('/dashboard/club', { cookie, accept: 'text/html' })
+    const badNumeric = /admin-nav-group">\s*[0-3]\s*</.test(res.text)
+    const hasGroups = ['عمومی', 'عملیات'].every((g) => res.text.includes(`admin-nav-group">${g}</p>`))
+    const hasTabs = ['خلاصه', 'رزروها'].every((t) => res.text.includes(`>${t}<`))
+    return {
+      ok: res.status === 200 && !badNumeric && hasGroups && hasTabs,
+      detail: badNumeric ? 'numeric group labels' : (!hasGroups || !hasTabs ? 'missing nav labels' : ''),
+      ms: res.ms,
+    }
+  })
+
   const clubRes = await fetchReq('/api/club', { cookie })
   const clubId = clubRes.json?.[0]?.id
   ctx.clubAdminId = clubId
@@ -459,16 +470,22 @@ async function phaseFlows(ctx) {
     })
   }
 
-  await step('flows', `match by token ${MATCH_TOKEN}`, async () => {
-    const res = await fetchReq(`/api/matches/by-token/${MATCH_TOKEN}`)
-    return { ok: res.status === 200 && res.json?.shareToken === MATCH_TOKEN, detail: `HTTP ${res.status}`, ms: res.ms }
-  })
+  // Matches feature is disabled in shared/features.ts (FIND_PLAYERS_ENABLED = false)
+  const matchesEnabled = MATCHES_ENABLED
+  if (matchesEnabled) {
+    await step('flows', `match by token ${MATCH_TOKEN}`, async () => {
+      const res = await fetchReq(`/api/matches/by-token/${MATCH_TOKEN}`)
+      return { ok: res.status === 200 && res.json?.shareToken === MATCH_TOKEN, detail: `HTTP ${res.status}`, ms: res.ms }
+    })
 
-  await step('flows', `match share page title /m/${MATCH_TOKEN}`, async () => {
-    const res = await fetchReq(`/m/${MATCH_TOKEN}`, { accept: 'text/html' })
-    const ok = res.status === 200 && !res.text.includes('<title>IN BOX S</title>')
-    return { ok, detail: ok ? 'localized title' : 'generic title', ms: res.ms }
-  })
+    await step('flows', `match share page title /m/${MATCH_TOKEN}`, async () => {
+      const res = await fetchReq(`/m/${MATCH_TOKEN}`, { accept: 'text/html' })
+      const ok = res.status === 200 && !res.text.includes('<title>IN BOX S</title>')
+      return { ok, detail: ok ? 'localized title' : 'generic title', ms: res.ms }
+    })
+  } else {
+    await step('flows', 'match flows skipped (FIND_PLAYERS_ENABLED=false)', async () => ({ ok: true, detail: 'skipped' }))
+  }
 
   await step('flows', 'demo logins (all roles)', async () => {
     for (const role of Object.keys(DEMO)) {

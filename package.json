@@ -26,9 +26,13 @@
     "docs:pdf": "bash scripts/generate-tutorial-pdf.sh all",
     "smoke": "node scripts/smoke.mjs",
     "qa": "node scripts/qa-checklist.mjs",
+    "qa:ui": "node scripts/ui-visual-audit.mjs",
     "qa:fast": "QA_STEP_MS=0 node scripts/qa-checklist.mjs",
     "qa:flows": "node scripts/qa-flows.mjs",
     "demo:images": "node scripts/fetch-demo-images.mjs",
+    "inbox:commercial": "bash scripts/generate-inbox-commercial-higgsfield.sh",
+    "inbox:commercial:replicate": "node scripts/generate-inbox-commercial-replicate.mjs",
+    "inbox:commercial:keyframe": "node scripts/generate-inbox-commercial-replicate.mjs --keyframe-only",
     "test": "vitest run",
     "test:watch": "vitest"
   },

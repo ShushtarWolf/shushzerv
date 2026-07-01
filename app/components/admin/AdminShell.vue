@@ -123,13 +123,13 @@ watch(() => route.path, closeSidebar)
   <div class="admin-shell min-h-dvh md:flex">
     <div
       v-if="sidebarOpen"
-      class="fixed inset-0 z-40 bg-black/50 md:hidden"
+      class="fixed inset-0 z-40 bg-black/50 lg:hidden"
       aria-hidden="true"
       @click="closeSidebar"
     />
 
     <aside
-      class="admin-sidebar z-50 flex w-[15.5rem] min-w-[15.5rem] shrink-0 flex-col transition-transform duration-200 max-lg:fixed max-lg:inset-y-0 ltr:max-lg:left-0 rtl:max-lg:right-0 md:relative md:min-h-dvh md:translate-x-0"
+      class="admin-sidebar z-50 flex w-[15.5rem] min-w-[15.5rem] shrink-0 flex-col transition-transform duration-200 max-lg:fixed max-lg:inset-y-0 ltr:max-lg:left-0 rtl:max-lg:right-0 lg:relative lg:min-h-dvh lg:translate-x-0"
       :class="asideClass"
     >
       <div class="flex items-center gap-2.5 px-4 py-4">
@@ -149,7 +149,7 @@ watch(() => route.path, closeSidebar)
         </div>
         <button
           type="button"
-          class="admin-icon-btn shrink-0 md:hidden"
+          class="admin-icon-btn shrink-0 lg:hidden"
           :aria-label="t('common.close')"
           @click="closeSidebar"
         >
@@ -221,7 +221,7 @@ watch(() => route.path, closeSidebar)
         <div class="flex min-w-0 flex-1 items-center gap-2">
           <button
             type="button"
-            class="admin-icon-btn-light shrink-0 md:hidden"
+            class="admin-icon-btn-light shrink-0 lg:hidden"
             :aria-label="t('nav.menu')"
             :aria-expanded="sidebarOpen"
             @click="toggleSidebar"
