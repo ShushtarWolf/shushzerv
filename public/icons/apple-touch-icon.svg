@@ -6,8 +6,11 @@
     </linearGradient>
   </defs>
   <rect width="192" height="192" rx="42" fill="url(#g)"/>
-  <path d="M96 24C62.2 24 42 48.2 42 78c0 31.5 54 90 54 90s54-58.5 54-90C150 48.2 129.8 24 96 24Z" fill="#fff" opacity="0.95"/>
-  <circle cx="96" cy="78" r="21" fill="#84CC16"/>
-  <path d="M81 111c7.2 10.8 15 15 15 15s7.8-4.2 15-15" stroke="#fff" stroke-width="9.6" stroke-linecap="round" fill="none"/>
-  <path d="M114 120l18 9-6 15-15-3" fill="#fff" opacity="0.9"/>
+  <g transform="translate(96 114)" stroke="#fff" stroke-width="11.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-42 15 H42 M-42 15 V34.8 M42 15 V34.8"/>
+    <g transform="translate(0 -15) rotate(14)">
+      <path d="M-36 -3 H36 M-36 -3 V-22.8 M36 -3 V-22.8"/>
+    </g>
+    <circle cx="0" cy="-43.2" r="17.4" fill="#fff" stroke="none"/>
+  </g>
 </svg>
