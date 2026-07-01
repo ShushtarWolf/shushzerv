@@ -208,7 +208,7 @@ const sortedClubs = computed(() => {
         <span class="font-medium text-brand-gray-400">{{ t('clubs.legendNoClasses') }}</span>
       </p>
 
-      <ClubsMap v-if="view === 'map'" :clubs="sortedClubs" />
+      <ClubsMap v-if="view === 'map'" :clubs="sortedClubs" variant="sidebar" />
       <div v-else :key="sportFilter" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <ClubCard v-for="club in sortedClubs" :key="club.id" :club="club" :date="dateFilter" />
       </div>

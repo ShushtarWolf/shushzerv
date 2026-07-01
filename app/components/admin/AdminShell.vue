@@ -44,6 +44,10 @@ const homeLink = computed(() => {
 
 const showSearch = computed(() => shellConfig.value?.showSearch !== false && user.value?.role !== 'PLATFORM_ADMIN')
 
+const isPlatformAdmin = computed(() => user.value?.role === 'PLATFORM_ADMIN')
+
+const shellClass = computed(() => (isPlatformAdmin.value ? '' : 'ds-dashboard-shell'))
+
 const asideClass = computed(() => {
   if (sidebarOpen.value) return 'max-lg:translate-x-0'
   return 'max-lg:ltr:-translate-x-full max-lg:rtl:translate-x-full'
@@ -120,7 +124,7 @@ watch(() => route.path, closeSidebar)
 </script>
 
 <template>
-  <div class="admin-shell min-h-dvh lg:flex">
+  <div class="admin-shell min-h-dvh lg:flex" :class="shellClass">
     <div
       v-if="sidebarOpen"
       class="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -135,7 +139,8 @@ watch(() => route.path, closeSidebar)
       <div class="flex items-center gap-2.5 px-4 py-4">
         <NuxtLink
           :to="homeLink"
-          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#95BF47] tap-highlight"
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg tap-highlight"
+          :class="isPlatformAdmin ? 'bg-[#95BF47]' : 'bg-brand-primary'"
           @click="closeSidebar"
         >
           <svg viewBox="0 0 24 24" class="h-4.5 w-4.5" fill="none" aria-hidden="true">
@@ -144,8 +149,8 @@ watch(() => route.path, closeSidebar)
           </svg>
         </NuxtLink>
         <div class="min-w-0 flex-1">
-          <p class="truncate text-[0.8125rem] font-semibold text-white">IN BOX S</p>
-          <p class="truncate text-[0.6875rem] text-[#b5b5b5]">{{ subtitle }}</p>
+          <p class="truncate text-[0.8125rem] font-semibold" :class="isPlatformAdmin ? 'text-white' : 'text-brand-gray-900'">IN BOX S</p>
+          <p class="truncate text-[0.6875rem]" :class="isPlatformAdmin ? 'text-[#b5b5b5]' : 'text-brand-gray-500'">{{ subtitle }}</p>
         </div>
         <button
           type="button"
@@ -187,7 +192,8 @@ watch(() => route.path, closeSidebar)
       <div class="border-t border-white/10 px-2 py-3">
         <NuxtLink
           :to="localePath('/')"
-          class="admin-nav-item text-[#b5b5b5] hover:text-white"
+          class="admin-nav-item"
+          :class="isPlatformAdmin ? 'text-[#b5b5b5] hover:text-white' : 'text-brand-gray-600 hover:text-brand-primary'"
           @click="closeSidebar"
         >
           <DashboardNavIcon name="home" class="h-[1.125rem] w-[1.125rem]" />
@@ -195,7 +201,8 @@ watch(() => route.path, closeSidebar)
         </NuxtLink>
         <button
           type="button"
-          class="admin-nav-item w-full text-[#e57373] hover:bg-white/5 hover:text-[#ef9a9a]"
+          class="admin-nav-item w-full"
+          :class="isPlatformAdmin ? 'text-[#e57373] hover:bg-white/5 hover:text-[#ef9a9a]' : 'text-brand-pink hover:bg-brand-pink/5'"
           @click="logout"
         >
           <DashboardNavIcon name="logout" class="h-[1.125rem] w-[1.125rem]" />
@@ -203,14 +210,17 @@ watch(() => route.path, closeSidebar)
         </button>
       </div>
 
-      <div v-if="loggedIn" class="border-t border-white/10 px-4 py-3">
+      <div v-if="loggedIn" class="border-t px-4 py-3" :class="isPlatformAdmin ? 'border-white/10' : 'border-black/5'">
         <div class="flex items-center gap-2.5">
-          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#303030] text-xs font-semibold text-white">
+          <div
+            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+            :class="isPlatformAdmin ? 'bg-[#303030] text-white' : 'bg-brand-primary/15 text-brand-primary'"
+          >
             {{ displayName?.charAt(0)?.toUpperCase() ?? '?' }}
           </div>
           <div class="min-w-0 flex-1">
-            <p class="truncate text-[0.8125rem] font-medium text-white">{{ displayName }}</p>
-            <p class="truncate text-[0.6875rem] text-[#b5b5b5]">{{ user?.email }}</p>
+            <p class="truncate text-[0.8125rem] font-medium" :class="isPlatformAdmin ? 'text-white' : 'text-brand-gray-900'">{{ displayName }}</p>
+            <p class="truncate text-[0.6875rem]" :class="isPlatformAdmin ? 'text-[#b5b5b5]' : 'text-brand-gray-500'">{{ user?.email }}</p>
           </div>
         </div>
       </div>
@@ -256,6 +266,19 @@ watch(() => route.path, closeSidebar)
           <LocaleSwitcher />
         </div>
       </header>
+
+      <nav v-if="sidebarNav && !isPlatformAdmin" class="ds-dashboard-nav">
+        <button
+          v-for="item in sidebarNav.tabs"
+          :key="item.id"
+          type="button"
+          class="ds-dashboard-nav-pill"
+          :class="{ 'ds-dashboard-nav-pill--active': sidebarNav.activeTabId === item.id }"
+          @click="selectSidebarTab(item.id)"
+        >
+          {{ item.label }}
+        </button>
+      </nav>
 
       <main class="admin-main flex-1 px-4 pb-8 sm:px-5 lg:px-6">
         <slot />

@@ -555,11 +555,11 @@ function gridCellLabel(courtId: string, slot: { startTime: string; endTime: stri
         </button>
       </div>
 
-      <div class="schedule-grid-scroll overflow-x-auto overscroll-contain rounded-xl border border-fd-primary/10">
-        <table class="w-full min-w-[32rem] border-collapse text-xs">
+      <div class="schedule-grid-scroll ds-calendar-grid-wrap overflow-x-auto overscroll-contain">
+        <table class="ds-calendar-grid">
           <thead>
             <tr class="bg-[#F5F5F4]">
-              <th class="sticky start-0 z-10 bg-[#F5F5F4] px-2 py-2 text-start font-bold text-fd-muted" scope="col">
+              <th class="ds-calendar-time sticky start-0 z-10 bg-white" scope="col">
                 {{ t('schedule.hours') }}
               </th>
               <th
@@ -575,7 +575,7 @@ function gridCellLabel(courtId: string, slot: { startTime: string; endTime: stri
           <tbody>
             <tr v-for="slot in gridTimes" :key="slot.startTime" class="border-t border-fd-primary/5">
               <th
-                class="sticky start-0 z-10 bg-white px-2 py-1.5 text-start font-semibold tabular-nums text-fd-navy"
+                class="sticky start-0 z-10 bg-white px-2 py-1.5 text-start font-semibold tabular-nums text-fd-navy ds-calendar-time"
                 scope="row"
                 dir="ltr"
               >

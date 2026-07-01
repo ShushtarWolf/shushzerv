@@ -61,7 +61,6 @@ watch(wantsBookFlow, (v) => {
   if (v) nextTick(() => scrollToBooking())
 })
 
-const accent = '#2C4A6E'
 
 const clubSports = computed(() => {
   const seen = new Set<string>()
@@ -354,21 +353,29 @@ async function confirmBooking() {
 </script>
 
 <template>
-  <div v-if="club" class="page-enter mx-auto max-w-6xl px-4 py-8 pb-36 sm:px-6">
+  <div v-if="club" class="page-enter mx-auto max-w-6xl px-4 py-6 pb-36 sm:px-6 sm:py-8">
     <BackLink to="/clubs" />
 
-    <div class="mb-6 overflow-hidden rounded-ios-lg ring-2 ring-inset" :style="{ '--tw-ring-color': accent }">
-      <div class="h-44 sm:h-56">
-        <ClubCover :club="club" />
+    <div class="ds-venue-gallery mb-4">
+      <div
+        v-for="i in 5"
+        :key="i"
+        class="ds-venue-gallery-cell"
+        :class="{ 'ds-venue-gallery-cell--hero': i === 1 }"
+      >
+        <ClubCover :club="club" class="h-full w-full object-cover" />
       </div>
     </div>
 
-    <div class="glass-panel mb-8 overflow-hidden p-6 md:p-8">
+    <div class="ds-venue-info-bar mb-8">
       <div class="flex flex-wrap items-start justify-between gap-4">
-        <div class="min-w-0">
-          <h1 class="sz-headline">{{ pickName(club) }}</h1>
+        <div class="min-w-0 flex-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="sz-headline">{{ pickName(club) }}</h1>
+            <SzBadge tone="green">★ {{ formatRating(club.rating) }}</SzBadge>
+          </div>
           <p class="mt-2 flex items-center gap-1.5 text-brand-gray-600">
-            <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <SzIcon name="location" size="sm" />
             {{ localized(club.addressFa, club.addressEn) }}
           </p>
           <div v-if="clubSports.length" class="mt-3 flex flex-wrap gap-2">
@@ -380,11 +387,13 @@ async function confirmBooking() {
             </SzBadge>
           </div>
         </div>
-        <div class="shrink-0 text-end">
-          <span class="sz-stat text-brand-orange">★ {{ formatRating(club.rating) }}</span>
-          <p class="text-sm font-bold text-brand-gray-600">
-            {{ t('clubs.from') }} {{ formatPrice(club.priceFrom) }} {{ t('clubs.currency') }}
+        <div class="flex shrink-0 flex-col items-end gap-2">
+          <p class="text-sm text-brand-gray-600">{{ t('clubs.from') }}</p>
+          <p class="text-2xl font-black text-brand-orange">
+            {{ formatPrice(club.priceFrom) }}
+            <span class="text-sm font-bold text-brand-gray-500">{{ t('clubs.currency') }}</span>
           </p>
+          <SzButton size="sm" @click="scrollToBooking">{{ t('clubs.reserve') }}</SzButton>
         </div>
       </div>
       <p v-if="club.cancellationPolicyFa || club.cancellationPolicyEn" class="mt-4 rounded-xl bg-sz-gray-50 p-4 text-sm text-sz-gray-700">
@@ -423,78 +432,74 @@ async function confirmBooking() {
       </div>
     </Teleport>
 
-    <section ref="bookingSectionRef" class="mb-8 scroll-mt-24">
-      <h2 class="ios-title-3 mb-4">{{ t('booking.title') }}</h2>
+    <div class="ds-venue-layout">
+      <div class="min-w-0 space-y-8">
+        <ClubReviews v-if="club" :club-id="club.id" @rated="refreshNuxtData()" />
 
-      <ol class="mb-6 flex items-center justify-center gap-1 text-sm font-bold sm:gap-2">
-        <li
-          v-for="(step, idx) in [
-            { n: 1, label: t('clubs.bookingStepCourt') },
-            { n: 2, label: t('clubs.bookingStepSlot') },
-            { n: 3, label: t('clubs.bookingStepConfirm') },
-          ]"
-          :key="step.n"
-          class="flex items-center gap-1 sm:gap-2"
-        >
-          <span
-            class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs transition"
-            :class="bookingStep >= step.n
-              ? 'bg-brand-orange text-brand-primary shadow-card'
-              : 'bg-brand-gray-100 text-brand-gray-500'"
-          >{{ step.n }}</span>
-          <span
-            class="hidden sm:inline"
-            :class="bookingStep >= step.n ? 'text-brand-gray-900' : 'text-brand-gray-500'"
-          >{{ step.label }}</span>
-          <span v-if="idx < 2" class="mx-0.5 text-brand-gray-300 sm:mx-1" aria-hidden="true">→</span>
-        </li>
-      </ol>
+        <section v-if="club.activities?.length">
+          <h2 class="ios-title-3 mb-4">{{ t('activities.title') }}</h2>
+          <div class="space-y-3">
+            <div v-for="a in club.activities" :key="a.id" class="glass-panel p-4">
+              <p class="font-bold text-brand-gray-900">{{ localized(a.titleFa, a.titleEn) }}</p>
+              <p class="text-sm text-brand-gray-600">{{ localized(a.descFa, a.descEn) }}</p>
+              <p class="mt-1 text-xs text-brand-gray-500">{{ formatDate(a.date) }} · {{ formatTime(a.startTime) }}</p>
+            </div>
+          </div>
+        </section>
+      </div>
 
-      <div class="mb-6">
-        <p class="mb-3 text-sm font-bold text-brand-gray-700">{{ t('clubs.selectCourt') }}</p>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="court in club.courts"
-            :key="court.id"
-            type="button"
-            class="rounded-full border px-4 py-2 text-sm font-bold transition tap-highlight"
-            :class="selectedCourtId === court.id
-              ? 'border-brand-orange bg-brand-orange text-brand-primary ring-2 ring-brand-orange/30 ring-offset-2'
-              : 'border-brand-gray-200 bg-white'"
-            @click="selectedCourtId = court.id; selectedSlotId = ''"
+      <aside ref="bookingSectionRef" class="ds-venue-booking-card scroll-mt-24 space-y-4">
+        <h2 class="ios-title-3">{{ t('booking.title') }}</h2>
+
+        <ol class="space-y-2 text-sm font-bold">
+          <li
+            v-for="(step, idx) in [
+              { n: 1, label: t('clubs.bookingStepCourt') },
+              { n: 2, label: t('clubs.bookingStepSlot') },
+              { n: 3, label: t('clubs.bookingStepConfirm') },
+            ]"
+            :key="step.n"
+            class="flex items-center gap-2"
           >
-            <span class="inline-flex items-center gap-1.5" :class="selectedCourtId === court.id ? 'text-brand-primary' : 'text-brand-gray-700'">
-              <SportIcon v-if="court.sport" :slug="court.sport.slug" size="xs" />
+            <span
+              class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs"
+              :class="bookingStep >= step.n ? 'bg-brand-orange text-brand-primary' : 'bg-brand-gray-100 text-brand-gray-500'"
+            >{{ step.n }}</span>
+            <span :class="bookingStep >= step.n ? 'text-brand-gray-900' : 'text-brand-gray-500'">{{ step.label }}</span>
+          </li>
+        </ol>
+
+        <div>
+          <p class="mb-2 text-xs font-bold uppercase tracking-wide text-brand-gray-500">{{ t('clubs.selectCourt') }}</p>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="court in club.courts"
+              :key="court.id"
+              type="button"
+              class="rounded-full border px-3 py-1.5 text-xs font-bold transition tap-highlight"
+              :class="selectedCourtId === court.id
+                ? 'border-brand-primary bg-brand-primary text-white'
+                : 'border-brand-gray-200 bg-white text-brand-gray-700'"
+              @click="selectedCourtId = court.id; selectedSlotId = ''"
+            >
               {{ pickName(court) }}
-            </span>
-          </button>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <ScheduleCalendar
-        bookable
-        hide-court-filter
-        :events="scheduleEvents"
-        :loading="scheduleLoading"
-        :selected-slot-id="selectedSlotId"
-        :initial-date="initialScheduleDate"
-        @range-change="onScheduleRange"
-        @select-slot="onSelectSlot"
-      />
-    </section>
-
-    <ClubReviews v-if="club" :club-id="club.id" @rated="refreshNuxtData()" />
-
-    <section v-if="club.activities?.length" class="mb-8">
-      <h2 class="ios-title-3 mb-4">{{ t('activities.title') }}</h2>
-      <div class="space-y-3">
-        <div v-for="a in club.activities" :key="a.id" class="glass-panel p-4">
-          <p class="font-bold text-brand-gray-900">{{ localized(a.titleFa, a.titleEn) }}</p>
-          <p class="text-sm text-brand-gray-600">{{ localized(a.descFa, a.descEn) }}</p>
-          <p class="mt-1 text-xs text-brand-gray-500">{{ formatDate(a.date) }} · {{ formatTime(a.startTime) }}</p>
-        </div>
-      </div>
-    </section>
+        <ScheduleCalendar
+          bookable
+          hide-court-filter
+          compact
+          :events="scheduleEvents"
+          :loading="scheduleLoading"
+          :selected-slot-id="selectedSlotId"
+          :initial-date="initialScheduleDate"
+          @range-change="onScheduleRange"
+          @select-slot="onSelectSlot"
+        />
+      </aside>
+    </div>
 
     <Transition name="slide-up">
       <div

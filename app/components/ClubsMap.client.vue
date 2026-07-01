@@ -2,10 +2,12 @@
 import type { Club } from '~/types'
 import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet'
 
-const props = defineProps<{ clubs: Club[] }>()
+const props = withDefaults(defineProps<{ clubs: Club[]; variant?: 'default' | 'sidebar' }>(), {
+  variant: 'default',
+})
 
 const { t, locale } = useI18n()
-const { pickName, formatNumber, formatRating } = useLocaleContent()
+const { pickName, formatNumber, formatRating, localized } = useLocaleContent()
 
 const mapRoot = ref<HTMLElement | null>(null)
 const selectedClub = ref<Club | null>(null)
@@ -203,32 +205,61 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="club-map-section">
-    <div class="club-map-header">
-      <div>
-        <h2 class="club-map-title">{{ t('map.title') }}</h2>
-        <p class="mt-0.5 text-xs text-brand-gray-500">{{ t('map.tapPinHint') }}</p>
+  <section :class="variant === 'sidebar' ? 'ds-map-split' : 'club-map-section'">
+    <div v-if="variant === 'sidebar'" class="ds-map-sidebar hidden lg:flex">
+      <div class="border-b border-black/5 px-4 py-3">
+        <h2 class="text-sm font-bold text-brand-gray-900">{{ t('nav.clubs') }}</h2>
+        <p class="text-xs text-brand-gray-500">{{ t('map.clubsCount', { n: formatNumber(mappableClubs.length) }) }}</p>
       </div>
-      <div v-if="mappableClubs.length" class="text-end">
-        <p class="club-map-count">
-          {{ t('map.clubsCount', { n: formatNumber(mappableClubs.length) }) }}
-        </p>
-        <p class="mt-1 text-[10px] text-brand-gray-400">
-          <span class="font-extrabold text-brand-gray-600">{{ t('map.legendBold') }}</span>
-          ·
-          <span class="font-medium text-brand-gray-400">{{ t('map.legendNormal') }}</span>
-        </p>
+      <div class="ds-map-sidebar-list">
+        <button
+          v-for="club in mappableClubs"
+          :key="club.id"
+          type="button"
+          class="ds-map-venue-row w-full text-start"
+          :class="{ 'ds-map-venue-row--active': selectedClub?.slug === club.slug }"
+          @click="selectClub(club)"
+        >
+          <div class="h-14 w-16 shrink-0 overflow-hidden rounded-lg bg-brand-gray-100">
+            <ClubCover :club="club" class="h-full w-full object-cover" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-bold text-brand-gray-900">{{ pickName(club) }}</p>
+            <p class="truncate text-xs text-brand-gray-500">{{ localized(club.addressFa, club.addressEn) }}</p>
+            <p class="mt-0.5 text-xs font-semibold text-brand-orange">★ {{ formatRating(club.rating) }}</p>
+          </div>
+        </button>
       </div>
     </div>
-    <div class="club-map-stage">
-      <div ref="mapRoot" class="club-map-canvas" role="application" :aria-label="t('map.title')" />
+
+    <div :class="variant === 'sidebar' ? 'relative min-h-[28rem]' : 'club-map-stage'">
+      <div v-if="variant === 'default'" class="club-map-header">
+        <div>
+          <h2 class="club-map-title">{{ t('map.title') }}</h2>
+          <p class="mt-0.5 text-xs text-brand-gray-500">{{ t('map.tapPinHint') }}</p>
+        </div>
+        <div v-if="mappableClubs.length" class="text-end">
+          <p class="club-map-count">
+            {{ t('map.clubsCount', { n: formatNumber(mappableClubs.length) }) }}
+          </p>
+          <p class="mt-1 text-[10px] text-brand-gray-400">
+            <span class="font-extrabold text-brand-gray-600">{{ t('map.legendBold') }}</span>
+            ·
+            <span class="font-medium text-brand-gray-400">{{ t('map.legendNormal') }}</span>
+          </p>
+        </div>
+      </div>
+      <div ref="mapRoot" class="club-map-canvas h-full min-h-[28rem]" role="application" :aria-label="t('map.title')" />
     </div>
+
     <ClubMapPopup
-      v-if="selectedClub"
+      v-if="selectedClub && variant === 'default'"
       :club="selectedClub"
       @close="closePopup"
     />
-    <p v-if="!mappableClubs.length" class="club-map-empty">{{ t('common.noResults') }}</p>
+    <p v-if="!mappableClubs.length" class="border-t border-black/5 px-4 py-3 text-center text-sm text-brand-gray-500">
+      {{ t('common.noResults') }}
+    </p>
   </section>
 </template>
 

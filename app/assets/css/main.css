@@ -610,6 +610,208 @@
   .admin-pagination {
     @apply flex items-center justify-center gap-3 text-[0.8125rem] text-[var(--admin-muted)];
   }
+
+  /* Dream Sports–inspired surfaces (IN BOX S brand) */
+  .ds-hero {
+    @apply relative overflow-hidden rounded-[1.75rem] text-white shadow-lifted;
+    background: linear-gradient(125deg, #1e3a5f 0%, #2c4a6e 42%, #1a3352 100%);
+    min-height: 22rem;
+  }
+
+  .ds-hero-media {
+    @apply pointer-events-none absolute inset-0 opacity-30;
+    background:
+      radial-gradient(ellipse 80% 60% at 85% 20%, rgba(132, 204, 22, 0.35), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 10% 90%, rgba(255, 255, 255, 0.12), transparent 50%);
+  }
+
+  .ds-hero-search {
+    @apply rounded-2xl bg-white p-3 text-brand-gray-900 shadow-card sm:p-4;
+  }
+
+  .ds-venue-gallery {
+    @apply grid gap-2 overflow-hidden rounded-[1.25rem];
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    height: 14rem;
+  }
+
+  @media (max-width: 768px) {
+    .ds-venue-gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      height: 10rem;
+    }
+    .ds-venue-gallery-cell:nth-child(n + 3) {
+      display: none;
+    }
+  }
+
+  .ds-venue-gallery-cell {
+    @apply relative overflow-hidden bg-brand-gray-100;
+  }
+
+  .ds-venue-gallery-cell--hero {
+    @apply col-span-2 row-span-1 md:col-span-2;
+  }
+
+  .ds-venue-info-bar {
+    @apply rounded-[1.25rem] border border-black/5 bg-white p-5 shadow-card sm:p-6;
+  }
+
+  .ds-venue-layout {
+    @apply grid gap-6 lg:grid-cols-[1fr_22rem] lg:items-start;
+  }
+
+  .ds-venue-booking-card {
+    @apply sticky top-24 rounded-[1.25rem] border border-brand-primary/10 bg-white p-5 shadow-fd-soft;
+  }
+
+  .ds-map-split {
+    @apply grid overflow-hidden rounded-[1.25rem] border border-black/5 bg-white shadow-card lg:grid-cols-[22rem_1fr];
+    min-height: 28rem;
+  }
+
+  .ds-map-sidebar {
+    @apply flex max-h-[32rem] flex-col border-black/5 lg:max-h-none lg:border-e;
+  }
+
+  .ds-map-sidebar-list {
+    @apply flex-1 space-y-2 overflow-y-auto p-3;
+  }
+
+  .ds-map-venue-row {
+    @apply flex cursor-pointer gap-3 rounded-xl border border-transparent p-2.5 transition tap-highlight hover:bg-brand-gray-50;
+  }
+
+  .ds-map-venue-row--active {
+    @apply border-brand-primary/15 bg-brand-primary/5 ring-1 ring-brand-primary/10;
+  }
+
+  .ds-wallet-balance {
+    @apply relative overflow-hidden rounded-[1.25rem] p-6 text-white shadow-fd-soft;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c4a6e 55%, #152a45 100%);
+  }
+
+  .ds-wallet-balance::after {
+    content: '';
+    @apply pointer-events-none absolute -end-8 -top-8 h-40 w-40 rounded-full opacity-20;
+    background: radial-gradient(circle, #84cc16 0%, transparent 70%);
+  }
+
+  .ds-wallet-stat {
+    @apply rounded-xl bg-white/10 px-3 py-2 backdrop-blur-sm;
+  }
+
+  .ds-wallet-tx-row {
+    @apply flex items-center gap-3 border-b border-black/5 px-4 py-3.5 last:border-0 hover:bg-brand-gray-50/80;
+  }
+
+  .ds-chat-shell {
+    @apply grid overflow-hidden rounded-[1.25rem] border border-black/5 bg-white shadow-card;
+    min-height: calc(100dvh - 10rem);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .ds-chat-shell {
+      grid-template-columns: 18rem 1fr;
+      min-height: calc(100dvh - 8rem);
+    }
+  }
+
+  .ds-chat-sidebar {
+    @apply flex flex-col border-black/5 md:border-e;
+  }
+
+  .ds-chat-thread {
+    @apply flex min-h-0 flex-1 flex-col bg-[#fafaf9];
+  }
+
+  .ds-chat-bubble-in {
+    @apply max-w-[80%] rounded-2xl rounded-es-sm bg-white px-4 py-2.5 text-sm shadow-card;
+  }
+
+  .ds-chat-bubble-out {
+    @apply max-w-[80%] rounded-2xl rounded-ee-sm bg-brand-primary px-4 py-2.5 text-sm text-white;
+  }
+
+  .ds-dashboard-shell {
+    --admin-bg: #f5f5f4;
+    --admin-sidebar: #ffffff;
+    --admin-sidebar-hover: rgba(30, 58, 95, 0.06);
+    --admin-sidebar-active: rgba(30, 58, 95, 0.1);
+    --admin-border: #e7e5e4;
+    --admin-accent: #1e3a5f;
+    --admin-accent-hover: #152a45;
+  }
+
+  .ds-dashboard-shell .admin-sidebar {
+    @apply border-e border-[var(--admin-border)] text-brand-gray-900 shadow-sm;
+    color: var(--admin-text);
+  }
+
+  .ds-dashboard-shell .admin-nav-group {
+    @apply text-brand-gray-400;
+  }
+
+  .ds-dashboard-shell .admin-nav-item {
+    @apply text-brand-gray-700;
+  }
+
+  .ds-dashboard-shell .admin-nav-item:hover {
+    color: var(--admin-accent);
+  }
+
+  .ds-dashboard-shell .admin-nav-item-active {
+    @apply bg-brand-primary text-white shadow-fd-soft;
+    box-shadow: none;
+    color: #fff;
+  }
+
+  [dir='rtl'] .ds-dashboard-shell .admin-nav-item-active {
+    box-shadow: none;
+  }
+
+  .ds-dashboard-shell .admin-topbar {
+    @apply bg-white/95;
+  }
+
+  .ds-dashboard-nav {
+    @apply flex gap-2 overflow-x-auto border-b border-[var(--admin-border)] bg-white px-4 py-2 sm:px-5;
+    scrollbar-width: none;
+  }
+
+  .ds-dashboard-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ds-dashboard-nav-pill {
+    @apply shrink-0 rounded-full px-4 py-2 text-sm font-semibold text-brand-gray-600 transition tap-highlight hover:bg-brand-gray-50;
+  }
+
+  .ds-dashboard-nav-pill--active {
+    @apply bg-brand-primary text-white shadow-fd-soft hover:bg-brand-primary;
+  }
+
+  .ds-calendar-grid-wrap {
+    @apply overflow-x-auto rounded-xl border border-fd-primary/10 bg-[#fafaf9];
+  }
+
+  .ds-calendar-grid {
+    @apply w-full min-w-[36rem] border-collapse text-sm;
+  }
+
+  .ds-calendar-grid th,
+  .ds-calendar-grid td {
+    @apply border border-fd-primary/10 p-0;
+  }
+
+  .ds-calendar-grid th {
+    @apply bg-white px-2 py-2.5 text-xs font-bold text-fd-muted;
+  }
+
+  .ds-calendar-time {
+    @apply w-16 bg-white px-2 py-3 text-xs font-semibold text-fd-muted;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
