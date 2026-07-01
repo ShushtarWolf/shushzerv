@@ -52,22 +52,24 @@ function submit() {
 </script>
 
 <template>
-  <section class="relative overflow-hidden rounded-ios-xl bg-brand-primary p-6 text-white shadow-lifted sm:p-10">
+  <section class="relative overflow-hidden rounded-ios-xl bg-brand-primary p-5 text-white shadow-lifted sm:p-8 lg:p-9">
     <ShapeGridBackground class="absolute inset-0 h-full w-full" />
-    <div class="relative z-10 space-y-5">
+    <div class="relative z-10 mx-auto max-w-4xl space-y-4 text-center sm:space-y-5">
       <p v-if="loggedIn" class="text-sm font-semibold text-white/95">
         {{ t('hero.greeting', { name: firstName }) }}
       </p>
       <h1 class="sz-display text-white">
         {{ t('hero.bookNow') }}
       </h1>
-      <p class="max-w-xl text-base text-white/95">{{ t('hero.subtitle') }}</p>
+      <p class="max-w-xl mx-auto text-base text-white/95">{{ t('hero.subtitle') }}</p>
 
       <p class="text-sm font-semibold text-white/80">{{ t('hero.pickSport') }}</p>
-      <SzSportTabs variant="hero" :model-value="sport" :sports="sports" @update:model-value="onSportChange" />
+      <div class="flex justify-center">
+        <SzSportTabs variant="hero" :model-value="sport" :sports="sports" @update:model-value="onSportChange" />
+      </div>
 
       <form
-        class="grid gap-3 rounded-2xl bg-white p-4 text-brand-gray-900 shadow-card sm:grid-cols-2 lg:grid-cols-4"
+        class="mx-auto grid w-full max-w-3xl gap-3 rounded-2xl bg-white p-4 text-brand-gray-900 shadow-card sm:grid-cols-2 lg:grid-cols-4"
         :dir="isRtl ? 'rtl' : 'ltr'"
         @submit.prevent="submit"
       >

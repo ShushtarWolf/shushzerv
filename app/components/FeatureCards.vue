@@ -11,10 +11,17 @@ const cards = computed(() => [
   { key: 'coaches' as const, sport: 'tennis', to: '/coaches' },
   { key: 'clubs' as const, sport: 'padel', to: '/clubs' },
 ])
+
+const gridClass = computed(() => {
+  const n = cards.value.length
+  if (n <= 2) return 'sm:grid-cols-2'
+  if (n === 3) return 'sm:grid-cols-2 lg:grid-cols-3'
+  return 'sm:grid-cols-2 lg:grid-cols-4'
+})
 </script>
 
 <template>
-  <div class="sz-stagger sz-grid-enter grid items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="sz-stagger sz-grid-enter grid items-stretch gap-4" :class="gridClass">
     <SzHeroCard
       v-for="(card, i) in cards"
       :key="card.key"
@@ -22,7 +29,7 @@ const cards = computed(() => [
       :color="brandSurface(i)"
       class="h-full"
     >
-      <div class="flex h-full flex-col p-5">
+      <div class="flex h-full flex-col justify-center p-5 sm:min-h-[9.5rem]">
         <span class="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-white ring-1 ring-white/20">
           <SportIcon :slug="card.sport" size="md" />
         </span>

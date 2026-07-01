@@ -60,8 +60,8 @@ function closeMobileNav() {
 
 <template>
   <header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur-xl">
-    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6">
-      <div class="flex shrink-0 items-center gap-2">
+    <div class="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:gap-4 sm:px-6">
+      <div class="flex min-w-0 flex-1 items-center justify-start gap-2">
         <button
           type="button"
           class="inline-flex rounded-lg p-2 text-brand-gray-700 hover:bg-brand-gray-100 lg:hidden"
@@ -73,7 +73,7 @@ function closeMobileNav() {
         <InBoxLogo />
       </div>
 
-      <nav class="hidden shrink-0 items-center gap-0.5 lg:flex">
+      <nav class="hidden shrink-0 items-center justify-center gap-0.5 lg:flex">
         <NuxtLink
           v-for="link in primaryLinks"
           :key="link.to"
@@ -106,7 +106,7 @@ function closeMobileNav() {
         </div>
       </nav>
 
-      <div class="flex shrink-0 items-center gap-1 sm:gap-1.5">
+      <div class="flex min-h-9 min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2 [&>*]:shrink-0">
         <GlobalSearch />
         <LocaleSwitcher />
         <NotificationBell />

@@ -26,20 +26,14 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
 </script>
 
 <template>
-  <div class="page-enter">
-    <section class="mx-auto max-w-7xl space-y-4 px-4 pt-6 sm:px-6">
-      <HeroSearch :sports="sports ?? []" />
-    </section>
+  <div class="page-enter mx-auto max-w-7xl space-y-8 px-4 pb-10 pt-5 sm:space-y-10 sm:px-6 sm:pt-6">
+    <HeroSearch :sports="sports ?? []" />
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <ClubsMap :clubs="allClubs ?? []" />
-    </section>
+    <FeatureCards />
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <FeatureCards />
-    </section>
+    <ClubsMap :clubs="allClubs ?? []" />
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <section>
       <SzSection :title="t('clubs.title')" :to="localePath('/clubs')" :link-text="t('clubs.viewAll')" />
       <HomeSectionSkeleton v-if="clubsPending" :count="6" />
       <div v-else-if="featuredClubs.length" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -53,7 +47,7 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
       />
     </section>
 
-    <section v-if="showPublicPackages" class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <section v-if="showPublicPackages">
       <SzSection :title="t('packages.title')" :to="localePath('/packages')" :link-text="t('packages.viewAll')" />
       <HomeSectionSkeleton v-if="packagesPending" :count="3" />
       <div v-else-if="featuredPackages.length" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -67,7 +61,7 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
       />
     </section>
 
-    <section v-if="showGroupClasses" class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <section v-if="showGroupClasses">
       <SzSection :title="t('classes.title')" :to="localePath('/classes')" :link-text="t('classes.viewAll')" />
       <HomeSectionSkeleton v-if="classesPending" :count="3" />
       <div v-else-if="featuredClasses.length" class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -81,15 +75,15 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
       />
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <section>
       <SzSection :title="t('coaches.title')" :to="localePath('/coaches')" :link-text="t('coaches.viewAll')" />
       <HomeSectionSkeleton v-if="coachesPending" variant="coach" :count="4" />
-      <div v-else class="sz-stagger sz-grid-enter grid items-stretch gap-3 sm:grid-cols-2">
+      <div v-else class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <CoachCard v-for="coach in topCoaches" :key="coach.id" :coach="coach" />
       </div>
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+    <section>
       <SzSection :title="t('news.title')" :to="localePath('/news')" :link-text="t('news.viewAll')" />
       <HomeSectionSkeleton v-if="newsPending" variant="list" :count="4" />
       <div v-else class="sz-stagger sz-grid-enter grid items-stretch gap-4 sm:grid-cols-2">
@@ -97,12 +91,8 @@ const latestNews = computed(() => (news.value ?? []).slice(0, 4))
       </div>
     </section>
 
-    <section class="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <FaqAccordion />
-    </section>
+    <FaqAccordion />
 
-    <section class="mx-auto max-w-7xl px-4 pb-10 sm:px-6">
-      <CtaBanner />
-    </section>
+    <CtaBanner />
   </div>
 </template>

@@ -33,7 +33,7 @@ const sportChips = computed(() => {
 
 <template>
   <SzCard :to="clubTo" themed class="flex h-full flex-col overflow-hidden">
-    <div class="relative h-36 overflow-hidden">
+    <div class="relative aspect-[16/10] overflow-hidden bg-brand-gray-100">
       <div class="h-full transition-transform duration-500 group-hover:scale-105">
         <ClubCover :club="club" />
       </div>

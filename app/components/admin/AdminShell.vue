@@ -120,7 +120,7 @@ watch(() => route.path, closeSidebar)
 </script>
 
 <template>
-  <div class="admin-shell min-h-dvh md:flex">
+  <div class="admin-shell min-h-dvh lg:flex">
     <div
       v-if="sidebarOpen"
       class="fixed inset-0 z-40 bg-black/50 lg:hidden"

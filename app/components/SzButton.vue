@@ -29,7 +29,7 @@ const sizeClass = computed(() => {
 const variantClass = computed(() => {
   switch (props.variant) {
     case 'secondary':
-      return 'bg-white text-brand-orange border border-brand-orange/25 shadow-card hover:bg-brand-gray-50'
+      return 'bg-white text-brand-orange border-2 border-brand-orange/35 shadow-card hover:bg-brand-orange/5'
     case 'ghost':
       return 'bg-brand-gray-100 text-brand-gray-900 hover:bg-brand-gray-200'
     case 'sport':
