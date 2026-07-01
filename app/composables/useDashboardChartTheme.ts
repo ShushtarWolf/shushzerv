@@ -1,16 +1,16 @@
 export function useDashboardChartTheme() {
   const colors = {
-    primary: '#2C4A6E',
-    primaryLight: '#4A6B8A',
+    primary: '#C41E1E',
+    primaryLight: '#DE0202',
     success: '#3D7A6A',
-    danger: '#B54A4A',
-    warning: '#A67C52',
+    danger: '#C41E1E',
+    warning: '#B68A3B',
     pink: '#9E5B6B',
-    orange: '#A67C52',
-    purple: '#7D6B8F',
-    teal: '#3D728A',
-    navy: '#1C1917',
-    muted: '#A8A29E',
+    orange: '#B68A3B',
+    purple: '#4A1420',
+    teal: '#6B1F28',
+    navy: '#2C2C2A',
+    muted: '#A3A39F',
   }
 
   const baseOptions = {
@@ -21,7 +21,7 @@ export function useDashboardChartTheme() {
       animations: { enabled: true, speed: 600 },
     },
     grid: {
-      borderColor: 'rgba(168, 162, 158, 0.18)',
+      borderColor: 'rgba(163, 163, 159, 0.18)',
       strokeDashArray: 4,
       padding: { left: 8, right: 8 },
     },
@@ -51,7 +51,7 @@ export function useDashboardChartTheme() {
     stroke: { curve: 'smooth' as const, width: 3 },
   }
 
-  function lineOptions(categories: string[], seriesColors: string[] = [colors.primary, colors.pink, colors.success]) {
+  function lineOptions(categories: string[], seriesColors: string[] = [colors.primary, colors.warning, colors.success]) {
     return {
       ...baseOptions,
       colors: seriesColors,

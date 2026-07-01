@@ -32,7 +32,7 @@ const tabs = computed(() => [
       >
         <span
           v-if="tab.center"
-          class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-brand-primary shadow-lifted"
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-white shadow-lifted"
         >
           <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 10h18M8 14h8" /></svg>
         </span>

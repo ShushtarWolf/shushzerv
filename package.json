@@ -40,6 +40,8 @@
     "seed": "node --import tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource-variable/space-grotesk": "^5.2.10",
     "@fontsource-variable/vazirmatn": "^5.2.8",
     "@nuxtjs/i18n": "^10.4.0",
     "@nuxtjs/tailwindcss": "^6.14.0",

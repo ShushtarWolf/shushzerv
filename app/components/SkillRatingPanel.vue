@@ -84,7 +84,7 @@ async function submitRating(item: PendingSkillRating) {
             :key="l"
             type="button"
             class="sz-chip tap-highlight"
-            :class="draftLevels[rowKey(item)] === l ? 'bg-brand-orange text-brand-primary' : 'bg-white shadow-card'"
+            :class="draftLevels[rowKey(item)] === l ? 'bg-brand-orange text-white' : 'bg-white shadow-card'"
             @click="draftLevels[rowKey(item)] = l"
           >
             {{ levelLabel(l) }}

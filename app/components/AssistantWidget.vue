@@ -83,7 +83,7 @@ watch(locale, () => {
     </div>
     <button
       type="button"
-      class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-brand-primary shadow-card tap-highlight"
+      class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange text-white shadow-card tap-highlight"
       :aria-label="t('assistant.title')"
       @click="open = !open"
     >

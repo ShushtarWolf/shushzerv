@@ -166,7 +166,7 @@ const scheduleTypeStyles = {
   platform: {
     card: 'border-s-[5px] border-brand-orange bg-brand-orange/[0.16] ring-brand-orange/35',
     badge: 'orange' as const,
-    legend: 'bg-brand-orange text-brand-primary',
+    legend: 'bg-brand-orange text-white',
   },
   club: {
     card: 'border-s-[5px] border-brand-blue bg-brand-blue/[0.16] ring-brand-blue/35',
@@ -196,7 +196,7 @@ const scheduleTypeStyles = {
   tournament: {
     card: 'border-s-[5px] border-brand-orange bg-brand-orange/[0.16] ring-brand-orange/35',
     badge: 'orange' as const,
-    legend: 'bg-brand-orange text-brand-primary',
+    legend: 'bg-brand-orange text-white',
   },
 } as const
 
@@ -272,7 +272,7 @@ function dayButtonClass(day: string) {
     return 'bg-[#F5F5F4] text-fd-navy shadow-fd-soft'
   }
 
-  if (isSelected) return 'bg-brand-orange text-brand-primary shadow-card'
+  if (isSelected) return 'bg-brand-orange text-white shadow-card'
   if (today) return 'bg-brand-orange/10 text-brand-orange ring-1 ring-brand-orange/30'
   return 'bg-white text-brand-gray-700 shadow-card'
 }
@@ -298,7 +298,7 @@ function courtChipClass(active: boolean) {
       : 'bg-[#F5F5F4] text-fd-navy shadow-fd-soft hover:bg-fd-primary/10'
   }
   return active
-    ? 'bg-brand-orange text-brand-primary shadow-card'
+    ? 'bg-brand-orange text-white shadow-card'
     : 'bg-white text-brand-gray-700 shadow-card hover:bg-brand-gray-50'
 }
 

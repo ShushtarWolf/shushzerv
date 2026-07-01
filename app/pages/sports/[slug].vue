@@ -53,7 +53,7 @@ watch(
       <SzSection :title="t('sportLanding.howTitle')" />
       <div class="sz-stagger grid gap-4 md:grid-cols-3">
         <div v-for="(step, i) in steps" :key="step" class="ios-card ios-card-hover p-5">
-          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange text-lg font-black text-brand-primary">{{ formatNumber(i + 1) }}</span>
+          <span class="flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange text-lg font-black text-white">{{ formatNumber(i + 1) }}</span>
           <h3 class="mt-3 font-extrabold">{{ t(`sportLanding.steps.${step}.title`) }}</h3>
           <p class="mt-2 text-sm text-brand-gray-600">{{ t(`sportLanding.steps.${step}.desc`) }}</p>
         </div>

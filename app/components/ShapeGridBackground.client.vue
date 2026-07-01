@@ -30,10 +30,10 @@ const props = withDefaults(
     speed: 0.5,
     borderColor: 'rgba(255, 255, 255, 0.12)',
     squareSize: 40,
-    hoverFillColor: 'rgba(132, 204, 22, 0.35)',
+    hoverFillColor: 'rgba(182, 138, 59, 0.35)',
     shape: 'square',
     hoverTrailAmount: 0,
-    vignetteColor: '#152A45',
+    vignetteColor: '#4A1420',
     interactive: false,
   },
 )

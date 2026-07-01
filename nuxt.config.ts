@@ -25,18 +25,18 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'IN BOX S',
+      title: 'inbox',
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'apple-touch-icon', href: '/icons/apple-touch-icon.svg' },
       ],
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
-        { name: 'theme-color', content: '#1E3A5F' },
-        { name: 'description', content: 'IN BOX S — book sports courts, classes, and coaches' },
+        { name: 'theme-color', content: '#C41E1E' },
+        { name: 'description', content: "inbox — every court's a box; your game's in the inbox." },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
-        { name: 'apple-mobile-web-app-title', content: 'IN BOX S' },
+        { name: 'apple-mobile-web-app-title', content: 'inbox' },
       ],
     },
   },
@@ -63,13 +63,13 @@ export default defineNuxtConfig({
     minify: false,
     registerType: 'autoUpdate',
     manifest: {
-      name: 'IN BOX S — Sports Booking',
-      short_name: 'IN BOX S',
-      description: 'Book sports courts, classes, and coaches',
+      name: 'inbox — Sports Booking',
+      short_name: 'inbox',
+      description: "every court's a box; your game's in the inbox.",
       lang: 'fa',
       dir: 'rtl',
-      theme_color: '#1E3A5F',
-      background_color: '#fafaf9',
+      theme_color: '#C41E1E',
+      background_color: '#F4EFE9',
       display: 'standalone',
       start_url: '/',
       icons: [

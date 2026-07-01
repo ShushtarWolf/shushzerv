@@ -94,7 +94,7 @@ async function submit() {
                 :key="s.id"
                 type="button"
                 class="sz-chip tap-highlight"
-                :class="sport === s.slug ? 'bg-brand-orange text-brand-primary shadow-card' : 'bg-white shadow-card'"
+                :class="sport === s.slug ? 'bg-brand-orange text-white shadow-card' : 'bg-white shadow-card'"
                 @click="sport = s.slug"
               >
                 <span class="inline-flex items-center gap-1.5">

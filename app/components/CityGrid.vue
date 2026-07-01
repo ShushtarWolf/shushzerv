@@ -25,7 +25,7 @@ function cityLink(city: string) {
     <button
       type="button"
       class="sz-chip"
-      :class="!sportFilter ? 'bg-brand-orange text-brand-primary' : 'bg-white text-brand-gray-700 shadow-card'"
+      :class="!sportFilter ? 'bg-brand-orange text-white' : 'bg-white text-brand-gray-700 shadow-card'"
       @click="sync(props.sports, '')"
     >
       {{ t('clubs.all') }}
@@ -35,7 +35,7 @@ function cityLink(city: string) {
       :key="s.id"
       type="button"
       class="sz-chip"
-      :class="sportFilter === s.slug ? 'bg-brand-orange text-brand-primary' : 'bg-white text-brand-gray-700 shadow-card'"
+      :class="sportFilter === s.slug ? 'bg-brand-orange text-white' : 'bg-white text-brand-gray-700 shadow-card'"
       @click="toggle(props.sports, s.slug)"
     >
       <span class="inline-flex items-center gap-1.5">

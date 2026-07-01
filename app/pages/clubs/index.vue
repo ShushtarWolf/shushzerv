@@ -147,7 +147,7 @@ const sortedClubs = computed(() => {
         :key="s.id"
         type="button"
         class="ios-segment-item tap-highlight transition-all duration-200"
-        :class="sportFilter === s.slug ? 'ios-segment-item-active bg-brand-orange text-brand-primary' : ''"
+        :class="sportFilter === s.slug ? 'ios-segment-item-active bg-brand-orange text-white' : ''"
         @click="sportFilter = s.slug"
       >
         <span class="inline-flex items-center gap-1.5">

@@ -1,4 +1,6 @@
 @import '@fontsource-variable/vazirmatn/index.css';
+@import '@fontsource-variable/space-grotesk/index.css';
+@import '@fontsource-variable/manrope/index.css';
 
 @tailwind base;
 @tailwind components;
@@ -6,18 +8,18 @@
 
 @layer base {
   :root {
-    --sz-bg: #f9fafb;
+    --sz-bg: #f4efe9;
     --sz-bg-elevated: rgba(255, 255, 255, 0.78);
     --sz-bg-glass: rgba(255, 255, 255, 0.7);
-    --sz-border: rgba(0, 0, 0, 0.06);
-    --sz-text: #1c1917;
-    --sz-text-secondary: #57534e;
-    --sz-accent: #1e3a5f;
-    --sz-accent-dark: #152a45;
-    --sz-accent-soft: rgba(30, 58, 95, 0.10);
-    --sz-lime: #84cc16;
-    --sz-lime-dark: #65a30d;
-    --sz-lime-soft: rgba(132, 204, 22, 0.12);
+    --sz-border: rgba(44, 44, 42, 0.08);
+    --sz-text: #2c2c2a;
+    --sz-text-secondary: #6b6b67;
+    --sz-accent: #c41e1e;
+    --sz-accent-dark: #4a1420;
+    --sz-accent-soft: rgba(196, 30, 30, 0.10);
+    --sz-gold: #b68a3b;
+    --sz-gold-dark: #9a7530;
+    --sz-gold-soft: rgba(182, 138, 59, 0.14);
     --sz-safe-bottom: env(safe-area-inset-bottom, 0px);
     --sz-safe-top: env(safe-area-inset-top, 0px);
     --sz-tab-bar-height: 4.5rem;
@@ -42,7 +44,16 @@
   }
 
   [dir='ltr'] body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', sans-serif;
+    font-family: 'Manrope Variable', Manrope, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  [dir='ltr'] .sz-display,
+  [dir='ltr'] .sz-headline,
+  [dir='ltr'] .ios-large-title,
+  [dir='ltr'] .ios-title-2,
+  [dir='ltr'] .fd-title,
+  [dir='ltr'] .fd-section-title {
+    font-family: 'Space Grotesk Variable', 'Space Grotesk', 'Manrope Variable', Manrope, sans-serif;
   }
 }
 
@@ -56,7 +67,7 @@
 
   .glass-bar {
     @apply border-b border-black/5;
-    background: rgba(250, 250, 249, 0.88);
+    background: rgba(244, 239, 233, 0.88);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
   }
@@ -82,11 +93,11 @@
   }
 
   .sz-display {
-    @apply text-[2.5rem] font-extrabold tracking-tight leading-[1.05] sm:text-[3.25rem];
+    @apply font-display text-[2.5rem] font-extrabold tracking-tight leading-[1.05] sm:text-[3.25rem];
   }
 
   .sz-headline {
-    @apply text-2xl font-bold tracking-tight sm:text-3xl;
+    @apply font-display text-2xl font-bold tracking-tight sm:text-3xl;
   }
 
   .sz-stat {
@@ -96,7 +107,6 @@
   .sz-eyebrow {
     @apply text-xs font-bold uppercase tracking-[0.18em] text-brand-primary;
   }
-
   .ios-footnote {
     @apply text-[0.8125rem] text-brand-gray-500 leading-snug;
   }
@@ -159,7 +169,7 @@
   }
 
   .sz-nearby-toggle-on {
-    @apply border-brand-orange bg-brand-orange/10 text-brand-orange;
+    @apply border-brand-primary bg-brand-primary/10 text-brand-primary;
   }
 
   .ios-btn {
@@ -167,7 +177,7 @@
   }
 
   .ios-btn-primary {
-    @apply ios-btn bg-brand-orange text-brand-primary shadow-card hover:bg-brand-orange-dark;
+    @apply ios-btn bg-brand-primary text-white shadow-card hover:bg-brand-primary-dark;
   }
 
   .ios-btn-ghost {
@@ -175,7 +185,7 @@
   }
 
   .ios-btn-secondary {
-    @apply ios-btn bg-white text-brand-orange border border-brand-orange/25 shadow-card hover:bg-brand-gray-50;
+    @apply ios-btn bg-white text-brand-primary border border-brand-primary/25 shadow-card hover:bg-brand-gray-50;
   }
 
   .tap-highlight {
@@ -253,7 +263,7 @@
   }
 
   .prose-sz a {
-    @apply text-brand-orange font-medium underline underline-offset-2;
+    @apply text-brand-primary font-medium underline underline-offset-2;
   }
 
   .prose-sz ul,
@@ -267,15 +277,15 @@
 
   /* Financial dashboard (Figma-inspired) */
   .fd-shell {
-    --fd-bg: #f5f5f4;
+    --fd-bg: #f4efe9;
     --fd-sidebar: #ffffff;
     --fd-primary: var(--sz-accent);
-    --fd-primary-light: #3b5f8c;
+    --fd-primary-light: #de0202;
     --fd-primary-soft: var(--sz-accent-soft);
-    --fd-navy: #1c1917;
-    --fd-muted: #a8a29e;
+    --fd-navy: #2c2c2a;
+    --fd-muted: #a3a39f;
     --fd-success: #3d7a6a;
-    --fd-danger: #b54a4a;
+    --fd-danger: #c41e1e;
     --fd-radius: 1.25rem;
     --fd-radius-lg: 1.875rem;
     background: var(--fd-bg);
@@ -296,7 +306,7 @@
   }
 
   .fd-hero {
-    background: linear-gradient(135deg, #3b5f8c 0%, #1e3a5f 100%);
+    background: linear-gradient(135deg, #de0202 0%, #c41e1e 48%, #4a1420 100%);
     @apply relative overflow-hidden rounded-[1.875rem] p-6 text-white shadow-fd sm:p-8;
   }
 
@@ -335,7 +345,7 @@
   }
 
   .fd-btn-primary {
-    @apply fd-btn bg-fd-primary text-white shadow-fd-soft hover:bg-[#152a45];
+    @apply fd-btn bg-fd-primary text-white shadow-fd-soft hover:bg-[#4a1420];
   }
 
   .fd-btn-secondary {
@@ -383,7 +393,7 @@
   }
 
   .fd-premium {
-    background: linear-gradient(135deg, #3b5f8c 0%, #1e3a5f 100%);
+    background: linear-gradient(135deg, #de0202 0%, #c41e1e 48%, #4a1420 100%);
     @apply rounded-[1.25rem] p-4 text-white shadow-fd-soft;
   }
 
@@ -611,17 +621,17 @@
     @apply flex items-center justify-center gap-3 text-[0.8125rem] text-[var(--admin-muted)];
   }
 
-  /* Dream Sports–inspired surfaces (IN BOX S brand) */
+  /* inbox brand surfaces */
   .ds-hero {
     @apply relative overflow-hidden rounded-[1.75rem] text-white shadow-lifted;
-    background: linear-gradient(125deg, #1e3a5f 0%, #2c4a6e 42%, #1a3352 100%);
+    background: linear-gradient(125deg, #4a1420 0%, #c41e1e 42%, #6b1f28 100%);
     min-height: 22rem;
   }
 
   .ds-hero-media {
     @apply pointer-events-none absolute inset-0 opacity-30;
     background:
-      radial-gradient(ellipse 80% 60% at 85% 20%, rgba(132, 204, 22, 0.35), transparent 55%),
+      radial-gradient(ellipse 80% 60% at 85% 20%, rgba(182, 138, 59, 0.28), transparent 55%),
       radial-gradient(ellipse 50% 40% at 10% 90%, rgba(255, 255, 255, 0.12), transparent 50%);
   }
 
@@ -688,13 +698,13 @@
 
   .ds-wallet-balance {
     @apply relative overflow-hidden rounded-[1.25rem] p-6 text-white shadow-fd-soft;
-    background: linear-gradient(135deg, #1e3a5f 0%, #2c4a6e 55%, #152a45 100%);
+    background: linear-gradient(135deg, #4a1420 0%, #c41e1e 55%, #6b1f28 100%);
   }
 
   .ds-wallet-balance::after {
     content: '';
     @apply pointer-events-none absolute -end-8 -top-8 h-40 w-40 rounded-full opacity-20;
-    background: radial-gradient(circle, #84cc16 0%, transparent 70%);
+    background: radial-gradient(circle, #b68a3b 0%, transparent 70%);
   }
 
   .ds-wallet-stat {
@@ -723,7 +733,7 @@
   }
 
   .ds-chat-thread {
-    @apply flex min-h-0 flex-1 flex-col bg-[#fafaf9];
+    @apply flex min-h-0 flex-1 flex-col bg-[#f4efe9];
   }
 
   .ds-chat-bubble-in {
@@ -735,13 +745,13 @@
   }
 
   .ds-dashboard-shell {
-    --admin-bg: #f5f5f4;
+    --admin-bg: #f4efe9;
     --admin-sidebar: #ffffff;
-    --admin-sidebar-hover: rgba(30, 58, 95, 0.06);
-    --admin-sidebar-active: rgba(30, 58, 95, 0.1);
-    --admin-border: #e7e5e4;
-    --admin-accent: #1e3a5f;
-    --admin-accent-hover: #152a45;
+    --admin-sidebar-hover: rgba(196, 30, 30, 0.06);
+    --admin-sidebar-active: rgba(196, 30, 30, 0.1);
+    --admin-border: #e0e0dc;
+    --admin-accent: #c41e1e;
+    --admin-accent-hover: #4a1420;
   }
 
   .ds-dashboard-shell .admin-sidebar {
@@ -793,7 +803,7 @@
   }
 
   .ds-calendar-grid-wrap {
-    @apply overflow-x-auto rounded-xl border border-fd-primary/10 bg-[#fafaf9];
+    @apply overflow-x-auto rounded-xl border border-fd-primary/10 bg-[#f4efe9];
   }
 
   .ds-calendar-grid {

@@ -465,7 +465,7 @@ async function confirmBooking() {
           >
             <span
               class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs"
-              :class="bookingStep >= step.n ? 'bg-brand-orange text-brand-primary' : 'bg-brand-gray-100 text-brand-gray-500'"
+              :class="bookingStep >= step.n ? 'bg-brand-orange text-white' : 'bg-brand-gray-100 text-brand-gray-500'"
             >{{ step.n }}</span>
             <span :class="bookingStep >= step.n ? 'text-brand-gray-900' : 'text-brand-gray-500'">{{ step.label }}</span>
           </li>

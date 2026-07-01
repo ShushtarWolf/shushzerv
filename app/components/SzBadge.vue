@@ -10,7 +10,7 @@ withDefaults(
 )
 
 const toneMap: Record<string, { soft: string; solid: string }> = {
-  orange: { soft: 'bg-brand-orange/12 text-brand-orange', solid: 'bg-brand-orange text-brand-primary' },
+  orange: { soft: 'bg-brand-orange/12 text-brand-orange', solid: 'bg-brand-orange text-white' },
   green: { soft: 'bg-brand-green/15 text-brand-green', solid: 'bg-brand-green text-white' },
   blue: { soft: 'bg-brand-blue/12 text-brand-blue', solid: 'bg-brand-blue text-white' },
   teal: { soft: 'bg-brand-teal/15 text-brand-teal', solid: 'bg-brand-teal text-white' },

@@ -98,39 +98,39 @@ function tabBaseClass() {
 
 .sz-sport-tabs-fade::before {
   inset-inline-start: 0;
-  background: linear-gradient(to right, #f9fafb, transparent);
+  background: linear-gradient(to right, #f4efe9, transparent);
 }
 
 .sz-sport-tabs-fade::after {
   inset-inline-end: 0;
-  background: linear-gradient(to left, #f9fafb, transparent);
+  background: linear-gradient(to left, #f4efe9, transparent);
 }
 
 .sz-sport-tabs-fade-hero::before {
   inset-inline-start: 0;
-  background: linear-gradient(to right, #1e3a5f, transparent);
+  background: linear-gradient(to right, #4a1420, transparent);
 }
 
 .sz-sport-tabs-fade-hero::after {
   inset-inline-end: 0;
-  background: linear-gradient(to left, #1e3a5f, transparent);
+  background: linear-gradient(to left, #4a1420, transparent);
 }
 
 [dir='rtl'] .sz-sport-tabs-fade::before,
 [dir='rtl'] .sz-sport-tabs-fade-hero::before {
-  background: linear-gradient(to left, #f9fafb, transparent);
+  background: linear-gradient(to left, #f4efe9, transparent);
 }
 
 [dir='rtl'] .sz-sport-tabs-fade-hero::before {
-  background: linear-gradient(to left, #1e3a5f, transparent);
+  background: linear-gradient(to left, #4a1420, transparent);
 }
 
 [dir='rtl'] .sz-sport-tabs-fade::after,
 [dir='rtl'] .sz-sport-tabs-fade-hero::after {
-  background: linear-gradient(to right, #f9fafb, transparent);
+  background: linear-gradient(to right, #f4efe9, transparent);
 }
 
 [dir='rtl'] .sz-sport-tabs-fade-hero::after {
-  background: linear-gradient(to right, #1e3a5f, transparent);
+  background: linear-gradient(to right, #4a1420, transparent);
 }
 </style>

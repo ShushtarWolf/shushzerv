@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const localePath = useLocalePath()
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const isEn = computed(() => locale.value === 'en')
 </script>
 
 <template>
   <NuxtLink :to="localePath('/')" class="flex items-center gap-2 tap-highlight">
-    <svg viewBox="0 0 24 24" class="h-9 w-9 text-brand-gray-900" fill="none" aria-hidden="true">
+    <svg viewBox="0 0 24 24" class="h-9 w-9 text-brand-primary" fill="none" aria-hidden="true">
       <g transform="translate(12 15)" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M-5.5 2 H5.5 M-5.5 2 V4.5 M5.5 2 V4.5"/>
         <g transform="translate(0 -2) rotate(14)">
@@ -14,6 +15,9 @@ const { t } = useI18n()
         <circle cx="0" cy="-5.8" r="2.3" fill="currentColor" stroke="none"/>
       </g>
     </svg>
-    <span class="text-lg font-bold tracking-tight">{{ t('brand.name') }}</span>
+    <span
+      class="text-lg font-bold tracking-tight text-brand-gray-900"
+      :class="isEn ? 'font-display italic lowercase' : ''"
+    >{{ t('brand.name') }}</span>
   </NuxtLink>
 </template>

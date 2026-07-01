@@ -73,7 +73,7 @@ async function finish() {
             :key="s.id"
             type="button"
             class="sz-chip tap-highlight"
-            :class="selectedSports.includes(s.slug) ? 'bg-brand-orange text-brand-primary shadow-card' : 'bg-white shadow-card'"
+            :class="selectedSports.includes(s.slug) ? 'bg-brand-orange text-white shadow-card' : 'bg-white shadow-card'"
             @click="toggleSport(s.slug)"
           >
             <span class="inline-flex items-center gap-1.5">

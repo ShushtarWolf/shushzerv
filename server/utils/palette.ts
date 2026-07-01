@@ -1,50 +1,52 @@
 /**
- * IN BOX S design tokens — Navy + Lime (palette F).
- * Navy for brand surfaces; lime for CTAs, links, and highlights.
+ * inbox brand tokens — from INBOX Brand Book.
+ * 55% cream · 25% gray · 17% coach red · 3% gold accent.
  */
 export const palette = {
   brand: {
-    primary: '#1E3A5F',
-    primaryDark: '#152A45',
-    primaryLight: '#3B5F8C',
-    primarySoft: 'rgba(30, 58, 95, 0.10)',
-    accent: '#84CC16',
-    accentDark: '#65A30D',
-    accentSoft: 'rgba(132, 204, 22, 0.12)',
-    surface: ['#1E3A5F', '#3B5F8C', '#152A45', '#2A4A72'] as const,
+    primary: '#C41E1E',
+    primaryDark: '#4A1420',
+    primaryLight: '#DE0202',
+    primarySoft: 'rgba(196, 30, 30, 0.10)',
+    cream: '#F4EFE9',
+    accent: '#B68A3B',
+    accentDark: '#9A7530',
+    accentSoft: 'rgba(182, 138, 59, 0.14)',
+    surface: ['#C41E1E', '#4A1420', '#DE0202', '#6B1F28'] as const,
   },
   gray: {
-    50: '#F9FAFB',
-    100: '#F5F5F4',
-    200: '#E7E5E4',
-    300: '#D6D3D1',
-    400: '#A8A29E',
-    500: '#78716C',
-    600: '#57534E',
-    700: '#44403C',
-    800: '#292524',
-    900: '#1C1917',
+    50: '#F4EFE9',
+    100: '#EDE9E4',
+    200: '#E0E0DC',
+    300: '#C4C4C0',
+    400: '#A3A39F',
+    500: '#858582',
+    600: '#6B6B67',
+    700: '#52524F',
+    800: '#3D3D3A',
+    900: '#2C2C2A',
   },
   semantic: {
-    success: '#65A30D',
-    danger: '#DC2626',
-    warning: '#D97706',
-    info: '#3B5F8C',
+    success: '#3D7A6A',
+    danger: '#C41E1E',
+    warning: '#B68A3B',
+    info: '#4A1420',
   },
   schedule: {
-    platformBooking: '#1E3A5F',
-    clubBooking: '#3B5F8C',
-    openSlot: '#78716C',
-    class: '#1E3A5F',
-    blocked: '#A8A29E',
-    match: '#152A45',
-    tournament: '#2A4A72',
-    session: '#84CC16',
+    platformBooking: '#C41E1E',
+    clubBooking: '#4A1420',
+    openSlot: '#858582',
+    class: '#C41E1E',
+    blocked: '#A3A39F',
+    match: '#4A1420',
+    tournament: '#6B1F28',
+    session: '#B68A3B',
   },
 } as const
 
 export const BRAND_PRIMARY = palette.brand.primary
 export const BRAND_ACCENT = palette.brand.accent
+export const BRAND_CREAM = palette.brand.cream
 
 /** @deprecated Use BRAND_PRIMARY — kept for gradual migration */
 export const DEFAULT_SPORT_COLOR = BRAND_PRIMARY
