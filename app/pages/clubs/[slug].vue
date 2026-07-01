@@ -434,6 +434,8 @@ async function confirmBooking() {
 
     <div class="ds-venue-layout">
       <div class="min-w-0 space-y-8">
+        <ClubLocationMap :club="club" />
+
         <ClubReviews v-if="club" :club-id="club.id" @rated="refreshNuxtData()" />
 
         <section v-if="club.activities?.length">

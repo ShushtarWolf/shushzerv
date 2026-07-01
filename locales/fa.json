@@ -59,7 +59,10 @@
     "reserveNow": "رزرو کن",
     "tapPinHint": "روی پین بزن تا رزرو باز شود.",
     "legendBold": "پررنگ = کلاس گروهی",
-    "legendNormal": "معمولی = فقط زمین"
+    "legendNormal": "معمولی = فقط زمین",
+    "locationTitle": "موقعیت مکانی",
+    "locationUnavailable": "مختصات نقشه برای این مجموعه موجود نیست.",
+    "openInMaps": "باز کردن در نقشه"
   },
   "search": {
     "city": "شهر",

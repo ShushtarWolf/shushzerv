@@ -59,7 +59,10 @@
     "reserveNow": "Reserve now",
     "tapPinHint": "Tap a pin to open reservation.",
     "legendBold": "Bold = group classes",
-    "legendNormal": "Regular = courts only"
+    "legendNormal": "Regular = courts only",
+    "locationTitle": "Location",
+    "locationUnavailable": "Map coordinates are not available for this venue.",
+    "openInMaps": "Open in Maps"
   },
   "search": {
     "city": "City",
