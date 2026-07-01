@@ -7,10 +7,19 @@ const { loggedIn, user, clear } = useUserSession()
 const { displayName } = useUserDisplayName()
 const adminNav = useAdminSidebar()
 const dashboardNav = useDashboardSidebar()
+const routeTabs = useDashboardNavTabsForRoute()
 const shellConfig = useDashboardShellConfig()
 const { showFindPlayers } = useFeatures()
 
-const sidebarNav = computed(() => adminNav.value ?? dashboardNav.value)
+const sidebarNav = computed(() => {
+  const provided = adminNav.value ?? dashboardNav.value
+  const tabs = provided?.tabs?.length ? provided.tabs : routeTabs.value
+  if (!tabs.length) return null
+  const raw = route.query.tab
+  const fromQuery = Array.isArray(raw) ? raw[0] : raw
+  const activeTabId = provided?.activeTabId ?? (fromQuery ? String(fromQuery) : 'overview')
+  return { tabs, activeTabId }
+})
 
 const sidebarOpen = ref(false)
 const searchQuery = ref('')
@@ -40,7 +49,7 @@ const asideClass = computed(() => {
   return 'max-lg:ltr:-translate-x-full max-lg:rtl:translate-x-full'
 })
 
-const navGroups = computed(() => {
+const navGroupEntries = computed(() => {
   const tabs = sidebarNav.value?.tabs ?? []
   const groups = new Map<string, typeof tabs>()
   for (const tab of tabs) {
@@ -48,7 +57,7 @@ const navGroups = computed(() => {
     if (!groups.has(group)) groups.set(group, [])
     groups.get(group)!.push(tab)
   }
-  return groups
+  return Array.from(groups.entries())
 })
 
 const groupLabels: Record<string, string> = {
@@ -120,7 +129,7 @@ watch(() => route.path, closeSidebar)
     />
 
     <aside
-      class="admin-sidebar z-50 flex w-[15.5rem] shrink-0 flex-col transition-transform duration-200 max-lg:fixed max-lg:inset-y-0 ltr:max-lg:left-0 rtl:max-lg:right-0 md:relative md:min-h-dvh md:translate-x-0"
+      class="admin-sidebar z-50 flex w-[15.5rem] min-w-[15.5rem] shrink-0 flex-col transition-transform duration-200 max-lg:fixed max-lg:inset-y-0 ltr:max-lg:left-0 rtl:max-lg:right-0 md:relative md:min-h-dvh md:translate-x-0"
       :class="asideClass"
     >
       <div class="flex items-center gap-2.5 px-4 py-4">
@@ -149,8 +158,8 @@ watch(() => route.path, closeSidebar)
       </div>
 
       <nav class="flex-1 overflow-y-auto px-2 pb-4">
-        <template v-for="(items, group) in navGroups" :key="group">
-          <p v-if="navGroups.size > 1 || group !== 'general'" class="admin-nav-group">{{ t(groupLabels[group] ?? group) }}</p>
+        <template v-for="[group, items] in navGroupEntries" :key="group">
+          <p v-if="navGroupEntries.length > 1 || group !== 'general'" class="admin-nav-group">{{ t(groupLabels[group] ?? group) }}</p>
           <div class="mb-2 flex flex-col gap-0.5">
             <button
               v-for="item in items"
@@ -161,7 +170,7 @@ watch(() => route.path, closeSidebar)
               @click="selectSidebarTab(item.id)"
             >
               <DashboardNavIcon :name="item.icon ?? 'grid'" class="h-[1.125rem] w-[1.125rem]" />
-              <span>{{ item.label }}</span>
+              <span class="min-w-0 flex-1 truncate text-start">{{ item.label }}</span>
             </button>
           </div>
         </template>

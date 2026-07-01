@@ -408,6 +408,9 @@
   }
 
   .admin-sidebar {
+    width: 15.5rem;
+    min-width: 15.5rem;
+    flex: 0 0 15.5rem;
     background: var(--admin-sidebar);
     color: #e3e3e3;
   }
